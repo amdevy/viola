@@ -1,10 +1,6 @@
 export function formatPrice(price: number): string {
-  return new Intl.NumberFormat("uk-UA", {
-    style: "currency",
-    currency: "UAH",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(price);
+  const formatted = Math.round(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  return `${formatted} грн`;
 }
 
 export function slugify(text: string): string {
