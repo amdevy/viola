@@ -125,7 +125,7 @@ export default function OrderForm() {
           />
           <Input
             label="Телефон"
-            placeholder="+380501234567"
+            placeholder="+380500582175"
             type="tel"
             error={errors.phone?.message}
             {...register("phone")}
