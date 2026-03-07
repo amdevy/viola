@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Блог — Поради по догляду за волоссям",
-  description: "Корисні статті та поради від Viola Hegedosh, технолога Na Golov[y], про догляд за волоссям.",
+  description: "Корисні статті та поради від Віола Гегедош, технолога Na Golov[y], про догляд за волоссям.",
 };
 
 interface BlogPost {

@@ -9,7 +9,7 @@ import type { Product } from "@/types";
 export const metadata: Metadata = {
   title: "Viola — Салон волосся | Косметика Na Golov[y]",
   description:
-    "Viola Hegedosh — технолог бренду Na Golov[y]. Салон волосся, професійна косметика, персональні консультації. Шампуні, кондиціонери, маски.",
+    "Віола Гегедош — технолог бренду Na Golov[y]. Салон волосся, професійна косметика, персональні консультації. Шампуні, кондиціонери, маски.",
 };
 
 const BENEFITS = [
@@ -51,13 +51,13 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero — Owner introduction (like brovkohub.com) */}
+      {/* Hero — Owner introduction */}
       <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-[#E8E4DE]">
         {/* Owner photo — right side on desktop, background on mobile */}
         <div className="absolute inset-0 lg:left-1/2 lg:right-0">
           <Image
             src="/viola.JPG"
-            alt="Viola Hegedosh — засновниця салону Viola, технолог бренду Na Golov[y]"
+            alt="Віола Гегедош — засновниця салону Viola, технолог бренду Na Golov[y]"
             fill
             className="object-cover object-top"
             priority
@@ -72,23 +72,29 @@ export default async function HomePage() {
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 w-full">
           <div className="max-w-xl">
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1A1A1A] leading-[1.1] mb-6">
-              Вітаю, мене звати Viola Hegedosh, я технолог бренду Na Golov[y]
+            <p className="font-serif text-lg sm:text-xl text-[#1A1A1A]/80 mb-2 tracking-wide">
+              Вітаю, мене звати
+            </p>
+            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1A1A1A] leading-[1.15] mb-2">
+              Віола Гегедош
             </h1>
-            <p className="text-lg text-[#1A1A1A]/70 mb-10 leading-relaxed max-w-md">
+            <p className="font-serif text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#1A1A1A] mb-6 tracking-tight">
+              технолог бренду Na Golov[y]
+            </p>
+            <p className="text-lg text-[#1A1A1A]/75 mb-10 leading-relaxed max-w-md">
               Тут ви можете зв'язатися зі мною для персональної
               консультації та підібрати догляд, який справді працює.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
                 href="/shop"
-                className="inline-flex items-center gap-2 bg-[#1A1A1A] text-white px-8 py-4 text-sm font-medium uppercase tracking-widest hover:bg-[#C4A882] transition-colors rounded"
+                className="inline-flex items-center gap-2 bg-[#1A1A1A] text-white px-8 py-4 text-sm font-medium uppercase tracking-[0.2em] hover:bg-[#C4A882] transition-all duration-300 rounded-sm"
               >
                 Купити
               </Link>
               <Link
                 href="/contacts"
-                className="inline-flex items-center gap-2 border-2 border-[#1A1A1A] text-[#1A1A1A] px-8 py-4 text-sm font-medium uppercase tracking-widest hover:bg-[#1A1A1A] hover:text-white transition-colors rounded"
+                className="inline-flex items-center gap-2 border-2 border-[#1A1A1A] text-[#1A1A1A] px-8 py-4 text-sm font-medium uppercase tracking-[0.2em] hover:bg-[#1A1A1A] hover:text-white transition-all duration-300 rounded-sm"
               >
                 Консультація
               </Link>
@@ -191,7 +197,7 @@ export default async function HomePage() {
                 Viola — салон волосся та косметика Na Golov[y]
               </h2>
               <p className="text-[#6B6B6B] mb-4 leading-relaxed">
-                Салон Viola заснований Viola Hegedosh — технологом бренду Na Golov[y].
+                Салон Viola заснований Віола Гегедош — технологом бренду Na Golov[y].
                 Ми пропонуємо професійну косметику для волосся та персональні консультації
                 з підбору догляду.
               </p>
