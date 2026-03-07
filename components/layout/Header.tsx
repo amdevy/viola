@@ -51,6 +51,9 @@ export default function Header() {
                 <Link href="/contacts" className="text-sm text-[#1A1A1A] hover:text-[#C4A882] transition-colors font-medium">
                   Контакти
                 </Link>
+                <Link href="/reviews" className="text-sm text-[#1A1A1A] hover:text-[#C4A882] transition-colors font-medium">
+                  Відгуки
+                </Link>
               </nav>
 
               {/* Logo (centered) */}

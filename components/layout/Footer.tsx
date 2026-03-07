@@ -64,6 +64,7 @@ export default function Footer() {
               {[
                 { href: "/about", label: "Про бренд" },
                 { href: "/blog", label: "Блог" },
+                { href: "/reviews", label: "Відгуки" },
                 { href: "/contacts", label: "Контакти" },
                 { href: "/delivery", label: "Доставка та оплата" },
                 { href: "/returns", label: "Повернення" },

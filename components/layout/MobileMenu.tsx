@@ -14,6 +14,7 @@ const NAV_LINKS = [
   { href: "/shop", label: "Магазин" },
   { href: "/blog", label: "Блог" },
   { href: "/contacts", label: "Контакти" },
+  { href: "/reviews", label: "Відгуки" },
 ];
 
 export default function MobileMenu({
