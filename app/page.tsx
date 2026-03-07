@@ -51,36 +51,46 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-[#1A1A1A]">
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent z-10" />
-        {/* Placeholder hero bg */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1A1A1A] via-[#2D2D2D] to-[#3D3530]" />
+      {/* Hero — Owner introduction (like brovkohub.com) */}
+      <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-[#E8E4DE]">
+        {/* Owner photo — right side on desktop, background on mobile */}
+        <div className="absolute inset-0 lg:left-1/2 lg:right-0">
+          <Image
+            src="/viola.JPG"
+            alt="Засновниця Viola"
+            fill
+            className="object-cover object-top"
+            priority
+            sizes="(max-width: 1024px) 100vw, 50vw"
+          />
+        </div>
 
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-          <div className="max-w-2xl">
-            <p className="text-[#C4A882] text-xs uppercase tracking-[0.3em] mb-4 font-medium">
-              Новинка сезону
-            </p>
-            <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-[1.1] mb-6">
-              Краса починається з волосся
+        {/* Overlay for mobile readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#E8E4DE] via-[#E8E4DE]/80 to-[#E8E4DE]/40 lg:hidden" />
+        {/* Left half solid background on desktop */}
+        <div className="absolute inset-y-0 left-0 w-1/2 bg-[#E8E4DE] hidden lg:block" />
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 w-full">
+          <div className="max-w-xl">
+            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1A1A1A] leading-[1.1] mb-6">
+              Вітаю, я засновниця бренду Viola
             </h1>
-            <p className="text-lg text-white/80 mb-10 leading-relaxed max-w-xl">
-              Profesійна косметика для волосся Viola. Натуральні інгредієнти,
-              перевірені технологами. Для кожного типу волосся.
+            <p className="text-lg text-[#1A1A1A]/70 mb-10 leading-relaxed max-w-md">
+              Тут ви можете зв'язатися зі мною для персональної
+              консультації та підібрати догляд, який справді працює.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
                 href="/shop"
-                className="inline-flex items-center gap-2 bg-[#C4A882] text-white px-8 py-4 text-sm font-medium uppercase tracking-widest hover:bg-[#A8875E] transition-colors rounded"
+                className="inline-flex items-center gap-2 bg-[#1A1A1A] text-white px-8 py-4 text-sm font-medium uppercase tracking-widest hover:bg-[#C4A882] transition-colors rounded"
               >
-                Перейти до магазину
+                Купити
               </Link>
               <Link
-                href="/about"
-                className="inline-flex items-center gap-2 border border-white/40 text-white px-8 py-4 text-sm font-medium uppercase tracking-widest hover:bg-white/10 transition-colors rounded"
+                href="/contacts"
+                className="inline-flex items-center gap-2 border-2 border-[#1A1A1A] text-[#1A1A1A] px-8 py-4 text-sm font-medium uppercase tracking-widest hover:bg-[#1A1A1A] hover:text-white transition-colors rounded"
               >
-                Про бренд
+                Консультація
               </Link>
             </div>
           </div>

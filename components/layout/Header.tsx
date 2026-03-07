@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useCart } from "@/hooks/useCart";
 import { useCategories } from "@/hooks/useProducts";
 import MobileMenu from "./MobileMenu";
@@ -54,11 +55,15 @@ export default function Header() {
 
               {/* Logo (centered) */}
               <div className="flex-1 md:flex-none flex justify-center md:justify-center">
-                <Link
-                  href="/"
-                  className="font-serif text-2xl font-bold text-[#1A1A1A] tracking-tight hover:text-[#C4A882] transition-colors"
-                >
-                  Viola
+                <Link href="/" className="block hover:opacity-80 transition-opacity">
+                  <Image
+                    src="/logo.png"
+                    alt="Viola — Hair and Beauty Salon"
+                    width={140}
+                    height={56}
+                    className="h-10 w-auto"
+                    priority
+                  />
                 </Link>
               </div>
 
