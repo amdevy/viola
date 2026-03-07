@@ -7,9 +7,9 @@ import { ProductGridSkeleton } from "@/components/ui/Skeleton";
 import type { Product } from "@/types";
 
 export const metadata: Metadata = {
-  title: "Viola — Професійна косметика для волосся",
+  title: "Viola — Салон волосся | Косметика Na Golov[y]",
   description:
-    "Відкрий для себе Viola — преміальну косметику для волосся. Шампуні, кондиціонери, маски для всіх типів волосся.",
+    "Віола Гегедош — технолог бренду Na Golov[y]. Салон волосся, професійна косметика, персональні консультації. Шампуні, кондиціонери, маски.",
 };
 
 const BENEFITS = [
@@ -20,8 +20,8 @@ const BENEFITS = [
   },
   {
     icon: "🔬",
-    title: "Професійна формула",
-    desc: "Розроблено разом із трихологами та стилістами.",
+    title: "Косметика Na Golov[y]",
+    desc: "Професійні формули, розроблені технологами бренду.",
   },
   {
     icon: "🚚",
@@ -51,13 +51,13 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero — Owner introduction (like brovkohub.com) */}
+      {/* Hero — Owner introduction */}
       <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-[#E8E4DE]">
         {/* Owner photo — right side on desktop, background on mobile */}
         <div className="absolute inset-0 lg:left-1/2 lg:right-0">
           <Image
             src="/viola.JPG"
-            alt="Засновниця Viola"
+            alt="Віола Гегедош — засновниця салону Viola, технолог бренду Na Golov[y]"
             fill
             className="object-cover object-top"
             priority
@@ -72,23 +72,29 @@ export default async function HomePage() {
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 w-full">
           <div className="max-w-xl">
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1A1A1A] leading-[1.1] mb-6">
-              Вітаю, я засновниця бренду Viola
+            <p className="font-serif text-lg sm:text-xl text-[#1A1A1A]/80 mb-2 tracking-wide">
+              Вітаю, мене звати
+            </p>
+            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1A1A1A] leading-[1.15] mb-2">
+              Віола Гегедош
             </h1>
-            <p className="text-lg text-[#1A1A1A]/70 mb-10 leading-relaxed max-w-md">
+            <p className="font-serif text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#1A1A1A] mb-6 tracking-tight">
+              технолог бренду Na Golov[y]
+            </p>
+            <p className="text-lg text-[#1A1A1A]/75 mb-10 leading-relaxed max-w-md">
               Тут ви можете зв'язатися зі мною для персональної
               консультації та підібрати догляд, який справді працює.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
                 href="/shop"
-                className="inline-flex items-center gap-2 bg-[#1A1A1A] text-white px-8 py-4 text-sm font-medium uppercase tracking-widest hover:bg-[#C4A882] transition-colors rounded"
+                className="inline-flex items-center gap-2 bg-[#1A1A1A] text-white px-8 py-4 text-sm font-medium uppercase tracking-[0.2em] hover:bg-[#C4A882] transition-all duration-300 rounded-sm"
               >
                 Купити
               </Link>
               <Link
                 href="/contacts"
-                className="inline-flex items-center gap-2 border-2 border-[#1A1A1A] text-[#1A1A1A] px-8 py-4 text-sm font-medium uppercase tracking-widest hover:bg-[#1A1A1A] hover:text-white transition-colors rounded"
+                className="inline-flex items-center gap-2 border-2 border-[#1A1A1A] text-[#1A1A1A] px-8 py-4 text-sm font-medium uppercase tracking-[0.2em] hover:bg-[#1A1A1A] hover:text-white transition-all duration-300 rounded-sm"
               >
                 Консультація
               </Link>
@@ -105,15 +111,17 @@ export default async function HomePage() {
               Категорії магазину
             </h2>
             <p className="text-[#6B6B6B] max-w-xl mx-auto">
-              Обери свій must-have. Шампунь, кондиціонер, маска — знайди те, що справді допоможе твоєму волоссю.
+              Вибери свій must-have серед найулюбленіших beauty-засобів. Шампунь, кондиціонер, маска — знайди те, що допоможе твоєму волоссю.
             </p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {[
               { slug: "shampoos", name: "Шампуні", color: "from-[#2D2D2D] to-[#1A1A1A]" },
               { slug: "conditioners", name: "Кондиціонери", color: "from-[#3D3530] to-[#2D2520]" },
               { slug: "masks", name: "Маски", color: "from-[#2D3530] to-[#1D2520]" },
-              { slug: "leave-in", name: "Незмивний догляд", color: "from-[#302D35] to-[#201D25]" },
+              { slug: "leave-in", name: "Незмивний догляд термозахист", color: "from-[#302D35] to-[#201D25]" },
+              { slug: "additions", name: "Доповнення догляду", color: "from-[#2A2D35] to-[#1A1D25]" },
+              { slug: "gift-sets", name: "Подарункові набори", color: "from-[#252A30] to-[#151A20]" },
             ].map((cat) => (
               <Link
                 key={cat.slug}
@@ -141,7 +149,7 @@ export default async function HomePage() {
                 Вибір наших клієнтів
               </h2>
               <p className="text-[#6B6B6B]">
-                Клієнти обирають — ми ділимося найкращим.
+                Клієнти обирають — ми ділимося найкращим. Переглянь топові засоби Na Golov[y], що стали фаворитами.
               </p>
             </div>
             <Link
@@ -186,17 +194,16 @@ export default async function HomePage() {
             <div>
               <p className="text-[#C4A882] text-xs uppercase tracking-[0.3em] mb-3">Наша історія</p>
               <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-6 leading-tight">
-                Viola — це любов до здорового волосся
+                Viola — салон волосся та косметика Na Golov[y]
               </h2>
               <p className="text-[#6B6B6B] mb-4 leading-relaxed">
-                Ми створили Viola, щоб кожна жінка могла мати доступ до
-                справжньої професійної косметики. Наші формули розроблені
-                разом із трихологами та перевірені тисячами клієнтів.
+                Салон Viola заснований Віола Гегедош — технологом бренду Na Golov[y].
+                Ми пропонуємо професійну косметику для волосся та персональні консультації
+                з підбору догляду.
               </p>
               <p className="text-[#6B6B6B] mb-8 leading-relaxed">
-                Кожен продукт — це результат глибоких досліджень та турботи
-                про здоров'я волосся. Без шкідливих речовин, з максимальною
-                ефективністю.
+                Кожен продукт Na Golov[y] — це результат глибоких досліджень та турботи
+                про здоров'я волосся. Без шкідливих речовин, з максимальною ефективністю.
               </p>
               <Link
                 href="/about"
@@ -260,7 +267,7 @@ export default async function HomePage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Organization",
-            name: "Viola",
+            name: "Viola — Салон волосся, технолог Na Golov[y]",
             url: process.env.NEXT_PUBLIC_SITE_URL,
             logo: `${process.env.NEXT_PUBLIC_SITE_URL}/logo.png`,
             sameAs: ["https://www.instagram.com/viola.mukachevo"],

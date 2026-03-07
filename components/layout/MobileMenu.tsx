@@ -14,6 +14,7 @@ const NAV_LINKS = [
   { href: "/shop", label: "Магазин" },
   { href: "/blog", label: "Блог" },
   { href: "/contacts", label: "Контакти" },
+  { href: "/reviews", label: "Відгуки" },
 ];
 
 export default function MobileMenu({
@@ -50,6 +51,13 @@ export default function MobileMenu({
 
         <nav className="flex-1 overflow-y-auto px-6 py-4">
           <div className="mb-6">
+            <Link
+              href="/shop"
+              onClick={onClose}
+              className="block py-2.5 text-sm font-medium text-[#C4A882] hover:text-[#1A1A1A] transition-colors mb-4"
+            >
+              Na Gólov[y]
+            </Link>
             <p className="text-xs uppercase tracking-widest text-[#6B6B6B] mb-3">Навігація</p>
             {NAV_LINKS.map((link) => (
               <Link

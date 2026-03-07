@@ -13,12 +13,22 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Viola — Професійна косметика для волосся",
+    default: "Viola — Салон волосся | Косметика Na Golov[y]",
     template: "%s | Viola",
   },
   description:
-    "Viola — інтернет-магазин професійної косметики для волосся. Шампуні, кондиціонери, маски, подарункові набори з доставкою по Україні.",
-  keywords: ["косметика для волосся", "шампунь", "кондиціонер", "маска для волосся", "Viola"],
+    "Віола Гегедош — технолог бренду Na Golov[y]. Салон волосся, професійна косметика, персональні консультації. Шампуні, кондиціонери, маски з доставкою по Україні.",
+  keywords: ["косметика для волосся", "Na Golov[y]", "шампунь", "кондиціонер", "маска", "Viola", "салон волосся"],
+  icons: {
+    icon: [
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    other: [
+      { rel: "manifest", url: "/site.webmanifest" },
+    ],
+  },
   openGraph: {
     type: "website",
     locale: "uk_UA",
