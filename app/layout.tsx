@@ -19,6 +19,16 @@ export const metadata: Metadata = {
   description:
     "Віола Гегедош — технолог бренду Na Golov[y]. Салон волосся, професійна косметика, персональні консультації. Шампуні, кондиціонери, маски з доставкою по Україні.",
   keywords: ["косметика для волосся", "Na Golov[y]", "шампунь", "кондиціонер", "маска", "Viola", "салон волосся"],
+  icons: {
+    icon: [
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    other: [
+      { rel: "manifest", url: "/site.webmanifest" },
+    ],
+  },
   openGraph: {
     type: "website",
     locale: "uk_UA",
