@@ -118,15 +118,6 @@ CREATE POLICY "order_items_authenticated" ON public.order_items FOR ALL USING (a
 CREATE POLICY "blog_posts_authenticated" ON public.blog_posts FOR ALL USING (auth.role() = 'authenticated');
 CREATE POLICY "reviews_authenticated" ON public.reviews FOR ALL USING (auth.role() = 'authenticated');
 
--- Service role bypass: API uses service role for orders/customers
--- Allow anon for insert (checkout) - orders API uses service role
--- Service role bypasses RLS by default
-
--- Storage bucket "products":
--- 1. Supabase Dashboard → Storage → New bucket → name: "products", Public: ON
--- 2. Bucket → Policies → New policy:
---    - For INSERT: "Allow authenticated uploads" - (auth.role() = 'authenticated')
-
 -- Seed categories
 INSERT INTO public.categories (name, slug) VALUES
   ('Шампуні', 'shampoos'),
