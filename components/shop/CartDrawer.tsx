@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/hooks/useCart";
 import CartItem from "./CartItem";
@@ -10,7 +10,9 @@ export default function CartDrawer() {
   const { items, isOpen, closeCart, total, itemCount } = useCart();
   const cartTotal = useCart((s) => s.total());
   const count = useCart((s) => s.itemCount());
+  const [mounted, setMounted] = useState(false);
 
+  useEffect(() => setMounted(true), []);
   useEffect(() => {
     if (isOpen) document.body.style.overflow = "hidden";
     else document.body.style.overflow = "";
@@ -37,7 +39,7 @@ export default function CartDrawer() {
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#E8E4DE]">
           <h2 className="font-serif text-xl font-bold text-[#1A1A1A]">
             Кошик
-            {count > 0 && (
+            {mounted && count > 0 && (
               <span className="ml-2 text-sm font-normal text-[#6B6B6B]">({count})</span>
             )}
           </h2>
@@ -54,7 +56,7 @@ export default function CartDrawer() {
 
         {/* Items */}
         <div className="flex-1 overflow-y-auto px-6">
-          {items.length === 0 ? (
+          {!mounted || items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center py-12">
               <svg className="w-16 h-16 text-[#E8E4DE] mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1}
@@ -80,7 +82,7 @@ export default function CartDrawer() {
         </div>
 
         {/* Footer */}
-        {items.length > 0 && (
+        {mounted && items.length > 0 && (
           <div className="border-t border-[#E8E4DE] px-6 py-4 space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-sm text-[#6B6B6B]">Разом</span>
