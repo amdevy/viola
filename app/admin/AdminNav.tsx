@@ -10,6 +10,7 @@ const NAV = [
   { href: "/admin/orders", label: "Замовлення" },
   { href: "/admin/products", label: "Товари" },
   { href: "/admin/customers", label: "Клієнти" },
+  { href: "/admin/blog", label: "Блог" },
 ];
 
 export default function AdminNav({ userEmail }: { userEmail: string }) {
