@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Блог — Поради по догляду за волоссям",
-  description: "Корисні статті та поради від команди Viola про догляд за волоссям.",
+  description: "Корисні статті та поради від Viola Hegedosh, технолога Na Golov[y], про догляд за волоссям.",
 };
 
 interface BlogPost {
@@ -70,7 +70,7 @@ export default async function BlogPage() {
       <div className="text-center mb-12">
         <h1 className="font-serif text-4xl font-bold text-[#1A1A1A] mb-3">Блог</h1>
         <p className="text-[#6B6B6B] max-w-xl mx-auto">
-          Поради від наших трихологів та стилістів про догляд за волоссям
+          Поради від технолога Na Golov[y] про догляд за волоссям
         </p>
       </div>
 

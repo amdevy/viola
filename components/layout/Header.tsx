@@ -61,7 +61,7 @@ export default function Header() {
                 <Link href="/" className="block hover:opacity-80 transition-opacity">
                   <Image
                     src="/logo.png"
-                    alt="Viola — Hair and Beauty Salon"
+                    alt="Viola — Салон волосся, косметика Na Golov[y]"
                     width={140}
                     height={56}
                     className="h-10 w-auto"

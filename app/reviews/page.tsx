@@ -4,7 +4,7 @@ import ReviewsList from "./ReviewsList";
 
 export const metadata: Metadata = {
   title: "Відгуки",
-  description: "Відгуки наших клієнтів про косметику для волосся Viola.",
+  description: "Відгуки клієнтів салону Viola про косметику Na Golov[y].",
 };
 
 export interface Review {
@@ -47,7 +47,7 @@ export default async function ReviewsPage() {
       <div className="text-center mb-12">
         <h1 className="font-serif text-4xl font-bold text-[#1A1A1A] mb-3">Відгуки</h1>
         <p className="text-[#6B6B6B] max-w-xl mx-auto">
-          Що кажуть наші клієнти про продукцію Viola
+          Що кажуть наші клієнти про косметику Na Golov[y] та салон Viola
         </p>
       </div>
 

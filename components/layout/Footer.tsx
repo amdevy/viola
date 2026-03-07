@@ -9,7 +9,7 @@ export default function Footer() {
           <div className="md:col-span-1">
             <h3 className="font-serif text-2xl font-bold text-white mb-3">Viola</h3>
             <p className="text-sm text-[#A0A0A0] leading-relaxed mb-4">
-              Професійна косметика для волосся. Турбота про ваше волосся з любов'ю.
+              Салон волосся Viola. Косметика Na Golov[y]. Турбота про ваше волосся з любов'ю.
             </p>
             <div className="flex gap-3">
               <a
@@ -46,6 +46,8 @@ export default function Footer() {
                 { href: "/shop?category=shampoos", label: "Шампуні" },
                 { href: "/shop?category=conditioners", label: "Кондиціонери" },
                 { href: "/shop?category=masks", label: "Маски" },
+                { href: "/shop?category=leave-in", label: "Незмивний догляд термозахист" },
+                { href: "/shop?category=additions", label: "Доповнення догляду" },
                 { href: "/shop?category=gift-sets", label: "Подарункові набори" },
               ].map((l) => (
                 <li key={l.href}>
