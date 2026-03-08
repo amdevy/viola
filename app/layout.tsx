@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "react-hot-toast";
+import { Analytics } from "@vercel/analytics/next";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import "./globals.css";
@@ -56,6 +57,7 @@ export default function RootLayout({
         <Header />
         <main>{children}</main>
         <Footer />
+        <Analytics />
         <Toaster
           position="top-right"
           toastOptions={{

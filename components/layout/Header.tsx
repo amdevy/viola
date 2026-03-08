@@ -73,26 +73,23 @@ export default function Header() {
                 </Link>
               </nav>
 
-              {/* Center: Na Gólov[y] + Viola logo */}
-              <div className='flex-1 flex justify-center items-center gap-4 md:gap-6'>
-                <Link
-                  href='/shop'
-                  className='text-base md:text-lg font-semibold text-[#1A1A1A] hover:text-[#C4A882] transition-colors tracking-tight'
-                >
-                  Na Gólov[y]
-                </Link>
+              {/* Center: logo + tagline */}
+              <div className='flex-1 flex justify-center'>
                 <Link
                   href='/'
-                  className='block hover:opacity-80 transition-opacity'
+                  className='flex flex-col items-center gap-0.5 hover:opacity-80 transition-opacity'
                 >
                   <Image
                     src='/logo.png'
                     alt='Viola — Салон волосся, косметика Na Golov[y]'
-                    width={180}
-                    height={72}
-                    className='h-12 md:h-14 w-auto'
+                    width={200}
+                    height={80}
+                    className='h-14 md:h-16 w-auto'
                     priority
                   />
+                  <span className='text-[10px] uppercase tracking-[0.25em] text-[#6B6B6B] font-light'>
+                    Косметика Na Gólov[y]
+                  </span>
                 </Link>
               </div>
 
