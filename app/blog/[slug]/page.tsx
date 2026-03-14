@@ -132,11 +132,11 @@ export default async function BlogPostPage({ params }: Props) {
         </header>
 
         {post.cover_image && (
-          <div className="aspect-video rounded overflow-hidden mb-8">
+          <div className="rounded overflow-hidden mb-8">
             <img
               src={post.cover_image}
               alt={post.title}
-              className="w-full h-full object-cover"
+              className="w-full h-auto"
             />
           </div>
         )}
