@@ -52,7 +52,7 @@ export default async function HomePage() {
   return (
     <>
       {/* Hero — Owner introduction */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-[#E8E4DE]">
+      <section className="relative min-h-[70vh] flex items-center overflow-hidden bg-[#E8E4DE]">
         {/* Owner photo — right side on desktop, background on mobile */}
         <div className="absolute inset-0 lg:left-1/2 lg:right-0">
           <Image
@@ -70,7 +70,7 @@ export default async function HomePage() {
         {/* Left half solid background on desktop */}
         <div className="absolute inset-y-0 left-0 w-1/2 bg-[#E8E4DE] hidden lg:block" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
           <div className="max-w-xl">
             <p className="font-serif text-lg sm:text-xl text-[#1A1A1A]/80 mb-2 tracking-wide">
               Вітаю, мене звати

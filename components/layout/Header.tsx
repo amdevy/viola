@@ -55,8 +55,9 @@ export default function Header() {
         <div className='border-b border-[#E8E4DE]'>
           <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
             <div className='flex items-center justify-between h-16 md:h-24'>
-              {/* Left nav */}
-              <nav className='hidden md:flex items-center gap-7 flex-1 justify-end'>
+              {/* Left nav — outer div always takes flex-1 space to center logo on mobile */}
+              <div className='flex flex-1 justify-end'>
+              <nav className='hidden md:flex items-center gap-7 justify-end'>
                 {[
                   { href: '/shop', label: 'Каталог товарів' },
                   { href: '/contacts', label: 'Контакти' },
@@ -71,6 +72,7 @@ export default function Header() {
                   </Link>
                 ))}
               </nav>
+              </div>
 
               {/* Center: logo */}
               <Link
@@ -91,8 +93,8 @@ export default function Header() {
               </Link>
 
               {/* Right: right nav + cart + mobile menu */}
-              <div className='flex items-center gap-7 flex-1 justify-start'>
-                <nav className='hidden md:flex items-center gap-5'>
+              <div className='flex items-center flex-1'>
+                <nav className='hidden md:flex items-center gap-5 mr-3'>
                   {[
                     { href: '/reviews', label: 'Відгуки' },
                     { href: '/blog', label: 'Блог' },
@@ -110,6 +112,7 @@ export default function Header() {
                     </Link>
                   ))}
                 </nav>
+                <div className='ml-auto flex items-center'>
                 <button
                   onClick={openCart}
                   className='relative p-2 text-[#1A1A1A] hover:text-[#C4A882] transition-colors'
@@ -154,6 +157,7 @@ export default function Header() {
                     />
                   </svg>
                 </button>
+                </div>
               </div>
             </div>
           </div>
