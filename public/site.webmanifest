@@ -1,5 +1,5 @@
 {
-  "name": "Viola — Салон волосся",
+  "name": "Viola — Салон краси",
   "short_name": "Viola",
   "icons": [
     {
@@ -15,5 +15,5 @@
   ],
   "theme_color": "#1A1A1A",
   "background_color": "#FAFAF8",
-  "display": "standalone"
+  "display": "browser"
 }

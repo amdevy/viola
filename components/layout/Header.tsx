@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useCart } from "@/hooks/useCart";
@@ -9,20 +9,30 @@ import MobileMenu from "./MobileMenu";
 import CartDrawer from "@/components/shop/CartDrawer";
 
 const CATEGORY_ORDER: Record<string, { name: string; order: number }> = {
-  shampoos:    { name: "Шампуні",          order: 1 },
-  conditioners:{ name: "Кондиціонери",     order: 2 },
-  masks:       { name: "Маски",            order: 3 },
-  "leave-in":  { name: "Незмивні засоби",  order: 4 },
-  additions:   { name: "Пілінги",          order: 5 },
+  shampoos:     { name: "Шампуні",         order: 1 },
+  conditioners: { name: "Кондиціонери",    order: 2 },
+  masks:        { name: "Маски",           order: 3 },
+  "leave-in":   { name: "Незмивні засоби", order: 4 },
+  additions:    { name: "Пілінги",         order: 5 },
 };
 
+const NAV_LINKS = [
+  { href: "/contacts", label: "Де отримати консультацію та придбати" },
+  { href: "/about",    label: "Про бренд" },
+  { href: "/reviews",  label: "Відгуки" },
+  { href: "/blog",     label: "Блог" },
+  { href: "/contacts", label: "Контакти" },
+];
+
 export default function Header() {
-  const { itemCount, openCart } = useCart();
+  const { openCart } = useCart();
   const count = useCart((s) => s.itemCount());
   const { categories } = useCategories();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [catalogOpen, setCatalogOpen] = useState(false);
+  const catalogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => setMounted(true), []);
   useEffect(() => {
@@ -31,94 +41,67 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (catalogRef.current && !catalogRef.current.contains(e.target as Node)) {
+        setCatalogOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const sortedCategories = [...categories]
+    .filter((cat) => cat.slug in CATEGORY_ORDER)
+    .sort((a, b) => CATEGORY_ORDER[a.slug].order - CATEGORY_ORDER[b.slug].order);
+
   return (
     <>
       {/* Announcement Bar */}
       <div className='bg-[#1A1A1A] text-white text-center py-2 px-4 text-xs tracking-wide'>
         Безкоштовна доставка від 3000 грн.{' '}
-        <Link
-          href='/shop'
-          className='underline hover:text-[#C4A882] transition-colors'
-        >
+        <Link href='/shop' className='underline hover:text-[#C4A882] transition-colors'>
           Перейти у магазин
         </Link>
       </div>
 
-      <header
-        className={`sticky top-0 z-40 bg-[#FAFAF8] transition-shadow duration-300 ${
-          scrolled ? 'shadow-sm' : ''
-        }`}
-      >
-        {/* Main header row */}
+      <header className={`sticky top-0 z-40 bg-[#FAFAF8] transition-shadow duration-300 ${scrolled ? 'shadow-sm' : ''}`}>
+
+        {/* Logo row */}
         <div className='border-b border-[#E8E4DE]'>
           <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-            <div className='flex items-center justify-between h-20 md:h-24'>
-              {/* Left: nav (desktop) */}
-              <nav className='hidden md:flex items-center gap-6 flex-1'>
-                <Link
-                  href='/shop'
-                  className='text-sm text-[#1A1A1A] hover:text-[#C4A882] transition-colors font-medium'
-                >
-                  Магазин
-                </Link>
-                <Link
-                  href='/blog'
-                  className='text-sm text-[#1A1A1A] hover:text-[#C4A882] transition-colors font-medium'
-                >
-                  Блог
-                </Link>
-                <Link
-                  href='/contacts'
-                  className='text-sm text-[#1A1A1A] hover:text-[#C4A882] transition-colors font-medium'
-                >
-                  Контакти
-                </Link>
-                <Link
-                  href='/reviews'
-                  className='text-sm text-[#1A1A1A] hover:text-[#C4A882] transition-colors font-medium'
-                >
-                  Відгуки
-                </Link>
-              </nav>
+            <div className='flex items-center justify-between h-16 md:h-24'>
 
-              {/* Center: logo + tagline */}
-              <div className='flex-1 flex justify-center'>
-                <Link
-                  href='/'
-                  className='flex flex-col items-center gap-0.5 hover:opacity-80 transition-opacity'
-                >
+              {/* Left spacer */}
+              <div className='flex-1' />
+
+              {/* Center: logo */}
+              <div className='flex-1 flex justify-center md:flex-none'>
+                <Link href='/' className='flex flex-col items-center gap-0.5 hover:opacity-80 transition-opacity'>
                   <Image
                     src='/logo.png'
-                    alt='Viola — Салон краси "Viola", косметика Na Golov[y]'
+                    alt='Viola — Салон краси'
                     width={200}
                     height={80}
-                    className='h-14 md:h-16 w-auto mix-blend-multiply'
+                    className='h-9 md:h-16 w-auto mix-blend-multiply'
                     priority
                   />
-                  <span className='text-[10px] uppercase tracking-[0.25em] text-[#6B6B6B] font-light'>
+                  <span className='text-[9px] uppercase tracking-[0.2em] text-[#6B6B6B] font-light whitespace-nowrap'>
                     Косметика Na Gólov[y]
                   </span>
                 </Link>
               </div>
 
-              {/* Right icons */}
+              {/* Right: cart + mobile menu */}
               <div className='flex items-center gap-2 flex-1 justify-end'>
-                {/* Cart */}
                 <button
                   onClick={openCart}
                   className='relative p-2 text-[#1A1A1A] hover:text-[#C4A882] transition-colors'
                   aria-label='Кошик'
                 >
-                  <svg
-                    className='w-5 h-5'
-                    fill='none'
-                    stroke='currentColor'
-                    viewBox='0 0 24 24'
-                  >
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      strokeWidth={1.5}
+                  <svg className='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                    <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5}
                       d='M2.25 3h1.386c.51 0 .955.343 1.087.836l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z'
                     />
                   </svg>
@@ -129,52 +112,78 @@ export default function Header() {
                   )}
                 </button>
 
-                {/* Mobile menu toggle */}
                 <button
                   onClick={() => setMenuOpen(true)}
                   className='md:hidden p-2 text-[#1A1A1A] hover:text-[#C4A882] transition-colors'
                   aria-label='Меню'
                 >
-                  <svg
-                    className='w-5 h-5'
-                    fill='none'
-                    stroke='currentColor'
-                    viewBox='0 0 24 24'
-                  >
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      strokeWidth={1.5}
-                      d='M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5'
-                    />
+                  <svg className='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                    <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d='M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5' />
                   </svg>
                 </button>
               </div>
+
             </div>
           </div>
         </div>
 
-        {/* Category nav bar (desktop) */}
-        {categories.length > 0 && (
-          <div className='hidden md:block border-b border-[#E8E4DE] bg-white'>
-            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-              <div className='flex items-center justify-center gap-8 h-10 overflow-x-auto'>
-                {[...categories]
-                  .filter((cat) => cat.slug in CATEGORY_ORDER)
-                  .sort((a, b) => CATEGORY_ORDER[a.slug].order - CATEGORY_ORDER[b.slug].order)
-                  .map((cat) => (
-                    <Link
-                      key={cat.id}
-                      href={`/shop?category=${cat.slug}`}
-                      className='text-xs uppercase tracking-widest text-[#1A1A1A] hover:text-[#C4A882] transition-colors whitespace-nowrap font-medium py-2'
-                    >
-                      {CATEGORY_ORDER[cat.slug].name}
-                    </Link>
-                  ))}
+        {/* Nav bar (desktop) */}
+        <div className='hidden md:block border-b border-[#E8E4DE] bg-white'>
+          <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+            <div className='flex items-center justify-center gap-8 h-11'>
+
+              {/* Catalog dropdown */}
+              <div ref={catalogRef} className='relative'>
+                <button
+                  onClick={() => setCatalogOpen((v) => !v)}
+                  className='flex items-center gap-1 text-xs uppercase tracking-widest text-[#1A1A1A] hover:text-[#C4A882] transition-colors font-medium py-2'
+                >
+                  Каталог товарів
+                  <svg className={`w-3 h-3 transition-transform duration-200 ${catalogOpen ? 'rotate-180' : ''}`} fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                    <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 9l-7 7-7-7' />
+                  </svg>
+                </button>
+
+                {catalogOpen && (
+                  <div className='absolute top-full left-0 mt-1 bg-white border border-[#E8E4DE] shadow-md rounded-sm min-w-[180px] py-1 z-50'>
+                    {sortedCategories.map((cat) => (
+                      <Link
+                        key={cat.id}
+                        href={`/shop?category=${cat.slug}`}
+                        onClick={() => setCatalogOpen(false)}
+                        className='block px-4 py-2 text-xs uppercase tracking-widest text-[#1A1A1A] hover:text-[#C4A882] hover:bg-[#FAFAF8] transition-colors'
+                      >
+                        {CATEGORY_ORDER[cat.slug].name}
+                      </Link>
+                    ))}
+                    <div className='border-t border-[#E8E4DE] mt-1 pt-1'>
+                      <Link
+                        href='/shop'
+                        onClick={() => setCatalogOpen(false)}
+                        className='block px-4 py-2 text-xs uppercase tracking-widest text-[#C4A882] hover:text-[#1A1A1A] hover:bg-[#FAFAF8] transition-colors font-medium'
+                      >
+                        Всі товари
+                      </Link>
+                    </div>
+                  </div>
+                )}
               </div>
+
+              {/* Other nav links */}
+              {NAV_LINKS.map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className='text-xs uppercase tracking-widest text-[#1A1A1A] hover:text-[#C4A882] transition-colors whitespace-nowrap font-medium py-2'
+                >
+                  {link.label}
+                </Link>
+              ))}
+
             </div>
           </div>
-        )}
+        </div>
+
       </header>
 
       <MobileMenu
