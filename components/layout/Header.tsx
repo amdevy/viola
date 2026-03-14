@@ -8,6 +8,14 @@ import { useCategories } from "@/hooks/useProducts";
 import MobileMenu from "./MobileMenu";
 import CartDrawer from "@/components/shop/CartDrawer";
 
+const CATEGORY_ORDER: Record<string, { name: string; order: number }> = {
+  shampoos:    { name: "Шампуні",          order: 1 },
+  conditioners:{ name: "Кондиціонери",     order: 2 },
+  masks:       { name: "Маски",            order: 3 },
+  "leave-in":  { name: "Незмивні засоби",  order: 4 },
+  additions:   { name: "Пілінги",          order: 5 },
+};
+
 export default function Header() {
   const { itemCount, openCart } = useCart();
   const count = useCart((s) => s.itemCount());
@@ -150,16 +158,19 @@ export default function Header() {
         {categories.length > 0 && (
           <div className='hidden md:block border-b border-[#E8E4DE] bg-white'>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-              <div className='flex items-center gap-8 h-10 overflow-x-auto'>
-                {categories.map((cat) => (
-                  <Link
-                    key={cat.id}
-                    href={`/shop?category=${cat.slug}`}
-                    className='text-xs uppercase tracking-widest text-[#1A1A1A] hover:text-[#C4A882] transition-colors whitespace-nowrap font-medium py-2'
-                  >
-                    {cat.name}
-                  </Link>
-                ))}
+              <div className='flex items-center justify-center gap-8 h-10 overflow-x-auto'>
+                {[...categories]
+                  .filter((cat) => cat.slug in CATEGORY_ORDER)
+                  .sort((a, b) => CATEGORY_ORDER[a.slug].order - CATEGORY_ORDER[b.slug].order)
+                  .map((cat) => (
+                    <Link
+                      key={cat.id}
+                      href={`/shop?category=${cat.slug}`}
+                      className='text-xs uppercase tracking-widest text-[#1A1A1A] hover:text-[#C4A882] transition-colors whitespace-nowrap font-medium py-2'
+                    >
+                      {CATEGORY_ORDER[cat.slug].name}
+                    </Link>
+                  ))}
               </div>
             </div>
           </div>

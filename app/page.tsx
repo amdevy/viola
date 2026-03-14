@@ -70,7 +70,7 @@ export default async function HomePage() {
         {/* Left half solid background on desktop */}
         <div className="absolute inset-y-0 left-0 w-1/2 bg-[#E8E4DE] hidden lg:block" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
           <div className="max-w-xl">
             <p className="font-serif text-lg sm:text-xl text-[#1A1A1A]/80 mb-2 tracking-wide">
               Вітаю, мене звати
@@ -114,14 +114,13 @@ export default async function HomePage() {
               Вибери свій must-have серед найулюбленіших beauty-засобів. Шампунь, кондиціонер, маска — знайди те, що допоможе твоєму волоссю.
             </p>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             {[
               { slug: "shampoos", name: "Шампуні", color: "from-[#2D2D2D] to-[#1A1A1A]" },
               { slug: "conditioners", name: "Кондиціонери", color: "from-[#3D3530] to-[#2D2520]" },
               { slug: "masks", name: "Маски", color: "from-[#2D3530] to-[#1D2520]" },
-              { slug: "leave-in", name: "Незмивний догляд термозахист", color: "from-[#302D35] to-[#201D25]" },
-              { slug: "additions", name: "Доповнення догляду", color: "from-[#2A2D35] to-[#1A1D25]" },
-              { slug: "gift-sets", name: "Подарункові набори", color: "from-[#252A30] to-[#151A20]" },
+              { slug: "leave-in", name: "Незмивні засоби", color: "from-[#302D35] to-[#201D25]" },
+              { slug: "additions", name: "Пілінги", color: "from-[#2A2D35] to-[#1A1D25]" },
             ].map((cat) => (
               <Link
                 key={cat.slug}
