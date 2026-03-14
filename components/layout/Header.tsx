@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import Link from "next/link";
 import Image from "next/image";
 import { useCart } from "@/hooks/useCart";
@@ -8,8 +8,16 @@ import { useCategories } from "@/hooks/useProducts";
 import MobileMenu from "./MobileMenu";
 import CartDrawer from "@/components/shop/CartDrawer";
 
+const CATEGORY_ORDER: Record<string, { name: string; order: number }> = {
+  shampoos:     { name: "Шампуні",         order: 1 },
+  conditioners: { name: "Кондиціонери",    order: 2 },
+  masks:        { name: "Маски",           order: 3 },
+  "leave-in":   { name: "Незмивні засоби", order: 4 },
+  additions:    { name: "Пілінги",         order: 5 },
+};
+
 export default function Header() {
-  const { itemCount, openCart } = useCart();
+  const { openCart } = useCart();
   const count = useCart((s) => s.itemCount());
   const { categories } = useCategories();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -22,6 +30,10 @@ export default function Header() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const sortedCategories = [...categories]
+    .filter((cat) => cat.slug in CATEGORY_ORDER)
+    .sort((a, b) => CATEGORY_ORDER[a.slug].order - CATEGORY_ORDER[b.slug].order);
 
   return (
     <>
@@ -37,65 +49,67 @@ export default function Header() {
       </div>
 
       <header
-        className={`sticky top-0 z-40 bg-[#FAFAF8] transition-shadow duration-300 ${
-          scrolled ? 'shadow-sm' : ''
-        }`}
+        className={`sticky top-0 z-40 bg-[#FAFAF8] transition-shadow duration-300 ${scrolled ? 'shadow-sm' : ''}`}
       >
         {/* Main header row */}
         <div className='border-b border-[#E8E4DE]'>
           <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-            <div className='flex items-center justify-between h-20 md:h-24'>
-              {/* Left: nav (desktop) */}
-              <nav className='hidden md:flex items-center gap-6 flex-1'>
-                <Link
-                  href='/shop'
-                  className='text-sm text-[#1A1A1A] hover:text-[#C4A882] transition-colors font-medium'
-                >
-                  Магазин
-                </Link>
-                <Link
-                  href='/blog'
-                  className='text-sm text-[#1A1A1A] hover:text-[#C4A882] transition-colors font-medium'
-                >
-                  Блог
-                </Link>
-                <Link
-                  href='/contacts'
-                  className='text-sm text-[#1A1A1A] hover:text-[#C4A882] transition-colors font-medium'
-                >
-                  Контакти
-                </Link>
-                <Link
-                  href='/reviews'
-                  className='text-sm text-[#1A1A1A] hover:text-[#C4A882] transition-colors font-medium'
-                >
-                  Відгуки
-                </Link>
+            <div className='flex items-center justify-between h-16 md:h-24'>
+              {/* Left nav */}
+              <nav className='hidden md:flex items-center gap-7 flex-1 justify-end'>
+                {[
+                  { href: '/shop', label: 'Каталог товарів' },
+                  { href: '/contacts', label: 'Контакти' },
+                  { href: '/about', label: 'Про бренд' },
+                ].map((link) => (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className='text-xs text-[#1A1A1A] hover:text-[#C4A882] transition-colors font-medium whitespace-nowrap'
+                  >
+                    {link.label}
+                  </Link>
+                ))}
               </nav>
 
-              {/* Center: logo + tagline */}
-              <div className='flex-1 flex justify-center'>
-                <Link
-                  href='/'
-                  className='flex flex-col items-center gap-0.5 hover:opacity-80 transition-opacity'
-                >
-                  <Image
-                    src='/logo.png'
-                    alt='Viola — Салон волосся, косметика Na Golov[y]'
-                    width={200}
-                    height={80}
-                    className='h-14 md:h-16 w-auto'
-                    priority
-                  />
-                  <span className='text-[10px] uppercase tracking-[0.25em] text-[#6B6B6B] font-light'>
-                    Косметика Na Gólov[y]
-                  </span>
-                </Link>
-              </div>
+              {/* Center: logo */}
+              <Link
+                href='/'
+                className='flex flex-col items-center gap-0.5 hover:opacity-80 transition-opacity'
+              >
+                <Image
+                  src='/logo.png'
+                  alt='Viola — Салон краси'
+                  width={200}
+                  height={80}
+                  className='h-9 md:h-16 w-auto mix-blend-multiply'
+                  priority
+                />
+                <span className='text-[9px] md:text-[10px] uppercase tracking-[0.2em] text-[#6B6B6B] font-light whitespace-nowrap'>
+                  Косметика Na Gólov[y]
+                </span>
+              </Link>
 
-              {/* Right icons */}
-              <div className='flex items-center gap-2 flex-1 justify-end'>
-                {/* Cart */}
+              {/* Right: right nav + cart + mobile menu */}
+              <div className='flex items-center gap-7 flex-1 justify-start'>
+                <nav className='hidden md:flex items-center gap-5'>
+                  {[
+                    { href: '/reviews', label: 'Відгуки' },
+                    { href: '/blog', label: 'Блог' },
+                    {
+                      href: '/contacts',
+                      label: 'Де отримати консультацію та придбати',
+                    },
+                  ].map((link) => (
+                    <Link
+                      key={link.label}
+                      href={link.href}
+                      className='text-xs text-[#1A1A1A] hover:text-[#C4A882] transition-colors font-medium whitespace-nowrap'
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </nav>
                 <button
                   onClick={openCart}
                   className='relative p-2 text-[#1A1A1A] hover:text-[#C4A882] transition-colors'
@@ -121,7 +135,6 @@ export default function Header() {
                   )}
                 </button>
 
-                {/* Mobile menu toggle */}
                 <button
                   onClick={() => setMenuOpen(true)}
                   className='md:hidden p-2 text-[#1A1A1A] hover:text-[#C4A882] transition-colors'
@@ -147,17 +160,17 @@ export default function Header() {
         </div>
 
         {/* Category nav bar (desktop) */}
-        {categories.length > 0 && (
+        {sortedCategories.length > 0 && (
           <div className='hidden md:block border-b border-[#E8E4DE] bg-white'>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-              <div className='flex items-center gap-8 h-10 overflow-x-auto'>
-                {categories.map((cat) => (
+              <div className='flex items-center justify-center gap-8 h-10'>
+                {sortedCategories.map((cat) => (
                   <Link
                     key={cat.id}
                     href={`/shop?category=${cat.slug}`}
                     className='text-xs uppercase tracking-widest text-[#1A1A1A] hover:text-[#C4A882] transition-colors whitespace-nowrap font-medium py-2'
                   >
-                    {cat.name}
+                    {CATEGORY_ORDER[cat.slug].name}
                   </Link>
                 ))}
               </div>

@@ -7,29 +7,29 @@ import { ProductGridSkeleton } from "@/components/ui/Skeleton";
 import type { Product } from "@/types";
 
 export const metadata: Metadata = {
-  title: "Viola — Салон волосся | Косметика Na Golov[y]",
+  title: "Viola — Салон краси | Косметика Na Golov[y]",
   description:
-    "Віола Гегедош — технолог бренду Na Golov[y]. Салон волосся, професійна косметика, персональні консультації. Шампуні, кондиціонери, маски.",
+    "Віола Гегедош — Експерт бренду Na Golovy. Салон краси Viola, професійна косметика, персональні консультації. Шампуні, кондиціонери, маски.",
 };
 
 const BENEFITS = [
   {
-    icon: "🌿",
+    icon: "/icons/heliconia.png",
     title: "Натуральний склад",
     desc: "Тільки перевірені інгредієнти без шкідливих речовин.",
   },
   {
-    icon: "🔬",
+    icon: "/icons/scientific-device.png",
     title: "Косметика Na Golov[y]",
-    desc: "Професійні формули, розроблені технологами бренду.",
+    desc: "Професійні формули, розроблені Експертами бренду Na Golovy.",
   },
   {
-    icon: "🚚",
+    icon: "/icons/delivery.png",
     title: "Швидка доставка",
     desc: "Нова Пошта по всій Україні. Від 1500 грн — безкоштовно.",
   },
   {
-    icon: "💎",
+    icon: "/icons/diamond.png",
     title: "Гарантія якості",
     desc: "Повернення протягом 14 днів без зайвих питань.",
   },
@@ -57,7 +57,7 @@ export default async function HomePage() {
         <div className="absolute inset-0 lg:left-1/2 lg:right-0">
           <Image
             src="/viola.JPG"
-            alt="Віола Гегедош — засновниця салону Viola, технолог бренду Na Golov[y]"
+            alt="Віола Гегедош — засновниця салону Viola, Експерт бренду Na Golovy"
             fill
             className="object-cover object-top"
             priority
@@ -70,7 +70,7 @@ export default async function HomePage() {
         {/* Left half solid background on desktop */}
         <div className="absolute inset-y-0 left-0 w-1/2 bg-[#E8E4DE] hidden lg:block" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
           <div className="max-w-xl">
             <p className="font-serif text-lg sm:text-xl text-[#1A1A1A]/80 mb-2 tracking-wide">
               Вітаю, мене звати
@@ -79,7 +79,7 @@ export default async function HomePage() {
               Віола Гегедош
             </h1>
             <p className="font-serif text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#1A1A1A] mb-6 tracking-tight">
-              технолог бренду Na Golov[y]
+              Експерт бренду Na Golovy
             </p>
             <p className="text-lg text-[#1A1A1A]/75 mb-10 leading-relaxed max-w-md">
               Тут ви можете зв'язатися зі мною для персональної
@@ -114,14 +114,13 @@ export default async function HomePage() {
               Вибери свій must-have серед найулюбленіших beauty-засобів. Шампунь, кондиціонер, маска — знайди те, що допоможе твоєму волоссю.
             </p>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             {[
               { slug: "shampoos", name: "Шампуні", color: "from-[#2D2D2D] to-[#1A1A1A]" },
               { slug: "conditioners", name: "Кондиціонери", color: "from-[#3D3530] to-[#2D2520]" },
               { slug: "masks", name: "Маски", color: "from-[#2D3530] to-[#1D2520]" },
-              { slug: "leave-in", name: "Незмивний догляд термозахист", color: "from-[#302D35] to-[#201D25]" },
-              { slug: "additions", name: "Доповнення догляду", color: "from-[#2A2D35] to-[#1A1D25]" },
-              { slug: "gift-sets", name: "Подарункові набори", color: "from-[#252A30] to-[#151A20]" },
+              { slug: "leave-in", name: "Незмивні засоби", color: "from-[#302D35] to-[#201D25]" },
+              { slug: "additions", name: "Пілінги", color: "from-[#2A2D35] to-[#1A1D25]" },
             ].map((cat) => (
               <Link
                 key={cat.slug}
@@ -197,7 +196,7 @@ export default async function HomePage() {
                 Viola — салон волосся та косметика Na Golov[y]
               </h2>
               <p className="text-[#6B6B6B] mb-4 leading-relaxed">
-                Салон Viola заснований Віола Гегедош — технологом бренду Na Golov[y].
+                Салон Viola заснований Віола Гегедош — Експертом бренду Na Golovy.
                 Ми пропонуємо професійну косметику для волосся та персональні консультації
                 з підбору догляду.
               </p>
@@ -222,7 +221,9 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {BENEFITS.map((b) => (
               <div key={b.title} className="text-center">
-                <div className="text-4xl mb-4">{b.icon}</div>
+                <div className="flex justify-center mb-4">
+                  <Image src={b.icon} alt={b.title} width={48} height={48} className="invert opacity-80" />
+                </div>
                 <h3 className="font-serif text-lg font-semibold text-white mb-2">{b.title}</h3>
                 <p className="text-sm text-white/60 leading-relaxed">{b.desc}</p>
               </div>
@@ -267,7 +268,7 @@ export default async function HomePage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Organization",
-            name: "Viola — Салон волосся, технолог Na Golov[y]",
+            name: `Viola — Салон краси "Viola", Експерт бренду Na Golovy`,
             url: process.env.NEXT_PUBLIC_SITE_URL,
             logo: `${process.env.NEXT_PUBLIC_SITE_URL}/logo.png`,
             sameAs: ["https://www.instagram.com/viola.mukachevo"],
