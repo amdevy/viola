@@ -31,39 +31,8 @@ async function getPosts(): Promise<BlogPost[]> {
   }
 }
 
-const PLACEHOLDER_POSTS = [
-  {
-    id: "1",
-    title: "Як правильно мити волосся: секрети трихологів",
-    slug: "yak-pravylno-myty-volossia",
-    excerpt: "Здавалося б, проста процедура — але більшість людей роблять це неправильно. Дізнайтесь секрети правильного миття волосся від наших трихологів.",
-    cover_image: null,
-    published_at: new Date().toISOString(),
-    reading_time: 5,
-  },
-  {
-    id: "2",
-    title: "ТОП-5 помилок при догляді за волоссям",
-    slug: "top-5-pomylok-pry-doglyadi-za-volossiam",
-    excerpt: "Ми зібрали найпоширеніші помилки, які заважають вашому волоссю бути здоровим та красивим.",
-    cover_image: null,
-    published_at: new Date().toISOString(),
-    reading_time: 7,
-  },
-  {
-    id: "3",
-    title: "Яку маску обрати для свого типу волосся",
-    slug: "yaku-masku-obraty-dlia-svoho-typu-volossia",
-    excerpt: "Розповідаємо, як визначити свій тип волосся та обрати ідеальну маску для відновлення та зволоження.",
-    cover_image: null,
-    published_at: new Date().toISOString(),
-    reading_time: 6,
-  },
-];
-
 export default async function BlogPage() {
   const posts = await getPosts();
-  const displayPosts = posts.length > 0 ? posts : PLACEHOLDER_POSTS;
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -74,8 +43,11 @@ export default async function BlogPage() {
         </p>
       </div>
 
+      {posts.length === 0 ? (
+        <p className="text-center text-[#6B6B6B] py-16">Статей поки немає</p>
+      ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {displayPosts.map((post) => (
+        {posts.map((post) => (
           <article key={post.id} className="group">
             <Link href={`/blog/${post.slug}`}>
               <div className="aspect-video rounded overflow-hidden bg-gradient-to-br from-[#E8E4DE] to-[#D4C5B0] mb-4 group-hover:opacity-90 transition-opacity">
@@ -122,6 +94,7 @@ export default async function BlogPage() {
           </article>
         ))}
       </div>
+      )}
     </div>
   );
 }
