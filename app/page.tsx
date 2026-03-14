@@ -9,7 +9,7 @@ import type { Product } from "@/types";
 export const metadata: Metadata = {
   title: "Viola — Салон волосся | Косметика Na Golov[y]",
   description:
-    "Віола Гегедош — технолог бренду Na Golov[y]. Салон волосся, професійна косметика, персональні консультації. Шампуні, кондиціонери, маски.",
+    "Віола Гегедош — Експерт бренду Na Golovy. Салон волосся, професійна косметика, персональні консультації. Шампуні, кондиціонери, маски.",
 };
 
 const BENEFITS = [
@@ -21,7 +21,7 @@ const BENEFITS = [
   {
     icon: "/icons/scientific-device.png",
     title: "Косметика Na Golov[y]",
-    desc: "Професійні формули, розроблені технологами бренду.",
+    desc: "Професійні формули, розроблені Експертами бренду Na Golovy.",
   },
   {
     icon: "/icons/delivery.png",
@@ -57,7 +57,7 @@ export default async function HomePage() {
         <div className="absolute inset-0 lg:left-1/2 lg:right-0">
           <Image
             src="/viola.JPG"
-            alt="Віола Гегедош — засновниця салону Viola, технолог бренду Na Golov[y]"
+            alt="Віола Гегедош — засновниця салону Viola, Експерт бренду Na Golovy"
             fill
             className="object-cover object-top"
             priority
@@ -79,7 +79,7 @@ export default async function HomePage() {
               Віола Гегедош
             </h1>
             <p className="font-serif text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#1A1A1A] mb-6 tracking-tight">
-              технолог бренду Na Golov[y]
+              Експерт бренду Na Golovy
             </p>
             <p className="text-lg text-[#1A1A1A]/75 mb-10 leading-relaxed max-w-md">
               Тут ви можете зв'язатися зі мною для персональної
@@ -197,7 +197,7 @@ export default async function HomePage() {
                 Viola — салон волосся та косметика Na Golov[y]
               </h2>
               <p className="text-[#6B6B6B] mb-4 leading-relaxed">
-                Салон Viola заснований Віола Гегедош — технологом бренду Na Golov[y].
+                Салон Viola заснований Віола Гегедош — Експертом бренду Na Golovy.
                 Ми пропонуємо професійну косметику для волосся та персональні консультації
                 з підбору догляду.
               </p>
@@ -269,7 +269,7 @@ export default async function HomePage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Organization",
-            name: "Viola — Салон волосся, технолог Na Golov[y]",
+            name: "Viola — Салон волосся, Експерт бренду Na Golovy",
             url: process.env.NEXT_PUBLIC_SITE_URL,
             logo: `${process.env.NEXT_PUBLIC_SITE_URL}/logo.png`,
             sameAs: ["https://www.instagram.com/viola.mukachevo"],

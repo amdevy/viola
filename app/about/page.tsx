@@ -5,7 +5,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Про бренд",
   description:
-    "Віола Гегедош — технолог бренду Na Golov[y]. Дізнайтесь більше про бренд професійної косметики для волосся Na Golov[y] та салон Viola.",
+    "Віола Гегедош — Експерт бренду Na Golovy. Дізнайтесь більше про бренд професійної косметики для волосся Na Golov[y] та салон Viola.",
 };
 
 const VALUES = [
@@ -75,7 +75,7 @@ export default function AboutPage() {
             <div className="relative aspect-[3/4] max-w-sm mx-auto lg:mx-0 rounded overflow-hidden">
               <Image
                 src="/viola.JPG"
-                alt="Віола Гегедош — технолог бренду Na Golov[y]"
+                alt="Віола Гегедош — Експерт бренду Na Golovy"
                 fill
                 className="object-cover object-top"
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -83,13 +83,13 @@ export default function AboutPage() {
             </div>
             <div>
               <p className="text-[#C4A882] text-xs uppercase tracking-[0.3em] mb-3">
-                Технолог бренду
+                Експерт бренду Na Golovy
               </p>
               <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-4 leading-tight">
                 Віола Гегедош
               </h2>
               <p className="text-[#6B6B6B] mb-4 leading-relaxed">
-                Як технолог бренду Na Golov[y] та засновниця салону Viola, я поєдную
+                Як Експерт бренду Na Golovy та засновниця салону Viola, я поєдную
                 глибокі знання про догляд за волоссям з пристрастю до справжньої якості.
               </p>
               <p className="text-[#6B6B6B] mb-4 leading-relaxed">
@@ -99,7 +99,7 @@ export default function AboutPage() {
               <p className="text-[#6B6B6B] mb-8 leading-relaxed">
                 Салон Viola — простір, де кожен клієнт отримує увагу та турботу. Тут ви
                 можете придбати косметику Na Golov[y] та отримати консультацію безпосередньо
-                від технолога бренду.
+                від Експерта бренду Na Golovy.
               </p>
               <Link
                 href="/contacts"
@@ -167,7 +167,7 @@ export default function AboutPage() {
             Підберіть догляд для вашого волосся
           </h2>
           <p className="text-white/60 mb-8 leading-relaxed">
-            Отримайте персональну консультацію від технолога бренду Na Golov[y]
+            Отримайте персональну консультацію від Експерта бренду Na Golovy
             та знайдіть продукти, які справді підходять вашому волоссю.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
