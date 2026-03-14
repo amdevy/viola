@@ -1,4 +1,5 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import type React from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -34,6 +35,62 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: post.cover_image ? [{ url: post.cover_image }] : [],
     },
   };
+}
+
+function renderContent(content: string) {
+  const hasHtml = /<[a-z][\s\S]*>/i.test(content);
+  if (hasHtml) {
+    return <div dangerouslySetInnerHTML={{ __html: content }} />;
+  }
+
+  // Split into paragraphs on double newlines
+  const paragraphs = content.split(/\n{2,}/).filter(Boolean);
+
+  return (
+    <div className="space-y-5 text-[#1A1A1A] leading-relaxed text-base">
+      {paragraphs.map((para, i) => {
+        const lines = para.split(/\n/).filter(Boolean);
+
+        // Each line: if it has 2+ inline "• " bullets, split on them
+        const elements: React.ReactNode[] = [];
+        const bulletItems: string[] = [];
+
+        for (const line of lines) {
+          if (line.trim().startsWith("•")) {
+            bulletItems.push(line.replace(/^•\s*/, ""));
+          } else if ((line.match(/•/g) ?? []).length >= 2) {
+            // Inline bullets — split on "• "
+            const parts = line.split(/\s*•\s*/).filter(Boolean);
+            // First part is likely intro text
+            const intro = parts[0].endsWith("?") || parts[0].endsWith(":") || parts.length > 2
+              ? parts[0]
+              : null;
+            const items = intro ? parts.slice(1) : parts;
+            if (intro) elements.push(<p key={`intro-${i}`}>{intro}</p>);
+            items.forEach((item) => bulletItems.push(item));
+          } else {
+            elements.push(<p key={`p-${i}-${line.slice(0, 10)}`}>{line}</p>);
+          }
+        }
+
+        return (
+          <div key={i} className="space-y-2">
+            {elements}
+            {bulletItems.length > 0 && (
+              <ul className="space-y-1.5 my-2">
+                {bulletItems.map((item, j) => (
+                  <li key={j} className="flex items-start gap-2">
+                    <span className="text-[#C4A882] shrink-0 mt-0.5">•</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
 export default async function BlogPostPage({ params }: Props) {
@@ -84,10 +141,7 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
         )}
 
-        <div
-          className="prose prose-lg max-w-none text-[#1A1A1A]"
-          dangerouslySetInnerHTML={{ __html: post.content ?? post.excerpt ?? "" }}
-        />
+        {renderContent(post.content ?? post.excerpt ?? "")}
       </article>
 
       <div className="mt-12 pt-8 border-t border-[#E8E4DE]">
