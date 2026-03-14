@@ -37,6 +37,7 @@ export default function AdminBlogPage() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [dragOver, setDragOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -90,6 +91,15 @@ export default function AdminBlogPage() {
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    setCoverFile(file);
+    setCoverPreview(URL.createObjectURL(file));
+  }
+
+  function handleDrop(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (!file || !file.type.startsWith("image/")) return;
     setCoverFile(file);
     setCoverPreview(URL.createObjectURL(file));
   }
@@ -377,40 +387,56 @@ export default function AdminBlogPage() {
                 <label className="block text-xs font-medium text-[#1A1A1A] mb-1">
                   Обкладинка
                 </label>
-                <div className="flex gap-3 items-start">
-                  {coverPreview && (
+                {coverPreview ? (
+                  <div className="relative rounded overflow-hidden border border-[#E8E4DE] group">
                     <img
                       src={coverPreview}
                       alt="cover"
-                      className="w-24 h-16 object-cover rounded border border-[#E8E4DE]"
+                      className="w-full h-40 object-cover"
                     />
-                  )}
-                  <div>
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="text-sm border border-[#E8E4DE] rounded px-3 py-1.5 hover:border-[#C4A882] transition-colors"
-                    >
-                      {coverPreview ? "Замінити" : "Завантажити фото"}
-                    </button>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      className="hidden"
-                    />
-                    {coverPreview && (
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                      <label className="cursor-pointer bg-white text-[#1A1A1A] text-xs font-medium px-3 py-1.5 rounded hover:bg-[#C4A882] hover:text-white transition-colors">
+                        Замінити
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileChange}
+                          className="hidden"
+                        />
+                      </label>
                       <button
                         type="button"
                         onClick={() => { setCoverPreview(null); setCoverFile(null); }}
-                        className="ml-2 text-xs text-red-500 hover:text-red-700"
+                        className="bg-white text-red-500 text-xs font-medium px-3 py-1.5 rounded hover:bg-red-500 hover:text-white transition-colors"
                       >
                         Видалити
                       </button>
-                    )}
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div
+                    onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                    onDragLeave={() => setDragOver(false)}
+                    onDrop={handleDrop}
+                    className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${dragOver ? "border-[#C4A882] bg-[#C4A882]/5" : "border-[#E8E4DE] hover:border-[#C4A882]"}`}
+                  >
+                    <label className="cursor-pointer flex flex-col items-center gap-2">
+                      <svg className="w-8 h-8 text-[#C4A882]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                      </svg>
+                      <span className="text-sm text-[#1A1A1A] font-medium">Перетягніть фото сюди</span>
+                      <span className="text-xs text-[#6B6B6B]">або натисніть для вибору файлу</span>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                )}
               </div>
             </div>
 
