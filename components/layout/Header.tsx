@@ -84,7 +84,7 @@ export default function Header() {
                     alt='Viola — Салон волосся, косметика Na Golov[y]'
                     width={200}
                     height={80}
-                    className='h-14 md:h-16 w-auto'
+                    className='h-14 md:h-16 w-auto mix-blend-multiply'
                     priority
                   />
                   <span className='text-[10px] uppercase tracking-[0.25em] text-[#6B6B6B] font-light'>
