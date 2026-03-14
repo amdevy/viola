@@ -104,13 +104,13 @@ export default function AdminBlogPage() {
     setCoverPreview(URL.createObjectURL(file));
   }
 
-  async function uploadCover(file: File): Promise<string | null> {
+  async function uploadCover(file: File): Promise<string> {
     const ext = file.name.split(".").pop();
     const path = `blog/${Date.now()}.${ext}`;
     const { error } = await supabase.storage
       .from("products")
       .upload(path, file, { upsert: true });
-    if (error) return null;
+    if (error) throw new Error("Помилка завантаження фото: " + error.message);
     const { data } = supabase.storage.from("products").getPublicUrl(path);
     return data.publicUrl;
   }
@@ -125,8 +125,13 @@ export default function AdminBlogPage() {
 
     let coverUrl = editPost?.cover_image ?? null;
     if (coverFile) {
-      const uploaded = await uploadCover(coverFile);
-      if (uploaded) coverUrl = uploaded;
+      try {
+        coverUrl = await uploadCover(coverFile);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Помилка завантаження фото");
+        setSaving(false);
+        return;
+      }
     }
 
     const payload = {
