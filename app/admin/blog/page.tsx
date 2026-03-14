@@ -106,12 +106,12 @@ export default function AdminBlogPage() {
 
   async function uploadCover(file: File): Promise<string> {
     const ext = file.name.split(".").pop();
-    const path = `blog/${Date.now()}.${ext}`;
+    const path = `${Date.now()}.${ext}`;
     const { error } = await supabase.storage
-      .from("products")
+      .from("blog")
       .upload(path, file, { upsert: true });
     if (error) throw new Error("Помилка завантаження фото: " + error.message);
-    const { data } = supabase.storage.from("products").getPublicUrl(path);
+    const { data } = supabase.storage.from("blog").getPublicUrl(path);
     return data.publicUrl;
   }
 
