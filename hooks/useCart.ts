@@ -1,7 +1,7 @@
 "use client";
 
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 import type { CartItem } from "@/types";
 
 interface CartStore {
@@ -72,20 +72,20 @@ export const useCart = create<CartStore>()(
     }),
     {
       name: "viola-cart",
-      storage: {
+      storage: createJSONStorage(() => ({
         getItem: (key) => {
-          try { return JSON.parse(localStorage.getItem(key) ?? "null"); }
+          try { return localStorage.getItem(key); }
           catch { return null; }
         },
         setItem: (key, value) => {
-          try { localStorage.setItem(key, JSON.stringify(value)); }
+          try { localStorage.setItem(key, value); }
           catch { /* ignore */ }
         },
         removeItem: (key) => {
           try { localStorage.removeItem(key); }
           catch { /* ignore */ }
         },
-      },
+      })),
     }
   )
 );
