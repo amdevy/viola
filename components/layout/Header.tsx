@@ -81,7 +81,7 @@ export default function Header() {
                 >
                   <Image
                     src='/logo.png'
-                    alt='Viola — Салон волосся, косметика Na Golov[y]'
+                    alt='Viola — Салон краси "Viola", косметика Na Golov[y]'
                     width={200}
                     height={80}
                     className='h-14 md:h-16 w-auto mix-blend-multiply'

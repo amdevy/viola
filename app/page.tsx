@@ -7,9 +7,9 @@ import { ProductGridSkeleton } from "@/components/ui/Skeleton";
 import type { Product } from "@/types";
 
 export const metadata: Metadata = {
-  title: "Viola — Салон волосся | Косметика Na Golov[y]",
+  title: "Viola — Салон краси | Косметика Na Golov[y]",
   description:
-    "Віола Гегедош — Експерт бренду Na Golovy. Салон волосся, професійна косметика, персональні консультації. Шампуні, кондиціонери, маски.",
+    "Віола Гегедош — Експерт бренду Na Golovy. Салон краси Viola, професійна косметика, персональні консультації. Шампуні, кондиціонери, маски.",
 };
 
 const BENEFITS = [
@@ -269,7 +269,7 @@ export default async function HomePage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Organization",
-            name: "Viola — Салон волосся, Експерт бренду Na Golovy",
+            name: `Viola — Салон краси "Viola", Експерт бренду Na Golovy`,
             url: process.env.NEXT_PUBLIC_SITE_URL,
             logo: `${process.env.NEXT_PUBLIC_SITE_URL}/logo.png`,
             sameAs: ["https://www.instagram.com/viola.mukachevo"],

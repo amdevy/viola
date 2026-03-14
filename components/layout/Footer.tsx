@@ -11,8 +11,7 @@ export default function Footer() {
               Viola
             </h3>
             <p className='text-sm text-[#A0A0A0] leading-relaxed mb-4'>
-              Салон волосся Viola. Косметика Na Golov[y]. Турбота про ваше
-              волосся з любов'ю.
+              Салон краси &quot;Viola&quot; — простір, де кожен клієнт отримує увагу, професійність та турботу в догляді за волоссям.
             </p>
             <div className='flex gap-3'>
               <a
