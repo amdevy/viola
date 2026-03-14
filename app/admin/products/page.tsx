@@ -20,6 +20,7 @@ export default function AdminProductsPage() {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [imageUploading, setImageUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -71,10 +72,7 @@ export default function AdminProductsPage() {
     setShowModal(true);
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
+  const uploadFile = async (file: File) => {
     setImageUploading(true);
     const supabase = createClient();
     const ext = file.name.split(".").pop();
@@ -91,6 +89,20 @@ export default function AdminProductsPage() {
     setForm((f) => ({ ...f, images: [...f.images, publicUrl] }));
     setImageUploading(false);
     toast.success("Зображення завантажено");
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    await uploadFile(file);
+  };
+
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (!file || !file.type.startsWith("image/")) return;
+    await uploadFile(file);
   };
 
   const handleSave = async () => {
@@ -309,32 +321,48 @@ export default function AdminProductsPage() {
           {/* Image upload */}
           <div>
             <label className="text-sm font-medium text-[#1A1A1A] block mb-2">Зображення</label>
-            <div className="flex flex-wrap gap-2 mb-2">
-              {form.images.map((img, i) => (
-                <div key={i} className="relative w-16 h-20 rounded overflow-hidden bg-[#F0EDE8] group">
-                  <Image src={img} alt="" fill className="object-cover" sizes="64px" />
-                  <button
-                    onClick={() => setForm((f) => ({ ...f, images: f.images.filter((_, j) => j !== i) }))}
-                    className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 text-white text-xs flex items-center justify-center transition-opacity"
-                  >
-                    ✕
-                  </button>
+            {form.images.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-2">
+                {form.images.map((img, i) => (
+                  <div key={i} className="relative w-16 h-20 rounded overflow-hidden bg-[#F0EDE8] group">
+                    <Image src={img} alt="" fill className="object-cover" sizes="64px" />
+                    <button
+                      onClick={() => setForm((f) => ({ ...f, images: f.images.filter((_, j) => j !== i) }))}
+                      className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 text-white text-xs flex items-center justify-center transition-opacity"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div
+              onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={handleDrop}
+              className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${dragOver ? "border-[#C4A882] bg-[#C4A882]/5" : "border-[#E8E4DE] hover:border-[#C4A882]"}`}
+            >
+              {imageUploading ? (
+                <div className="flex flex-col items-center gap-2">
+                  <div className="w-6 h-6 border-2 border-[#C4A882] border-t-transparent rounded-full animate-spin" />
+                  <span className="text-sm text-[#6B6B6B]">Завантаження...</span>
                 </div>
-              ))}
-              <label className="w-16 h-20 border-2 border-dashed border-[#E8E4DE] rounded flex flex-col items-center justify-center cursor-pointer hover:border-[#C4A882] transition-colors">
-                {imageUploading ? (
-                  <div className="w-4 h-4 border-2 border-[#C4A882] border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <span className="text-[#6B6B6B] text-xl">+</span>
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleImageUpload}
-                  disabled={imageUploading}
-                />
-              </label>
+              ) : (
+                <label className="cursor-pointer flex flex-col items-center gap-2">
+                  <svg className="w-8 h-8 text-[#C4A882]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                  </svg>
+                  <span className="text-sm text-[#1A1A1A] font-medium">Перетягніть фото сюди</span>
+                  <span className="text-xs text-[#6B6B6B]">або натисніть для вибору файлу</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageUpload}
+                    disabled={imageUploading}
+                  />
+                </label>
+              )}
             </div>
           </div>
         </div>
