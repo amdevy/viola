@@ -14,22 +14,22 @@ export const metadata: Metadata = {
 
 const BENEFITS = [
   {
-    icon: "🌿",
+    icon: "/icons/heliconia.png",
     title: "Натуральний склад",
     desc: "Тільки перевірені інгредієнти без шкідливих речовин.",
   },
   {
-    icon: "🔬",
+    icon: "/icons/scientific-device.png",
     title: "Косметика Na Golov[y]",
     desc: "Професійні формули, розроблені технологами бренду.",
   },
   {
-    icon: "🚚",
+    icon: "/icons/delivery.png",
     title: "Швидка доставка",
     desc: "Нова Пошта по всій Україні. Від 1500 грн — безкоштовно.",
   },
   {
-    icon: "💎",
+    icon: "/icons/diamond.png",
     title: "Гарантія якості",
     desc: "Повернення протягом 14 днів без зайвих питань.",
   },
@@ -222,7 +222,9 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {BENEFITS.map((b) => (
               <div key={b.title} className="text-center">
-                <div className="text-4xl mb-4">{b.icon}</div>
+                <div className="flex justify-center mb-4">
+                  <Image src={b.icon} alt={b.title} width={48} height={48} className="invert opacity-80" />
+                </div>
                 <h3 className="font-serif text-lg font-semibold text-white mb-2">{b.title}</h3>
                 <p className="text-sm text-white/60 leading-relaxed">{b.desc}</p>
               </div>
