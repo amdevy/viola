@@ -21,11 +21,20 @@ export default function ContactsForm() {
       return;
     }
     setSending(true);
-    // TODO: підключити API / відправку на email
-    await new Promise((r) => setTimeout(r, 800));
-    toast.success("Повідомлення надіслано");
-    setForm({ name: "", phone: "", email: "", message: "" });
-    setSending(false);
+    try {
+      const res = await fetch("/api/notify-contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) throw new Error();
+      toast.success("Повідомлення надіслано");
+      setForm({ name: "", phone: "", email: "", message: "" });
+    } catch {
+      toast.error("Помилка. Спробуйте ще раз.");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
