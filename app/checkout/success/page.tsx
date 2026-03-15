@@ -6,11 +6,13 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
-export default function SuccessPage({
+export default async function SuccessPage({
   searchParams,
 }: {
-  searchParams: { orderId?: string };
+  searchParams: Promise<{ orderId?: string }>;
 }) {
+  const { orderId } = await searchParams;
+
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-4">
       <div className="text-center max-w-md">
@@ -25,9 +27,9 @@ export default function SuccessPage({
         <p className="text-[#6B6B6B] mb-2">
           Ваше замовлення прийнято та буде оброблено найближчим часом.
         </p>
-        {searchParams.orderId && (
+        {orderId && (
           <p className="text-sm text-[#A0A0A0] mb-6">
-            Номер замовлення: <span className="font-mono font-medium text-[#1A1A1A]">{searchParams.orderId.slice(0, 8).toUpperCase()}</span>
+            Номер замовлення: <span className="font-mono font-medium text-[#1A1A1A]">{orderId.slice(0, 8).toUpperCase()}</span>
           </p>
         )}
         <p className="text-sm text-[#6B6B6B] mb-8">

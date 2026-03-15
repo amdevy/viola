@@ -25,11 +25,14 @@ export default function OrderForm() {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: { paymentMethod: "card" },
   });
+
+  const paymentMethod = watch("paymentMethod");
 
   const onSubmit = async (data: CheckoutFormData) => {
     if (items.length === 0) {
@@ -56,6 +59,32 @@ export default function OrderForm() {
       if (!res.ok) throw new Error("Помилка створення замовлення");
 
       const { orderId } = await res.json();
+
+      if (data.paymentMethod === "callback") {
+        await fetch("/api/notify-callback", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            orderId,
+            customer: {
+              name: `${data.firstName} ${data.lastName}`,
+              phone: data.phone,
+            },
+            items: items.map((i) => ({
+              name: i.name,
+              price: i.price,
+              qty: i.quantity,
+            })),
+            total: cartTotal,
+            notes: data.notes || null,
+            city: data.city,
+            novaPoshtaAddress: data.novaPoshtaAddress,
+          }),
+        });
+        clearCart();
+        router.push(`/checkout/success?orderId=${orderId}`);
+        return;
+      }
 
       const pfRes = await fetch("/api/wayforpay/checkout", {
         method: "POST",
@@ -153,10 +182,25 @@ export default function OrderForm() {
       {/* Payment */}
       <div>
         <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-4">Оплата</h2>
-        <div className="flex items-center gap-3 p-4 border-2 border-[#C4A882] bg-[#FDF9F5] rounded">
-          <span className="text-xl">💳</span>
-          <span className="text-sm font-medium text-[#1A1A1A]">Карткою онлайн (WayForPay)</span>
-          <input type="hidden" value="card" {...register("paymentMethod")} />
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { value: "card", icon: "💳", label: "Карткою онлайн", sub: "WayForPay" },
+            { value: "callback", icon: "📞", label: "Зворотній зв'язок", sub: "Ми зателефонуємо вам" },
+          ].map((opt) => (
+            <label
+              key={opt.value}
+              className={`flex flex-col items-center gap-1.5 p-4 border-2 rounded cursor-pointer transition-all ${
+                paymentMethod === opt.value
+                  ? "border-[#C4A882] bg-[#FDF9F5]"
+                  : "border-[#E8E4DE] hover:border-[#C4A882]"
+              }`}
+            >
+              <input type="radio" value={opt.value} className="sr-only" {...register("paymentMethod")} />
+              <span className="text-xl">{opt.icon}</span>
+              <span className="text-xs font-semibold text-[#1A1A1A] text-center">{opt.label}</span>
+              <span className="text-[11px] text-[#6B6B6B] text-center">{opt.sub}</span>
+            </label>
+          ))}
         </div>
       </div>
 
@@ -178,7 +222,11 @@ export default function OrderForm() {
         disabled={submitting}
         className="w-full bg-[#1A1A1A] text-white py-4 text-sm font-medium rounded hover:bg-[#C4A882] transition-colors disabled:opacity-50 uppercase tracking-wider"
       >
-        {submitting ? "Оформлення..." : "Оформити замовлення"}
+        {submitting
+          ? "Оформлення..."
+          : paymentMethod === "callback"
+          ? "Залишити заявку"
+          : "Оформити замовлення"}
       </button>
     </form>
   );

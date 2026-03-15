@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, Fragment } from "react";
 import { Skeleton } from "@/components/ui/Skeleton";
 
 interface Column<T> {
@@ -16,6 +16,7 @@ interface DataTableProps<T> {
   loading?: boolean;
   emptyMessage?: string;
   keyExtractor: (row: T) => string;
+  expandedRow?: { id: string | null; render: (row: T) => ReactNode };
 }
 
 export default function DataTable<T>({
@@ -24,6 +25,7 @@ export default function DataTable<T>({
   loading,
   emptyMessage = "Дані відсутні",
   keyExtractor,
+  expandedRow,
 }: DataTableProps<T>) {
   return (
     <div className="overflow-x-auto rounded border border-[#E8E4DE]">
@@ -61,20 +63,30 @@ export default function DataTable<T>({
               </td>
             </tr>
           ) : (
-            data.map((row) => (
-              <tr
-                key={keyExtractor(row)}
-                className="hover:bg-[#FAFAF8] transition-colors"
-              >
-                {columns.map((col) => (
-                  <td key={col.key} className={`px-4 py-3 ${col.className ?? ""}`}>
-                    {col.render
-                      ? col.render(row)
-                      : String((row as Record<string, unknown>)[col.key] ?? "")}
-                  </td>
-                ))}
-              </tr>
-            ))
+            data.map((row) => {
+              const key = keyExtractor(row);
+              const isExpanded = expandedRow?.id === key;
+              return (
+                <Fragment key={key}>
+                  <tr className="hover:bg-[#FAFAF8] transition-colors">
+                    {columns.map((col) => (
+                      <td key={col.key} className={`px-4 py-3 ${col.className ?? ""}`}>
+                        {col.render
+                          ? col.render(row)
+                          : String((row as Record<string, unknown>)[col.key] ?? "")}
+                      </td>
+                    ))}
+                  </tr>
+                  {isExpanded && expandedRow && (
+                    <tr className="bg-[#FAFAF8]">
+                      <td colSpan={columns.length} className="px-4 py-3 border-t border-[#E8E4DE]">
+                        {expandedRow.render(row)}
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
+              );
+            })
           )}
         </tbody>
       </table>
