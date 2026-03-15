@@ -11,7 +11,7 @@ export const checkoutSchema = z.object({
   cityRef: z.string().min(1, "Оберіть місто"),
   novaPoshtaRef: z.string().min(1, "Оберіть відділення"),
   novaPoshtaAddress: z.string().min(1, "Оберіть відділення"),
-  paymentMethod: z.enum(["card", "cash"]),
+  paymentMethod: z.enum(["card"]),
   notes: z.string().optional(),
 });
 
