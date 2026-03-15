@@ -55,7 +55,8 @@ export async function POST(req: NextRequest) {
       nova_poshta_address: novaPoshtaAddress,
       total,
       notes: notes || null,
-      status: paymentMethod === "cash" ? "pending" : "pending",
+      status: "pending",
+      payment_type: paymentMethod ?? null,
       payment_id: null,
     })
     .select("id")

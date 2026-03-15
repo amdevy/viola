@@ -31,6 +31,7 @@ export default function AdminOrdersPage() {
   const { orders, loading, updateStatus } = useOrders();
   const [statusFilter, setStatusFilter] = useState("");
   const [updating, setUpdating] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   const filtered = statusFilter
     ? orders.filter((o) => o.status === statusFilter)
@@ -49,9 +50,13 @@ export default function AdminOrdersPage() {
       key: "id",
       header: "ID",
       render: (o: Order) => (
-        <span className="font-mono text-xs text-[#6B6B6B]">
+        <button
+          onClick={() => setExpanded(expanded === o.id ? null : o.id)}
+          className="font-mono text-xs text-[#C4A882] hover:text-[#A8875E] transition-colors text-left"
+        >
           {o.id.slice(0, 8).toUpperCase()}
-        </span>
+          <span className="ml-1 text-[10px]">{expanded === o.id ? "▲" : "▼"}</span>
+        </button>
       ),
     },
     {
@@ -145,6 +150,27 @@ export default function AdminOrdersPage() {
         loading={loading}
         keyExtractor={(o) => o.id}
         emptyMessage="Замовлень не знайдено"
+        expandedRow={{
+          id: expanded,
+          render: (o: Order) => {
+            const items = (o as any).order_items ?? [];
+            if (items.length === 0) return <p className="text-xs text-[#6B6B6B]">Товари не знайдено</p>;
+            return (
+              <div className="space-y-1">
+                <p className="text-xs font-semibold text-[#1A1A1A] mb-2 uppercase tracking-wider">Товари:</p>
+                {items.map((item: any) => (
+                  <div key={item.id} className="flex items-center justify-between text-sm">
+                    <span className="text-[#1A1A1A]">
+                      {item.product?.name ?? "—"}
+                      <span className="text-[#6B6B6B] ml-2">× {item.quantity}</span>
+                    </span>
+                    <span className="font-medium">{formatPrice(item.price * item.quantity)}</span>
+                  </div>
+                ))}
+              </div>
+            );
+          },
+        }}
       />
     </div>
   );
