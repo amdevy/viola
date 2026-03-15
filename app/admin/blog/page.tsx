@@ -11,11 +11,13 @@ interface BlogPost {
   excerpt: string | null;
   content: string | null;
   cover_image: string | null;
+  cover_position: string | null;
   published: boolean;
   published_at: string | null;
   reading_time: number | null;
   created_at: string;
 }
+
 
 const EMPTY_FORM = {
   title: "",
@@ -24,6 +26,7 @@ const EMPTY_FORM = {
   content: "",
   reading_time: "",
   published: false,
+  cover_position: "center",
 };
 
 export default function AdminBlogPage() {
@@ -73,6 +76,7 @@ export default function AdminBlogPage() {
       content: post.content ?? "",
       reading_time: post.reading_time?.toString() ?? "",
       published: post.published,
+      cover_position: post.cover_position ?? "center",
     });
     setCoverPreview(post.cover_image);
     setCoverFile(null);
@@ -141,6 +145,7 @@ export default function AdminBlogPage() {
       content: form.content.trim() || null,
       reading_time: form.reading_time ? parseInt(form.reading_time) : null,
       cover_image: coverUrl,
+      cover_position: form.cover_position,
       published: form.published,
       published_at: form.published
         ? (editPost?.published_at ?? new Date().toISOString())
@@ -389,15 +394,14 @@ export default function AdminBlogPage() {
 
               {/* Cover image */}
               <div>
-                <label className="block text-xs font-medium text-[#1A1A1A] mb-1">
-                  Обкладинка
-                </label>
+                <label className="block text-xs font-medium text-[#1A1A1A] mb-1">Обкладинка</label>
                 {coverPreview ? (
                   <div className="relative rounded overflow-hidden border border-[#E8E4DE] group">
                     <img
                       src={coverPreview}
                       alt="cover"
                       className="w-full h-40 object-cover"
+                      style={{ objectPosition: form.cover_position }}
                     />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
                       <label className="cursor-pointer bg-white text-[#1A1A1A] text-xs font-medium px-3 py-1.5 rounded hover:bg-[#C4A882] hover:text-white transition-colors">

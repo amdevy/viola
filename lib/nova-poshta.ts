@@ -32,7 +32,7 @@ export async function getWarehouses(cityRef: string, query?: string) {
     methodProperties: {
       CityRef: cityRef,
       FindByString: query ?? "",
-      Limit: 50,
+      Limit: 500,
     },
   });
   return data.data ?? [];

@@ -26,13 +26,10 @@ export default function OrderForm() {
     handleSubmit,
     setValue,
     formState: { errors },
-    watch,
   } = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: { paymentMethod: "card" },
   });
-
-  const paymentMethod = watch("paymentMethod");
 
   const onSubmit = async (data: CheckoutFormData) => {
     if (items.length === 0) {
@@ -60,37 +57,31 @@ export default function OrderForm() {
 
       const { orderId } = await res.json();
 
-      if (data.paymentMethod === "cash") {
-        clearCart();
-        router.push(`/checkout/success?orderId=${orderId}`);
-      } else {
-        // WayForPay payment initiated by PaymentButton
-        const pfRes = await fetch("/api/wayforpay/checkout", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            orderId,
-            items: items.map((i) => ({
-              name: i.name,
-              price: i.price,
-              qty: i.quantity,
-            })),
-            customer: {
-              name: `${data.firstName} ${data.lastName}`,
-              phone: data.phone,
-              email: data.email ?? "",
-            },
-          }),
-        });
+      const pfRes = await fetch("/api/wayforpay/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderId,
+          items: items.map((i) => ({
+            name: i.name,
+            price: i.price,
+            qty: i.quantity,
+          })),
+          customer: {
+            name: `${data.firstName} ${data.lastName}`,
+            phone: data.phone,
+            email: data.email ?? "",
+          },
+        }),
+      });
 
-        const html = await pfRes.text();
-        const div = document.createElement("div");
-        div.innerHTML = html;
-        document.body.appendChild(div);
-        const form = div.querySelector("form");
-        if (form) form.submit();
-        clearCart();
-      }
+      const html = await pfRes.text();
+      const div = document.createElement("div");
+      div.innerHTML = html;
+      document.body.appendChild(div);
+      const form = div.querySelector("form");
+      if (form) form.submit();
+      clearCart();
     } catch (err) {
       toast.error("Виникла помилка. Спробуйте ще раз.");
       setSubmitting(false);
@@ -162,29 +153,10 @@ export default function OrderForm() {
       {/* Payment */}
       <div>
         <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-4">Оплата</h2>
-        <div className="grid grid-cols-2 gap-3">
-          {[
-            { value: "card", label: "Карткою онлайн", icon: "💳" },
-            { value: "cash", label: "Накладений платіж", icon: "📦" },
-          ].map((opt) => (
-            <label
-              key={opt.value}
-              className={`flex flex-col items-center gap-2 p-4 border-2 rounded cursor-pointer transition-all ${
-                paymentMethod === opt.value
-                  ? "border-[#C4A882] bg-[#FDF9F5]"
-                  : "border-[#E8E4DE] hover:border-[#C4A882]"
-              }`}
-            >
-              <input
-                type="radio"
-                value={opt.value}
-                className="sr-only"
-                {...register("paymentMethod")}
-              />
-              <span className="text-xl">{opt.icon}</span>
-              <span className="text-xs font-medium text-[#1A1A1A] text-center">{opt.label}</span>
-            </label>
-          ))}
+        <div className="flex items-center gap-3 p-4 border-2 border-[#C4A882] bg-[#FDF9F5] rounded">
+          <span className="text-xl">💳</span>
+          <span className="text-sm font-medium text-[#1A1A1A]">Карткою онлайн (WayForPay)</span>
+          <input type="hidden" value="card" {...register("paymentMethod")} />
         </div>
       </div>
 

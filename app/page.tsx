@@ -114,13 +114,13 @@ export default async function HomePage() {
               Вибери свій must-have серед найулюбленіших beauty-засобів. Шампунь, кондиціонер, маска — знайди те, що допоможе твоєму волоссю.
             </p>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
               { slug: "shampoos", name: "Шампуні", color: "from-[#2D2D2D] to-[#1A1A1A]" },
               { slug: "conditioners", name: "Кондиціонери", color: "from-[#3D3530] to-[#2D2520]" },
               { slug: "masks", name: "Маски", color: "from-[#2D3530] to-[#1D2520]" },
               { slug: "leave-in", name: "Незмивні засоби", color: "from-[#302D35] to-[#201D25]" },
-              { slug: "additions", name: "Пілінги", color: "from-[#2A2D35] to-[#1A1D25]" },
+              // { slug: "additions", name: "Пілінги", color: "from-[#2A2D35] to-[#1A1D25]" },
             ].map((cat) => (
               <Link
                 key={cat.slug}

@@ -20,10 +20,14 @@ export default function NovaPoshtaSelect({
   const [cities, setCities] = useState<NovaPoshtaCity[]>([]);
   const [selectedCity, setSelectedCity] = useState<NovaPoshtaCity | null>(null);
   const [warehouses, setWarehouses] = useState<NovaPoshtaWarehouse[]>([]);
+  const [warehouseQuery, setWarehouseQuery] = useState("");
   const [selectedWarehouse, setSelectedWarehouse] = useState<NovaPoshtaWarehouse | null>(null);
   const [cityLoading, setCityLoading] = useState(false);
+  const [warehouseLoading, setWarehouseLoading] = useState(false);
   const [showCityDropdown, setShowCityDropdown] = useState(false);
+  const [showWarehouseDropdown, setShowWarehouseDropdown] = useState(false);
   const cityRef = useRef<HTMLDivElement>(null);
+  const warehouseRef = useRef<HTMLDivElement>(null);
 
   // Search cities
   useEffect(() => {
@@ -46,21 +50,27 @@ export default function NovaPoshtaSelect({
   useEffect(() => {
     if (!selectedCity) {
       setWarehouses([]);
+      setWarehouseQuery("");
       return;
     }
     const load = async () => {
+      setWarehouseLoading(true);
       const res = await fetch(`/api/nova-poshta?type=warehouses&cityRef=${selectedCity.Ref}`);
       const data = await res.json();
       setWarehouses(data.data ?? []);
+      setWarehouseLoading(false);
     };
     load();
   }, [selectedCity]);
 
-  // Close on outside click
+  // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (cityRef.current && !cityRef.current.contains(e.target as Node)) {
         setShowCityDropdown(false);
+      }
+      if (warehouseRef.current && !warehouseRef.current.contains(e.target as Node)) {
+        setShowWarehouseDropdown(false);
       }
     };
     document.addEventListener("mousedown", handler);
@@ -132,25 +142,70 @@ export default function NovaPoshtaSelect({
 
       {/* Warehouse */}
       {selectedCity && (
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-[#1A1A1A]">Відділення Нової Пошти</label>
-          <select
-            value={selectedWarehouse?.Ref ?? ""}
-            onChange={(e) => {
-              const wh = warehouses.find((w) => w.Ref === e.target.value) ?? null;
-              selectWarehouse(wh as NovaPoshtaWarehouse);
-            }}
-            className={`w-full px-4 py-3 text-sm border rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#C4A882] transition-colors ${
-              warehouseError ? "border-[#E53E3E]" : "border-[#E8E4DE]"
-            }`}
-          >
-            <option value="">Оберіть відділення...</option>
-            {warehouses.map((wh) => (
-              <option key={wh.Ref} value={wh.Ref}>
-                {wh.Description}
-              </option>
-            ))}
-          </select>
+        <div className="flex flex-col gap-1" ref={warehouseRef}>
+          <label className="text-sm font-medium text-[#1A1A1A]">Відділення / Поштомат Нової Пошти</label>
+          <div className="relative">
+            <input
+              type="text"
+              placeholder={warehouseLoading ? "Завантаження..." : "Пошук відділення або поштомату..."}
+              value={selectedWarehouse ? selectedWarehouse.Description : warehouseQuery}
+              onChange={(e) => {
+                setWarehouseQuery(e.target.value);
+                if (selectedWarehouse) {
+                  setSelectedWarehouse(null);
+                  onWarehouseChange(null);
+                }
+                setShowWarehouseDropdown(true);
+              }}
+              onFocus={() => !selectedWarehouse && setShowWarehouseDropdown(true)}
+              readOnly={warehouseLoading}
+              className={`w-full px-4 py-3 text-sm border rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#C4A882] transition-colors ${
+                warehouseError ? "border-[#E53E3E]" : "border-[#E8E4DE]"
+              }`}
+            />
+            {warehouseLoading && (
+              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                <div className="w-4 h-4 border-2 border-[#C4A882] border-t-transparent rounded-full animate-spin" />
+              </div>
+            )}
+            {selectedWarehouse && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedWarehouse(null);
+                  setWarehouseQuery("");
+                  onWarehouseChange(null);
+                }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B6B6B] hover:text-[#1A1A1A]"
+              >
+                ✕
+              </button>
+            )}
+
+            {showWarehouseDropdown && !selectedWarehouse && warehouses.length > 0 && (
+              <div className="absolute top-full left-0 right-0 bg-white border border-[#E8E4DE] rounded shadow-lg z-20 max-h-60 overflow-y-auto">
+                {warehouses
+                  .filter((wh) =>
+                    warehouseQuery.length === 0 ||
+                    wh.Description.toLowerCase().includes(warehouseQuery.toLowerCase())
+                  )
+                  .map((wh) => (
+                    <button
+                      key={wh.Ref}
+                      type="button"
+                      onClick={() => {
+                        selectWarehouse(wh);
+                        setWarehouseQuery("");
+                        setShowWarehouseDropdown(false);
+                      }}
+                      className="w-full text-left px-4 py-2.5 text-sm text-[#1A1A1A] hover:bg-[#F0EDE8] transition-colors"
+                    >
+                      {wh.Description}
+                    </button>
+                  ))}
+              </div>
+            )}
+          </div>
           {warehouseError && <p className="text-xs text-[#E53E3E]">{warehouseError}</p>}
         </div>
       )}
