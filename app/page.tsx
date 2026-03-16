@@ -296,11 +296,30 @@ export default async function HomePage() {
             Підписуйся та ділись своїми результатами
           </p>
           <div className='grid grid-cols-3 md:grid-cols-6 gap-2 mb-8'>
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className='aspect-square rounded overflow-hidden bg-gradient-to-br from-[#E8E4DE] to-[#D4C5B0]'
-              />
+            {[
+              '/instagram/IMG_3773.jpg',
+              '/instagram/IMG_4255.JPG',
+              '/instagram/IMG_4333.JPG',
+              '/instagram/IMG_4358.JPG',
+              '/instagram/IMG_4751.jpg',
+              '/instagram/IMG_8563.jpg',
+            ].map((src) => (
+              <a
+                key={src}
+                href='https://www.instagram.com/viola.mukachevo'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='relative aspect-square rounded overflow-hidden block group'
+              >
+                <Image
+                  src={src}
+                  alt='Viola Instagram'
+                  fill
+                  className='object-cover group-hover:scale-105 transition-transform duration-300'
+                  sizes='(max-width: 768px) 33vw, 16vw'
+                />
+                <div className='absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300' />
+              </a>
             ))}
           </div>
           <a
