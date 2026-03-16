@@ -47,7 +47,7 @@ export default function CheckoutSummary() {
         </div>
         <div className="flex justify-between text-sm text-[#6B6B6B]">
           <span>Доставка</span>
-          <span>{cartTotal >= 1500 ? "Безкоштовно" : "За тарифами НП"}</span>
+          <span>За тарифами НП</span>
         </div>
         <div className="flex justify-between font-semibold text-[#1A1A1A] pt-2 border-t border-[#E8E4DE]">
           <span>Разом</span>
