@@ -16,8 +16,8 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [hovered, setHovered] = useState(false);
   const { addItem, openCart } = useCart();
 
-  const primaryImage = product.images?.[0] ?? "/placeholder-product.jpg";
-  const secondaryImage = product.images?.[1] ?? primaryImage;
+  const primaryImage = product.images?.[0]?.trim() || "/placeholder-product.png";
+  const secondaryImage = product.images?.[1]?.trim() || primaryImage;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -53,6 +53,9 @@ export default function ProductCard({ product }: ProductCardProps) {
           fill
           className="object-cover transition-all duration-500 group-hover:scale-105"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          onError={(e) => {
+            e.currentTarget.src = "/placeholder-product.png";
+          }}
         />
 
         {/* Badges */}

@@ -88,11 +88,6 @@ export default function CartDrawer() {
               <span className="text-sm text-[#6B6B6B]">Разом</span>
               <span className="text-lg font-semibold text-[#1A1A1A]">{formatPrice(cartTotal)}</span>
             </div>
-            {cartTotal < 1500 && (
-              <p className="text-xs text-[#6B6B6B] text-center">
-                Додайте товарів на {formatPrice(1500 - cartTotal)} для безкоштовної доставки
-              </p>
-            )}
             <Link
               href="/checkout"
               onClick={closeCart}

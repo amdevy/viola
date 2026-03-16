@@ -12,7 +12,7 @@ export default function ProductGallery({ images, name }: ProductGalleryProps) {
   const [activeIdx, setActiveIdx] = useState(0);
   const [zoomed, setZoomed] = useState(false);
 
-  const safeImages = images?.length ? images : ["/placeholder-product.jpg"];
+  const safeImages = images?.length ? images : ["/placeholder-product.png"];
   const active = safeImages[activeIdx];
 
   return (

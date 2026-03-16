@@ -59,7 +59,7 @@ export default function CartPage() {
                 </div>
                 <div className="flex justify-between text-sm text-[#6B6B6B]">
                   <span>Доставка</span>
-                  <span>{cartTotal >= 1500 ? "Безкоштовно" : "За тарифами НП"}</span>
+                  <span>За тарифами НП</span>
                 </div>
               </div>
               <div className="border-t border-[#E8E4DE] pt-4 mb-6">

@@ -16,8 +16,20 @@ interface ProductFilterProps {
   onChange: (filters: FilterState) => void;
 }
 
+const CATEGORY_ORDER: Record<string, number> = {
+  shampoos: 1,
+  masks: 2,
+  conditioners: 3,
+  "leave-in": 4,
+  gifts: 5,
+  additions: 6,
+};
+
 export default function ProductFilter({ filters, onChange }: ProductFilterProps) {
   const { categories } = useCategories();
+  const sortedCategories = [...categories].sort(
+    (a, b) => (CATEGORY_ORDER[a.slug] ?? 99) - (CATEGORY_ORDER[b.slug] ?? 99)
+  );
 
   const update = (key: keyof FilterState, value: string) => {
     onChange({ ...filters, [key]: value });
@@ -65,7 +77,7 @@ export default function ProductFilter({ filters, onChange }: ProductFilterProps)
             >
               Всі категорії
             </button>
-            {categories.map((cat) => (
+            {sortedCategories.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => update("category", cat.slug)}

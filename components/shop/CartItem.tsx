@@ -13,7 +13,7 @@ export default function CartItem({ item }: { item: CartItemType }) {
       {/* Image */}
       <div className="relative w-16 h-20 flex-shrink-0 rounded overflow-hidden bg-[#F0EDE8]">
         <Image
-          src={item.image || "/placeholder-product.jpg"}
+          src={item.image || "/placeholder-product.png"}
           alt={item.name}
           fill
           className="object-cover"

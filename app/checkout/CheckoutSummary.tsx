@@ -19,7 +19,7 @@ export default function CheckoutSummary() {
           <div key={item.productId} className="flex gap-3">
             <div className="relative w-12 h-14 flex-shrink-0 rounded overflow-hidden bg-[#F0EDE8]">
               <Image
-                src={item.image || "/placeholder-product.jpg"}
+                src={item.image || "/placeholder-product.png"}
                 alt={item.name}
                 fill
                 className="object-cover"
@@ -47,7 +47,7 @@ export default function CheckoutSummary() {
         </div>
         <div className="flex justify-between text-sm text-[#6B6B6B]">
           <span>Доставка</span>
-          <span>{cartTotal >= 1500 ? "Безкоштовно" : "За тарифами НП"}</span>
+          <span>За тарифами НП</span>
         </div>
         <div className="flex justify-between font-semibold text-[#1A1A1A] pt-2 border-t border-[#E8E4DE]">
           <span>Разом</span>

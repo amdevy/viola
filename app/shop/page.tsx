@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useProducts } from "@/hooks/useProducts";
 import ProductGrid from "@/components/shop/ProductGrid";
 import ProductFilter from "@/components/shop/ProductFilter";
@@ -17,6 +17,13 @@ function ShopContent() {
     hairType: "",
     sort: "newest",
   });
+
+  useEffect(() => {
+    setFilters((prev) => ({
+      ...prev,
+      category: searchParams.get("category") ?? "",
+    }));
+  }, [searchParams]);
 
   const { products, loading } = useProducts({
     category: filters.category || undefined,

@@ -19,7 +19,9 @@ export const metadata: Metadata = {
   },
   description:
     "Віола Гегедош — Експерт бренду Na Golovy. Салон краси Viola, професійна косметика, персональні консультації. Шампуні, кондиціонери, маски з доставкою по Україні.",
-  keywords: ["косметика для волосся", "Na Golov[y]", "шампунь", "кондиціонер", "маска", "Viola", "салон волосся"],
+  keywords: ["косметика для волосся", "Na Golov[y]", "шампунь", "кондиціонер", "маска для волосся", "Viola", "салон краси Мукачево", "Віола Гегедош", "аромакосметика"],
+  authors: [{ name: "Viola Salon" }],
+  robots: { index: true, follow: true },
   icons: {
     icon: [
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
