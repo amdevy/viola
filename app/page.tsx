@@ -59,7 +59,7 @@ export default async function HomePage() {
             src='/viola.JPG'
             alt='Віола Гегедош — засновниця салону Viola, Експерт бренду Na Golovy'
             fill
-            className='object-cover object-top'
+            className='object-cover object-[center_15%]'
             priority
             sizes='(max-width: 1024px) 100vw, 50vw'
           />
