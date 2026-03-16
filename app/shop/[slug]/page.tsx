@@ -166,6 +166,11 @@ export default async function ProductPage({ params }: Props) {
               </div>
             )}
 
+            {/* Manufacturer */}
+            <p className="text-sm text-[#6B6B6B] mb-6">
+              Виробник: <span className="font-semibold text-[#1A1A1A]">Na Gólov[y]</span>
+            </p>
+
             {/* Add to cart */}
             <AddToCartButton product={product} />
 
@@ -173,7 +178,7 @@ export default async function ProductPage({ params }: Props) {
             <div className="mt-6 pt-6 border-t border-[#E8E4DE] grid grid-cols-3 gap-4 text-center">
               {[
                 { icon: "🚚", text: "Доставка\nНова Пошта" },
-                { icon: "↩️", text: "Повернення\n14 днів" },
+                { icon: "📦", text: "Відправляємо\nза 1–3 дні" },
                 { icon: "✓", text: "Оригінальна\nпродукція" },
               ].map((b) => (
                 <div key={b.text}>

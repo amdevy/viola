@@ -95,7 +95,7 @@ export default function Footer() {
                 { href: '/reviews', label: 'Відгуки' },
                 { href: '/contacts', label: 'Контакти' },
                 { href: '/delivery', label: 'Доставка та оплата' },
-                { href: '/returns', label: 'Повернення' },
+                { href: '/offer', label: 'Публічна оферта' },
               ].map((l) => (
                 <li key={l.href}>
                   <Link

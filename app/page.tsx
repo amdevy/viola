@@ -26,12 +26,7 @@ const BENEFITS = [
   {
     icon: "/icons/delivery.png",
     title: "Швидка доставка",
-    desc: "Нова Пошта по всій Україні. Від 1500 грн — безкоштовно.",
-  },
-  {
-    icon: "/icons/diamond.png",
-    title: "Гарантія якості",
-    desc: "Повернення протягом 14 днів без зайвих питань.",
+    desc: "Нова Пошта по всій Україні. Відправляємо протягом 1–3 робочих днів. Від 1500 грн — безкоштовно.",
   },
 ];
 
@@ -187,22 +182,28 @@ export default async function HomePage() {
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="aspect-[4/3] rounded overflow-hidden bg-gradient-to-br from-[#E8E4DE] to-[#D4C5B0] flex items-center justify-center">
-              <span className="font-serif text-6xl text-[#C4A882] opacity-50">V</span>
+            <div className="relative aspect-[4/3] rounded overflow-hidden">
+              <Image
+                src="/content/IMG_6639.JPG"
+                alt="Салон Viola — косметика Na Golov[y]"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
             </div>
             <div>
               <p className="text-[#C4A882] text-xs uppercase tracking-[0.3em] mb-3">Наша історія</p>
               <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-6 leading-tight">
-                Viola — салон волосся та косметика Na Golov[y]
+                Viola — салон краси, що спеціалізується на професійному догляді за волоссям з аромакосметикою Na Golov[y]
               </h2>
               <p className="text-[#6B6B6B] mb-4 leading-relaxed">
-                Салон Viola заснований Віола Гегедош — Експертом бренду Na Golovy.
-                Ми пропонуємо професійну косметику для волосся та персональні консультації
-                з підбору догляду.
+                Салон &quot;Viola&quot; заснований Віолою Гегедош — експертом бренду Na Golov[y]. У нас можна придбати
+                професійну косметику по догляду за волоссям, а також ми надаємо персональні консультації
+                з індивідуального підбору засобів.
               </p>
               <p className="text-[#6B6B6B] mb-8 leading-relaxed">
-                Кожен продукт Na Golov[y] — це результат глибоких досліджень та турботи
-                про здоров'я волосся. Без шкідливих речовин, з максимальною ефективністю.
+                Кожен продукт Na Golov[y] — результат глибоких досліджень і турботи про здоров&apos;я волосся.
+                Формули створені без шкідливих компонентів та забезпечують максимальну ефективність і делікатний догляд.
               </p>
               <Link
                 href="/about"
@@ -243,11 +244,30 @@ export default async function HomePage() {
             Підписуйся та ділись своїми результатами
           </p>
           <div className="grid grid-cols-3 md:grid-cols-6 gap-2 mb-8">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="aspect-square rounded overflow-hidden bg-gradient-to-br from-[#E8E4DE] to-[#D4C5B0]"
-              />
+            {[
+              "/instagram/IMG_3773.jpg",
+              "/instagram/IMG_4255.JPG",
+              "/instagram/IMG_4333.JPG",
+              "/instagram/IMG_4358.JPG",
+              "/instagram/IMG_4751.jpg",
+              "/instagram/IMG_8563.jpg",
+            ].map((src) => (
+              <a
+                key={src}
+                href="https://www.instagram.com/viola.mukachevo"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative aspect-square rounded overflow-hidden block group"
+              >
+                <Image
+                  src={src}
+                  alt="Viola Instagram"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  sizes="(max-width: 768px) 33vw, 16vw"
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+              </a>
             ))}
           </div>
           <a
