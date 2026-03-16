@@ -21,13 +21,28 @@ export function useProducts(filters?: {
       setLoading(true);
       const supabase = createClient();
 
+      let categoryId: string | undefined;
+      if (filters?.category) {
+        const { data: cat } = await supabase
+          .from("categories")
+          .select("id")
+          .eq("slug", filters.category)
+          .single();
+        if (!cat) {
+          setProducts([]);
+          setLoading(false);
+          return;
+        }
+        categoryId = cat.id;
+      }
+
       let query = supabase
         .from("products")
         .select("*, category:categories(id,name,slug)")
         .eq("in_stock", true);
 
-      if (filters?.category) {
-        query = query.eq("categories.slug", filters.category);
+      if (categoryId) {
+        query = query.eq("category_id", categoryId);
       }
       if (filters?.minPrice) query = query.gte("price", filters.minPrice);
       if (filters?.maxPrice) query = query.lte("price", filters.maxPrice);
