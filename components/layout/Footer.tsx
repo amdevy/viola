@@ -11,7 +11,8 @@ export default function Footer() {
               Viola
             </h3>
             <p className='text-sm text-[#A0A0A0] leading-relaxed mb-4'>
-              Салон краси &quot;Viola&quot; — простір, де кожен клієнт отримує увагу, професійність та турботу в догляді за волоссям.
+              Салон краси &quot;Viola&quot; — простір, де кожен клієнт отримує
+              увагу, професійність та турботу в догляді за волоссям.
             </p>
             <div className='flex gap-3'>
               <a
@@ -119,12 +120,12 @@ export default function Footer() {
                 <span className='text-[#A0A0A0]'>+380 50 058 21 75</span>
               </li>
               <li>
-                <a
+                {/* <a
                   href='mailto:hello@viola.com.ua'
                   className='hover:text-[#C4A882] transition-colors'
                 >
                   hello@viola.com.ua
-                </a>
+                </a> */}
               </li>
               <li className='mt-4'>
                 <p className='text-xs text-[#6B6B6B]'>Пн–Пт: 9:00 — 18:00</p>
@@ -137,6 +138,14 @@ export default function Footer() {
           <p className='text-xs text-[#6B6B6B]'>
             © {new Date().getFullYear()} Viola. Всі права захищені.
           </p>
+          <a
+            href='https://t.me/AndriiMatt'
+            target='_blank'
+            rel='noopener noreferrer'
+            className='text-xs text-[#6B6B6B] hover:text-[#C4A882] transition-colors'
+          >
+            Розробка сайту — Andrii Matsiuk
+          </a>
           <div className='flex gap-4'>
             <Link
               href='/privacy'
