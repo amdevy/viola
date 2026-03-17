@@ -39,12 +39,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const product = await getProduct(slug);
   if (!product) return { title: "Товар не знайдено" };
 
+  const title = `${product.name} — купити Na Gólov[y]`;
+  const description = product.description
+    ? product.description.slice(0, 155)
+    : `Купити ${product.name} Na Gólov[y] з доставкою Новою Поштою по Україні. Ціна ${product.price} грн.`;
+
   return {
-    title: product.name,
-    description: product.description ?? `Купити ${product.name} з доставкою по Україні`,
+    title,
+    description,
+    keywords: [product.name, "Na Golovy", "Na Gólov[y]", "купити", "косметика для волосся"],
     openGraph: {
-      title: product.name,
-      description: product.description ?? "",
+      title,
+      description,
       images: product.images?.[0] ? [{ url: product.images[0] }] : [],
     },
   };
@@ -76,6 +82,7 @@ export default async function ProductPage({ params }: Props) {
     name: product.name,
     description: product.description,
     image: product.images,
+    brand: { "@type": "Brand", name: "Na Gólov[y]" },
     offers: {
       "@type": "Offer",
       price: product.price,
@@ -83,6 +90,8 @@ export default async function ProductPage({ params }: Props) {
       availability: product.in_stock
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
+      seller: { "@type": "Organization", name: "Viola Salon" },
+      url: `${process.env.NEXT_PUBLIC_SITE_URL}/shop/${product.slug}`,
     },
   };
 

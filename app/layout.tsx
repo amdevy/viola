@@ -14,12 +14,17 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Viola — Салон краси | Косметика Na Golov[y]",
-    template: "%s | Viola",
+    default: "Купити Na Gólov[y] в Україні — Viola Salon | Мукачево",
+    template: "%s — Na Gólov[y] | Viola",
   },
   description:
-    "Віола Гегедош — Експерт бренду Na Golovy. Салон краси Viola, професійна косметика, персональні консультації. Шампуні, кондиціонери, маски з доставкою по Україні.",
-  keywords: ["косметика для волосся", "Na Golov[y]", "шампунь", "кондиціонер", "маска для волосся", "Viola", "салон краси Мукачево", "Віола Гегедош", "аромакосметика"],
+    "Офіційний магазин косметики Na Gólov[y] у Мукачево. Шампуні, маски, кондиціонери для збереження кольору та здоров'я волосся. Доставка Новою Поштою по всій Україні. Консультація від технолога Віоли Гегедош.",
+  keywords: [
+    "Na Golovy", "Na Gólov[y]", "на голови косметика", "купити на голови",
+    "косметика для волосся купити", "шампунь Na Golovy", "маска для волосся Na Golovy",
+    "аромакосметика для волосся", "професійна косметика Мукачево",
+    "Viola салон Мукачево", "Віола Гегедош", "косметика для збереження кольору",
+  ],
   authors: [{ name: "Viola Salon" }],
   robots: { index: true, follow: true },
   icons: {
@@ -36,6 +41,18 @@ export const metadata: Metadata = {
     type: "website",
     locale: "uk_UA",
     siteName: "Viola",
+    images: [
+      {
+        url: "/brand.JPG",
+        width: 1200,
+        height: 630,
+        alt: "Косметика Na Gólov[y] — Viola Salon",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/brand.JPG"],
   },
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
 };
@@ -53,6 +70,40 @@ export default function RootLayout({
         <link
           href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap"
           rel="stylesheet"
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "LocalBusiness",
+              name: "Viola Salon",
+              description: "Офіційний магазин косметики Na Gólov[y]. Технолог бренду — Віола Гегедош.",
+              url: process.env.NEXT_PUBLIC_SITE_URL,
+              telephone: "+380500582175",
+              email: "hello@viola.com.ua",
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: "вул. Шевченка 13А/35",
+                addressLocality: "Мукачево",
+                addressCountry: "UA",
+              },
+              geo: {
+                "@type": "GeoCoordinates",
+                latitude: 48.4354842,
+                longitude: 22.7100357,
+              },
+              sameAs: [
+                "https://www.instagram.com/viola.mukachevo",
+                "https://t.me/violagegedosh",
+              ],
+              brand: {
+                "@type": "Brand",
+                name: "Na Gólov[y]",
+                url: "https://www.nagolovy.pro/",
+              },
+            }),
+          }}
         />
       </head>
       <body className="bg-[#FAFAF8] text-[#1A1A1A] antialiased">
