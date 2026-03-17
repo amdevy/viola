@@ -145,7 +145,6 @@ export default function AdminBlogPage() {
       content: form.content.trim() || null,
       reading_time: form.reading_time ? parseInt(form.reading_time) : null,
       cover_image: coverUrl,
-      cover_position: form.cover_position,
       published: form.published,
       published_at: form.published
         ? (editPost?.published_at ?? new Date().toISOString())
