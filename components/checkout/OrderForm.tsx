@@ -29,7 +29,7 @@ export default function OrderForm() {
     formState: { errors },
   } = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutSchema),
-    defaultValues: { paymentMethod: "card" },
+    defaultValues: { paymentMethod: "callback" },
   });
 
   const paymentMethod = watch("paymentMethod");
@@ -184,7 +184,7 @@ export default function OrderForm() {
         <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-4">Оплата</h2>
         <div className="grid grid-cols-2 gap-3">
           {[
-            { value: "card", icon: "💳", label: "Карткою онлайн", sub: "WayForPay" },
+            // { value: "card", icon: "💳", label: "Карткою онлайн", sub: "WayForPay" },
             { value: "callback", icon: "📞", label: "Зворотній зв'язок", sub: "Ми зателефонуємо вам" },
           ].map((opt) => (
             <label
