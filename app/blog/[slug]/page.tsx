@@ -110,11 +110,39 @@ export default async function BlogPostPage({ params }: Props) {
     ],
   };
 
+  const articleLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt ?? "",
+    ...(post.cover_image && { image: post.cover_image }),
+    datePublished: post.published_at,
+    dateModified: post.updated_at ?? post.published_at,
+    author: {
+      "@type": "Person",
+      name: "Віола Гегедош",
+      url: siteUrl,
+      jobTitle: "Технолог бренду Na Gólov[y]",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Viola Salon",
+      url: siteUrl,
+      logo: { "@type": "ImageObject", url: `${siteUrl}/logo.png` },
+    },
+    url: `${siteUrl}/blog/${slug}`,
+    mainEntityOfPage: { "@type": "WebPage", "@id": `${siteUrl}/blog/${slug}` },
+  };
+
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
       />
       <nav className="text-xs text-[#6B6B6B] mb-8 flex items-center gap-2">
         <Link href="/" className="hover:text-[#C4A882]">Головна</Link>
