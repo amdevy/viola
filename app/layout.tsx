@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     siteName: "Viola",
     images: [
       {
-        url: "/brand.JPG",
+        url: "/preview.jpg",
         width: 1200,
         height: 630,
         alt: "Косметика Na Gólov[y] — Viola Salon",
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    images: ["/brand.JPG"],
+    images: ["/preview.jpg"],
   },
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
 };
