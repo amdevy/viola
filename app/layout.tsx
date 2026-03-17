@@ -106,9 +106,9 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="bg-[#FAFAF8] text-[#1A1A1A] antialiased">
+      <body className="bg-[#FAFAF8] text-[#1A1A1A] antialiased flex flex-col min-h-screen">
         <Header />
-        <main>{children}</main>
+        <main className="flex-1">{children}</main>
         <Footer />
         <Analytics />
         <Toaster
