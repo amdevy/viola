@@ -11,11 +11,14 @@ interface MobileMenuProps {
 }
 
 const NAV_LINKS = [
-  { href: "/shop", label: "Магазин" },
+  { href: "/shop", label: "Каталог" },
+  { href: "/about", label: "Про бренд" },
   { href: "/blog", label: "Блог" },
-  { href: "/contacts", label: "Контакти" },
   { href: "/reviews", label: "Відгуки" },
+  { href: "/contacts", label: "Контакти" },
 ];
+
+const CATEGORY_ORDER = ["shampoos", "masks", "conditioners", "leave-in", "additions", "gifts"];
 
 export default function MobileMenu({
   isOpen,
@@ -74,7 +77,13 @@ export default function MobileMenu({
           {categories.length > 0 && (
             <div>
               <p className="text-xs uppercase tracking-widest text-[#6B6B6B] mb-3">Категорії</p>
-              {categories.map((cat) => (
+              {[...categories]
+                .sort((a, b) => {
+                  const ai = CATEGORY_ORDER.indexOf(a.slug);
+                  const bi = CATEGORY_ORDER.indexOf(b.slug);
+                  return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+                })
+                .map((cat) => (
                 <Link
                   key={cat.id}
                   href={`/shop?category=${cat.slug}`}
@@ -83,7 +92,7 @@ export default function MobileMenu({
                 >
                   {cat.name}
                 </Link>
-              ))}
+                ))}
             </div>
           )}
         </nav>

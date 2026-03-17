@@ -76,6 +76,8 @@ export default async function ProductPage({ params }: Props) {
     ? Math.round(((product.compare_price - product.price) / product.compare_price) * 100)
     : null;
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -91,8 +93,32 @@ export default async function ProductPage({ params }: Props) {
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
       seller: { "@type": "Organization", name: "Viola Salon" },
-      url: `${process.env.NEXT_PUBLIC_SITE_URL}/shop/${product.slug}`,
+      url: `${siteUrl}/shop/${product.slug}`,
     },
+  };
+
+  const breadcrumbItems: { "@type": string; position: number; name: string; item?: string }[] = [
+    { "@type": "ListItem", position: 1, name: "Головна", item: siteUrl },
+    { "@type": "ListItem", position: 2, name: "Магазин", item: `${siteUrl}/shop` },
+  ];
+  if (product.category) {
+    breadcrumbItems.push({
+      "@type": "ListItem",
+      position: 3,
+      name: product.category.name,
+      item: `${siteUrl}/shop?category=${product.category.slug}`,
+    });
+  }
+  breadcrumbItems.push({
+    "@type": "ListItem",
+    position: breadcrumbItems.length + 1,
+    name: product.name,
+  });
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: breadcrumbItems,
   };
 
   return (
@@ -100,6 +126,10 @@ export default async function ProductPage({ params }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

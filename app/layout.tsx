@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     siteName: "Viola",
     images: [
       {
-        url: "/brand.JPG",
+        url: "/preview.jpg",
         width: 1200,
         height: 630,
         alt: "Косметика Na Gólov[y] — Viola Salon",
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    images: ["/brand.JPG"],
+    images: ["/preview.jpg"],
   },
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
 };
@@ -106,9 +106,9 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="bg-[#FAFAF8] text-[#1A1A1A] antialiased">
+      <body className="bg-[#FAFAF8] text-[#1A1A1A] antialiased flex flex-col min-h-screen">
         <Header />
-        <main>{children}</main>
+        <main className="flex-1">{children}</main>
         <Footer />
         <Analytics />
         <Toaster
