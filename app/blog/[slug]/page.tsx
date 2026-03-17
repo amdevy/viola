@@ -98,8 +98,24 @@ export default async function BlogPostPage({ params }: Props) {
   const post = await getPost(slug);
   if (!post) notFound();
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Головна", item: siteUrl },
+      { "@type": "ListItem", position: 2, name: "Блог", item: `${siteUrl}/blog` },
+      { "@type": "ListItem", position: 3, name: post.title },
+    ],
+  };
+
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
       <nav className="text-xs text-[#6B6B6B] mb-8 flex items-center gap-2">
         <Link href="/" className="hover:text-[#C4A882]">Головна</Link>
         <span>/</span>
