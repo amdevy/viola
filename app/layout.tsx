@@ -26,6 +26,7 @@ export const metadata: Metadata = {
     "Viola салон Мукачево", "Віола Гегедош", "косметика для збереження кольору",
   ],
   authors: [{ name: "Viola Salon" }],
+  alternates: { canonical: "https://www.violamukachevo.com" },
   robots: { index: true, follow: true },
   icons: {
     icon: [
