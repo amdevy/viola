@@ -45,12 +45,9 @@ export default function TermsPage() {
 
         <section>
           <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-3">4. Повернення та обмін</h2>
-          <ul className="list-disc list-inside space-y-1 ml-2">
-            <li>Повернення товару належної якості — протягом 14 днів з моменту отримання</li>
-            <li>Товар повинен бути у незміненому вигляді, без слідів використання</li>
-            <li>Косметичні засоби поверненню не підлягають, якщо порушена упаковка</li>
-            <li>При отриманні пошкодженого товару — сфотографуйте та зверніться до нас протягом 24 годин</li>
-          </ul>
+          <p>
+            Згідно з Постановою КМУ №172 від 19.03.1994, косметичні засоби належної якості поверненню та обміну не підлягають.
+          </p>
         </section>
 
         <section>
@@ -62,7 +59,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-3">6. Обмеження відповідальності</h2>
+          <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-3">5. Обмеження відповідальності</h2>
           <p>
             Продавець не несе відповідальності за збитки, спричинені неправильним використанням товару,
             затримками доставки з вини перевізника або обставинами непереборної сили.
@@ -70,7 +67,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-3">7. Контакти</h2>
+          <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-3">6. Контакти</h2>
           <p>
             З питань щодо замовлень та умов звертайтесь:
           </p>

@@ -42,7 +42,7 @@ export default function PrivacyPage() {
           <ul className="list-disc list-inside space-y-1 ml-2">
             <li>Оформлення та доставки замовлень</li>
             <li>Зв&apos;язку з покупцем щодо замовлення</li>
-            <li>Вирішення спорів та повернень</li>
+            <li>Вирішення спорів</li>
           </ul>
         </section>
 
