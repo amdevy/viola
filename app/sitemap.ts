@@ -6,9 +6,8 @@ const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient();
 
-  const [{ data: products }, { data: categories }, { data: posts }] = await Promise.all([
+  const [{ data: products }, { data: posts }] = await Promise.all([
     supabase.from("products").select("slug, updated_at").eq("in_stock", true),
-    supabase.from("categories").select("slug"),
     supabase.from("blog_posts").select("slug, updated_at").eq("published", true),
   ]);
 
@@ -24,12 +23,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/privacy`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
   ];
 
-  const categoryRoutes: MetadataRoute.Sitemap = (categories ?? []).map((cat) => ({
-    url: `${BASE}/shop?category=${cat.slug}`,
-    changeFrequency: "weekly",
-    priority: 0.8,
-  }));
-
   const productRoutes: MetadataRoute.Sitemap = (products ?? []).map((p) => ({
     url: `${BASE}/shop/${p.slug}`,
     lastModified: p.updated_at ? new Date(p.updated_at) : new Date(),
@@ -44,5 +37,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticRoutes, ...categoryRoutes, ...productRoutes, ...blogRoutes];
+  return [...staticRoutes, ...productRoutes, ...blogRoutes];
 }
