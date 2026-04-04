@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice } from "@/lib/utils";
@@ -14,6 +14,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const [hovered, setHovered] = useState(false);
+  const router = useRouter();
   const { addItem, openCart } = useCart();
 
   const primaryImage = product.images?.[0]?.trim() || "/placeholder-product.png";
@@ -39,9 +40,12 @@ export default function ProductCard({ product }: ProductCardProps) {
     : null;
 
   return (
-    <Link
-      href={`/shop/${product.slug}`}
-      className="group flex flex-col"
+    <div
+      role="link"
+      tabIndex={0}
+      onClick={() => router.push(`/shop/${product.slug}`)}
+      onKeyDown={(e) => { if (e.key === "Enter") router.push(`/shop/${product.slug}`); }}
+      className="group flex flex-col cursor-pointer"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -72,15 +76,24 @@ export default function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
 
-        {/* Quick add button */}
-        <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+        {/* Quick add buttons */}
+        <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex">
           <button
             onClick={handleAddToCart}
             disabled={!product.in_stock}
-            className="w-full bg-[#1A1A1A] text-white text-xs font-medium py-3 hover:bg-[#C4A882] transition-colors disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider"
+            className="flex-1 bg-[#1A1A1A] text-white text-xs font-medium py-3 hover:bg-[#C4A882] transition-colors disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider"
           >
-            {product.in_stock ? "Додати до кошика" : "Немає в наявності"}
+            {product.in_stock ? "В кошик" : "Немає"}
           </button>
+          <a
+            href="https://t.me/violagegedosh"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="flex-1 bg-[#C4A882] text-white text-xs font-medium py-3 text-center hover:bg-[#b89970] transition-colors uppercase tracking-wider"
+          >
+            Консультація
+          </a>
         </div>
       </div>
 
@@ -103,6 +116,6 @@ export default function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
