@@ -121,36 +121,42 @@ export default async function HomePage() {
               {
                 slug: 'shampoos',
                 name: 'Шампуні',
-                color: 'from-[#2D2D2D] to-[#1A1A1A]',
+                image: '/content/Шампунь.jpg',
               },
               {
                 slug: 'conditioners',
                 name: 'Кондиціонери',
-                color: 'from-[#3D3530] to-[#2D2520]',
+                image: '/content/Кондиціонер.jpg',
               },
               {
                 slug: 'masks',
                 name: 'Маски',
-                color: 'from-[#2D3530] to-[#1D2520]',
+                image: '/content/Маска 2.jpg',
               },
               {
                 slug: 'leave-in',
                 name: 'Незмивні засоби',
-                color: 'from-[#302D35] to-[#201D25]',
+                image: '/content/Незмивні.jpg',
               },
-              // { slug: "additions", name: "Пілінги", color: "from-[#2A2D35] to-[#1A1D25]" },
             ].map((cat) => (
               <Link
                 key={cat.slug}
                 href={`/shop?category=${cat.slug}`}
-                className={`relative aspect-[3/4] rounded overflow-hidden bg-gradient-to-b ${cat.color} flex items-end p-4 group`}
+                className='relative aspect-[3/4] rounded overflow-hidden flex items-end p-4 group'
               >
+                <Image
+                  src={cat.image}
+                  alt={cat.name}
+                  fill
+                  className='object-cover transition-transform duration-500 group-hover:scale-105'
+                  sizes='(max-width: 640px) 50vw, 25vw'
+                />
+                <div className='absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent' />
                 <div className='relative z-10'>
                   <p className='text-white font-semibold text-lg group-hover:text-[#C4A882] transition-colors'>
                     {cat.name}
                   </p>
                 </div>
-                <div className='absolute inset-0 bg-white/0 group-hover:bg-white/5 transition-colors' />
               </Link>
             ))}
           </div>
