@@ -3,8 +3,9 @@ import Link from "next/link";
 import ContactsForm from "./ContactsForm";
 
 export const metadata: Metadata = {
-  title: "Контакти",
-  description: "Контакти салону Viola. Телефон, адреса, форма зворотного зв'язку.",
+  title: "Контакти — Салон краси Viola в Мукачево",
+  description: "Адреса салону Viola: вул. Шевченка 13А/35, Мукачево. Телефон: +380 50 058 21 75. Графік роботи, форма зворотного зв'язку та карта.",
+  alternates: { canonical: "https://violamukachevo.com/contacts" },
 };
 
 export default function ContactsPage() {

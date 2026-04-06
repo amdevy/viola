@@ -3,8 +3,10 @@ import { createClient } from "@/lib/supabase/server";
 import ReviewsList from "./ReviewsList";
 
 export const metadata: Metadata = {
-  title: "Відгуки",
-  description: "Відгуки клієнтів салону Viola про косметику Na Golov[y].",
+  title: "Відгуки про косметику Na Golov[y] — Viola Salon",
+  description: "Відгуки клієнтів салону Viola про професійну косметику для волосся Na Golovy (На Голову). Реальні враження та оцінки покупців.",
+  keywords: ["відгуки Na Golovy", "na golovy відгуки", "на голову відгуки", "Na Golovy відгуки покупців"],
+  alternates: { canonical: "https://violamukachevo.com/reviews" },
 };
 
 export interface Review {

@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: "Viola — Салон краси | Косметика Na Golov[y]",
   description:
     "Віола Гегедош — Експерт бренду Na Golovy. Салон краси Viola, професійна косметика, персональні консультації. Шампуні, кондиціонери, маски.",
+  alternates: { canonical: "https://violamukachevo.com" },
 };
 
 const BENEFITS = [
@@ -339,17 +340,20 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* JSON-LD */}
+      {/* JSON-LD: WebSite */}
       <script
         type='application/ld+json'
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             '@context': 'https://schema.org',
-            '@type': 'Organization',
-            name: `Viola — Салон краси "Viola", Експерт бренду Na Golovy`,
-            url: process.env.NEXT_PUBLIC_SITE_URL,
-            logo: `${process.env.NEXT_PUBLIC_SITE_URL}/logo.png`,
-            sameAs: ['https://www.instagram.com/viola.mukachevo'],
+            '@type': 'WebSite',
+            '@id': 'https://violamukachevo.com/#website',
+            name: 'Салон краси Viola',
+            url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://violamukachevo.com',
+            inLanguage: 'uk-UA',
+            publisher: {
+              '@id': 'https://violamukachevo.com/#business',
+            },
           }),
         }}
       />

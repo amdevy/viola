@@ -1,8 +1,9 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Публічна оферта",
+  title: "Публічна оферта — Viola Salon Мукачево",
   description: "Публічна оферта інтернет-магазину Viola — умови купівлі-продажу косметики Na Golov[y].",
+  alternates: { canonical: "https://violamukachevo.com/offer" },
 };
 
 export default function OfferPage() {

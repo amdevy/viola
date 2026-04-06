@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Cormorant_Garamond } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import { Analytics } from "@vercel/analytics/next";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import "./globals.css";
+
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  subsets: ["latin", "cyrillic"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
 
 const inter = Inter({
   variable: "--font-inter",
@@ -20,13 +27,14 @@ export const metadata: Metadata = {
   description:
     "Офіційний магазин косметики Na Gólov[y] у Мукачево. Шампуні, маски, кондиціонери для збереження кольору та здоров'я волосся. Доставка Новою Поштою по всій Україні. Консультація від технолога Віоли Гегедош.",
   keywords: [
-    "Na Golovy", "Na Gólov[y]", "на голови косметика", "купити на голови",
-    "косметика для волосся купити", "шампунь Na Golovy", "маска для волосся Na Golovy",
-    "аромакосметика для волосся", "професійна косметика Мукачево",
-    "Viola салон Мукачево", "Віола Гегедош", "косметика для збереження кольору",
+    "Na Golovy", "Na Gólov[y]", "na golovy", "na golovu",
+    "на голову", "на голову косметика",
+    "купити на голову", "купити na golovy", "na golovy купити",
+    "шампунь Na Golovy", "маска Na Golovy", "кондиціонер Na Golovy",
+    "косметика для волосся Na Golovy", "аромакосметика Na Golovy",
+    "професійна косметика Мукачево", "Viola салон Мукачево", "Віола Гегедош",
   ],
   authors: [{ name: "Viola Salon" }],
-  alternates: { canonical: "https://violamukachevo.com" },
   robots: { index: true, follow: true },
   icons: {
     icon: [
@@ -64,29 +72,28 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="uk" className={inter.variable}>
+    <html lang="uk" className={`${inter.variable} ${cormorant.variable}`}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "LocalBusiness",
-              name: "Viola Salon",
+              "@type": "BeautySalon",
+              "@id": "https://violamukachevo.com/#business",
+              name: "Салон краси Viola",
               description: "Офіційний магазин косметики Na Gólov[y]. Технолог бренду — Віола Гегедош.",
-              url: process.env.NEXT_PUBLIC_SITE_URL,
+              url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com",
               telephone: "+380500582175",
               email: "hello@viola.com.ua",
+              image: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com"}/preview.jpg`,
+              priceRange: "₴₴",
               address: {
                 "@type": "PostalAddress",
                 streetAddress: "вул. Шевченка 13А/35",
                 addressLocality: "Мукачево",
+                addressRegion: "Закарпатська область",
+                postalCode: "89600",
                 addressCountry: "UA",
               },
               geo: {
@@ -94,6 +101,14 @@ export default function RootLayout({
                 latitude: 48.4354842,
                 longitude: 22.7100357,
               },
+              openingHoursSpecification: [
+                {
+                  "@type": "OpeningHoursSpecification",
+                  dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                  opens: "09:00",
+                  closes: "19:00",
+                },
+              ],
               sameAs: [
                 "https://www.instagram.com/viola.mukachevo",
                 "https://t.me/violagegedosh",

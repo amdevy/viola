@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Умови використання",
-  description: "Умови використання сайту та інтернет-магазину Viola — права та обов'язки сторін.",
+  title: "Умови використання сайту — Viola Salon",
+  description: "Умови використання сайту та інтернет-магазину Viola — права та обов'язки сторін, політика повернення.",
+  alternates: { canonical: "https://violamukachevo.com/terms" },
 };
 
 export default function TermsPage() {

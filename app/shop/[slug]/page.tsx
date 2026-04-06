@@ -41,13 +41,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const title = `${product.name} — купити Na Gólov[y]`;
   const description = product.description
-    ? product.description.slice(0, 155)
-    : `Купити ${product.name} Na Gólov[y] з доставкою Новою Поштою по Україні. Ціна ${product.price} грн.`;
+    ? `${product.description.slice(0, 120)} Купити Na Golovy в Україні.`
+    : `Купити ${product.name} Na Golovy (На Голову) з доставкою Новою Поштою по Україні. Ціна ${product.price} грн.`;
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
   return {
     title,
     description,
-    keywords: [product.name, "Na Golovy", "Na Gólov[y]", "купити", "косметика для волосся"],
+    keywords: [
+      product.name, "Na Golovy", "Na Gólov[y]", "na golovy", "на голову",
+      `купити ${product.name}`, "купити na golovy", "косметика для волосся Na Golovy",
+    ],
+    alternates: { canonical: `${siteUrl}/shop/${product.slug}` },
     openGraph: {
       title,
       description,
@@ -82,9 +87,10 @@ export default async function ProductPage({ params }: Props) {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
-    description: product.description,
+    ...(product.description && { description: product.description }),
     image: product.images,
-    brand: { "@type": "Brand", name: "Na Gólov[y]" },
+    sku: product.id,
+    brand: { "@type": "Brand", name: "Na Gólov[y]", url: "https://www.nagolovy.pro/" },
     offers: {
       "@type": "Offer",
       price: product.price,
@@ -92,8 +98,31 @@ export default async function ProductPage({ params }: Props) {
       availability: product.in_stock
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
-      seller: { "@type": "Organization", name: "Viola Salon" },
+      seller: {
+        "@type": "Organization",
+        "@id": "https://violamukachevo.com/#business",
+        name: "Салон краси Viola",
+      },
       url: `${siteUrl}/shop/${product.slug}`,
+      priceValidUntil: new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+        .toISOString()
+        .split("T")[0],
+      shippingDetails: {
+        "@type": "OfferShippingDetails",
+        shippingDestination: { "@type": "DefinedRegion", addressCountry: "UA" },
+        deliveryTime: {
+          "@type": "ShippingDeliveryTime",
+          handlingTime: { "@type": "QuantitativeValue", minValue: 1, maxValue: 3, unitCode: "DAY" },
+          transitTime: { "@type": "QuantitativeValue", minValue: 1, maxValue: 3, unitCode: "DAY" },
+        },
+      },
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        applicableCountry: "UA",
+        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 14,
+        returnMethod: "https://schema.org/ReturnByMail",
+      },
     },
   };
 
@@ -263,30 +292,18 @@ function ProductTabs({ product }: { product: Product }) {
 
   return (
     <div>
-      <div className="border-b border-[#E8E4DE]">
-        <div className="flex gap-8" id="product-tabs">
-          {tabs.map((tab, i) => (
-            <a
-              key={tab.id}
-              href={`#tab-${tab.id}`}
-              className={`text-sm font-medium py-3 border-b-2 -mb-px transition-colors ${
-                i === 0
-                  ? "border-[#1A1A1A] text-[#1A1A1A]"
-                  : "border-transparent text-[#6B6B6B] hover:text-[#1A1A1A]"
-              }`}
-            >
-              {tab.label}
-            </a>
-          ))}
+      {tabs.map((tab) => (
+        <div key={tab.id} id={`tab-${tab.id}`} className="border-b border-[#E8E4DE] last:border-b-0">
+          <h3 className="text-sm font-medium py-3 text-[#1A1A1A]">
+            {tab.label}
+          </h3>
+          <div className="pb-6 prose prose-sm max-w-none">
+            <p className="text-[#6B6B6B] leading-relaxed whitespace-pre-line">
+              {tab.content}
+            </p>
+          </div>
         </div>
-      </div>
-      <div className="py-6 prose prose-sm max-w-none text-[#1A1A1A]">
-        {tabs[0]?.content && (
-          <p className="text-[#6B6B6B] leading-relaxed whitespace-pre-line">
-            {tabs[0].content}
-          </p>
-        )}
-      </div>
+      ))}
     </div>
   );
 }

@@ -3,9 +3,11 @@ import Image from "next/image";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Про бренд",
+  title: "Віола Гегедош — Технолог бренду Na Golov[y] | Viola Salon",
   description:
-    "Віола Гегедош — Експерт бренду Na Golovy. Дізнайтесь більше про бренд професійної косметики для волосся Na Golov[y] та салон Viola.",
+    "Віола Гегедош — Експерт бренду Na Golovy (На Голову). Дізнайтесь більше про бренд професійної аромакосметики для волосся та салон Viola у Мукачево.",
+  keywords: ["Na Golovy", "на голову", "na golovy", "Віола Гегедош", "Na Golovy бренд", "на голову косметика"],
+  alternates: { canonical: "https://violamukachevo.com/about" },
 };
 
 const VALUES = [
@@ -209,6 +211,34 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+
+      {/* Person JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "@id": "https://violamukachevo.com/#viola",
+            name: "Віола Гегедош",
+            jobTitle: "Технолог бренду Na Gólov[y]",
+            worksFor: { "@id": "https://violamukachevo.com/#business" },
+            url: "https://violamukachevo.com/about",
+            image: "https://violamukachevo.com/viola.JPG",
+            telephone: "+380500582175",
+            sameAs: [
+              "https://www.instagram.com/viola.mukachevo",
+              "https://t.me/violagegedosh",
+            ],
+            knowsAbout: [
+              "Догляд за волоссям",
+              "Косметика Na Gólov[y]",
+              "Аромакосметика",
+              "Колористика",
+            ],
+          }),
+        }}
+      />
     </>
   );
 }
