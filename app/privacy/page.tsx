@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Політика конфіденційності",
-  description: "Політика конфіденційності інтернет-магазину Viola — захист персональних даних клієнтів.",
+  title: "Політика конфіденційності — Viola Salon",
+  description: "Політика конфіденційності інтернет-магазину Viola — захист та обробка персональних даних клієнтів.",
+  alternates: { canonical: "https://violamukachevo.com/privacy" },
 };
 
 export default function PrivacyPage() {

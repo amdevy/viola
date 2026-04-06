@@ -117,18 +117,23 @@ export default function Footer() {
             </h4>
             <ul className='space-y-2 text-sm text-[#A0A0A0]'>
               <li>
-                <span className='text-[#A0A0A0]'>+380 50 058 21 75</span>
+                <a
+                  href='tel:+380500582175'
+                  className='text-[#A0A0A0] hover:text-[#C4A882] transition-colors'
+                >
+                  +380 50 058 21 75
+                </a>
               </li>
               <li>
-                {/* <a
+                <a
                   href='mailto:hello@viola.com.ua'
                   className='hover:text-[#C4A882] transition-colors'
                 >
                   hello@viola.com.ua
-                </a> */}
+                </a>
               </li>
               <li className='mt-4'>
-                <p className='text-xs text-[#6B6B6B]'>Пн–Пт: 9:00 — 18:00</p>
+                <p className='text-xs text-[#6B6B6B]'>Пн–Сб: 9:00 — 19:00</p>
               </li>
             </ul>
           </div>

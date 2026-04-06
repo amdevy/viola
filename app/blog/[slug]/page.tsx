@@ -27,9 +27,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPost(slug);
   if (!post) return { title: "Стаття не знайдена" };
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
   return {
     title: post.title,
     description: post.excerpt ?? "",
+    alternates: { canonical: `${siteUrl}/blog/${slug}` },
     openGraph: {
       title: post.title,
       images: post.cover_image ? [{ url: post.cover_image }] : [],
@@ -120,15 +122,17 @@ export default async function BlogPostPage({ params }: Props) {
     dateModified: post.updated_at ?? post.published_at,
     author: {
       "@type": "Person",
+      "@id": "https://violamukachevo.com/#viola",
       name: "Віола Гегедош",
-      url: siteUrl,
+      url: `${siteUrl}/about`,
       jobTitle: "Технолог бренду Na Gólov[y]",
     },
     publisher: {
       "@type": "Organization",
-      name: "Viola Salon",
+      "@id": "https://violamukachevo.com/#business",
+      name: "Салон краси Viola",
       url: siteUrl,
-      logo: { "@type": "ImageObject", url: `${siteUrl}/logo.png` },
+      logo: { "@type": "ImageObject", url: `${siteUrl}/preview.jpg` },
     },
     url: `${siteUrl}/blog/${slug}`,
     mainEntityOfPage: { "@type": "WebPage", "@id": `${siteUrl}/blog/${slug}` },
@@ -159,6 +163,10 @@ export default async function BlogPostPage({ params }: Props) {
             {post.title}
           </h1>
           <div className="flex items-center gap-3 text-sm text-[#6B6B6B]">
+            <Link href="/about" className="font-medium text-[#1A1A1A] hover:text-[#C4A882] transition-colors">
+              Віола Гегедош
+            </Link>
+            <span>·</span>
             <time dateTime={post.published_at}>
               {new Date(post.published_at).toLocaleDateString("uk-UA", {
                 day: "numeric",
@@ -188,7 +196,26 @@ export default async function BlogPostPage({ params }: Props) {
         {renderContent(post.content ?? post.excerpt ?? "")}
       </article>
 
+      {/* Author card */}
       <div className="mt-12 pt-8 border-t border-[#E8E4DE]">
+        <Link href="/about" className="flex items-center gap-4 group">
+          <img
+            src="/viola.JPG"
+            alt="Віола Гегедош"
+            className="w-12 h-12 rounded-full object-cover object-[center_15%]"
+          />
+          <div>
+            <p className="text-sm font-semibold text-[#1A1A1A] group-hover:text-[#C4A882] transition-colors">
+              Віола Гегедош
+            </p>
+            <p className="text-xs text-[#6B6B6B]">
+              Технолог бренду Na Golov[y] · Засновниця салону Viola
+            </p>
+          </div>
+        </Link>
+      </div>
+
+      <div className="mt-8 pt-8 border-t border-[#E8E4DE]">
         <Link
           href="/blog"
           className="inline-flex items-center gap-2 text-sm text-[#C4A882] hover:text-[#A8875E] font-medium transition-colors"

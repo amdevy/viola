@@ -1,8 +1,9 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Доставка та оплата",
-  description: "Умови доставки та оплати замовлень в інтернет-магазині Viola. Нова Пошта по всій Україні.",
+  title: "Доставка та оплата — Новою Поштою по всій Україні",
+  description: "Умови доставки та оплати замовлень в інтернет-магазині Viola. Нова Пошта по всій Україні. Відправляємо за 1-3 робочих дні.",
+  alternates: { canonical: "https://violamukachevo.com/delivery" },
 };
 
 const PAYMENT_POINTS = [

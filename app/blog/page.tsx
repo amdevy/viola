@@ -3,8 +3,10 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Блог — Поради по догляду за волоссям",
-  description: "Корисні статті та поради від Віола Гегедош, Експерта бренду Na Golovy, про догляд за волоссям.",
+  title: "Блог — Поради по догляду за волоссям від Viola",
+  description: "Корисні статті та поради від Віола Гегедош, Експерта бренду Na Golovy (На Голову), про догляд за волоссям та використання косметики Na Golovy.",
+  keywords: ["Na Golovy блог", "na golovy поради", "на голову догляд", "догляд за волоссям Na Golovy"],
+  alternates: { canonical: "https://violamukachevo.com/blog" },
 };
 
 interface BlogPost {
