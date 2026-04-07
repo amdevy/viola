@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Доставка та оплата — Новою Поштою по всій Україні",
@@ -43,8 +44,59 @@ const SCHEDULE = [
 export default function DeliveryPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify([
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Головна", item: "https://violamukachevo.com" },
+              { "@type": "ListItem", position: 2, name: "Доставка та оплата" },
+            ],
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+              {
+                "@type": "Question",
+                name: "Як здійснюється оплата?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Оплата здійснюється 100% передоплатою через платіжну систему WayForPay або банківський переказ на рахунок ФОП Гегедош Віолета Валеріївна.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Якою службою доставки відправляються замовлення?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Доставка здійснюється по всій Україні службою Нова Пошта. Вартість доставки розраховується за тарифами перевізника.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Як швидко відправляється замовлення?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Замовлення, оформлені з понеділка по суботу до 15:00, відправляються в цей же день. Після 15:00 — наступного дня вранці. Замовлення в суботу після 14:00 або в неділю відправляються в понеділок вранці.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Скільки часу займає доставка?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Термін доставки залежить від перевізника та зазвичай становить 1–3 дні.",
+                },
+              },
+            ],
+          },
+        ]) }}
+      />
       <nav className="text-xs text-[#6B6B6B] mb-8">
-        <span>Головна</span>
+        <Link href="/" className="hover:text-[#C4A882]">Головна</Link>
         <span className="mx-2">/</span>
         <span className="text-[#1A1A1A]">Доставка та оплата</span>
       </nav>
@@ -127,6 +179,15 @@ export default function DeliveryPage() {
           </div>
         </section>
 
+      </div>
+
+      <div className="mt-12 pt-8 border-t border-[#E8E4DE] text-center">
+        <p className="text-[#6B6B6B] text-sm">
+          Є питання щодо доставки?{" "}
+          <Link href="/contacts" className="text-[#C4A882] hover:underline font-medium">
+            Зв&apos;яжіться з нами
+          </Link>
+        </p>
       </div>
     </div>
   );

@@ -92,6 +92,7 @@ export default function Footer() {
             <ul className='space-y-2'>
               {[
                 { href: '/about', label: 'Про бренд' },
+                { href: '/poslugy', label: 'Послуги' },
                 { href: '/blog', label: 'Блог' },
                 { href: '/reviews', label: 'Відгуки' },
                 { href: '/contacts', label: 'Контакти' },

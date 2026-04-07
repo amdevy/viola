@@ -122,22 +122,22 @@ export default async function HomePage() {
               {
                 slug: 'shampoos',
                 name: 'Шампуні',
-                image: '/content/Шампунь.jpg',
+                image: '/content/shampoo.jpg',
               },
               {
                 slug: 'conditioners',
                 name: 'Кондиціонери',
-                image: '/content/Кондиціонер.jpg',
+                image: '/content/conditioner.jpg',
               },
               {
                 slug: 'masks',
                 name: 'Маски',
-                image: '/content/Маска 2.jpg',
+                image: '/content/mask.jpg',
               },
               {
                 slug: 'leave-in',
                 name: 'Незмивні засоби',
-                image: '/content/Незмивні.jpg',
+                image: '/content/leave-in.jpg',
               },
             ].map((cat) => (
               <Link
@@ -241,10 +241,10 @@ export default async function HomePage() {
                 за волоссям з аромакосметикою Na Golov[y]
               </h2>
               <p className='text-[#6B6B6B] mb-4 leading-relaxed'>
-                Салон &quot;Viola&quot; заснований Віолою Гегедош — експертом
-                бренду Na Golov[y]. У нас можна придбати професійну косметику по
-                догляду за волоссям, а також ми надаємо персональні консультації
-                з індивідуального підбору засобів.
+                Салон &quot;Viola&quot; у Мукачево заснований Віолою Гегедош —
+                експертом бренду Na Golov[y]. У нас можна придбати професійну
+                косметику по догляду за волоссям, а також ми надаємо персональні
+                консультації з індивідуального підбору засобів.
               </p>
               <p className='text-[#6B6B6B] mb-8 leading-relaxed'>
                 Кожен продукт Na Golov[y] — результат глибоких досліджень і
@@ -304,23 +304,23 @@ export default async function HomePage() {
           </p>
           <div className='grid grid-cols-3 md:grid-cols-6 gap-2 mb-8'>
             {[
-              '/instagram/IMG_3773.jpg',
-              '/instagram/IMG_4255.JPG',
-              '/instagram/IMG_4333.JPG',
-              '/instagram/IMG_4358.JPG',
-              '/instagram/IMG_4751.jpg',
-              '/instagram/IMG_8563.jpg',
-            ].map((src) => (
+              { src: '/instagram/IMG_3773.jpg', alt: 'Догляд за волоссям з косметикою Na Golov[y] — Viola Salon' },
+              { src: '/instagram/IMG_4255.JPG', alt: 'Результат фарбування волосся в салоні Viola Мукачево' },
+              { src: '/instagram/IMG_4333.JPG', alt: 'Професійна косметика Na Golov[y] для здоров\'я волосся' },
+              { src: '/instagram/IMG_4358.JPG', alt: 'Віола Гегедош — консультація з догляду за волоссям' },
+              { src: '/instagram/IMG_4751.jpg', alt: 'Шампуні та маски Na Golov[y] — салон Viola' },
+              { src: '/instagram/IMG_8563.jpg', alt: 'Аромакосметика Na Golov[y] — догляд та відновлення волосся' },
+            ].map((img) => (
               <a
-                key={src}
+                key={img.src}
                 href='https://www.instagram.com/viola.mukachevo'
                 target='_blank'
                 rel='noopener noreferrer'
                 className='relative aspect-square rounded overflow-hidden block group'
               >
                 <Image
-                  src={src}
-                  alt='Viola Instagram'
+                  src={img.src}
+                  alt={img.alt}
                   fill
                   className='object-cover group-hover:scale-105 transition-transform duration-300'
                   sizes='(max-width: 768px) 33vw, 16vw'

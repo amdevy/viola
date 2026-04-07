@@ -60,7 +60,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-3">5. Обмеження відповідальності</h2>
+          <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-3">6. Обмеження відповідальності</h2>
           <p>
             Продавець не несе відповідальності за збитки, спричинені неправильним використанням товару,
             затримками доставки з вини перевізника або обставинами непереборної сили.
@@ -68,7 +68,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-3">6. Контакти</h2>
+          <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-3">7. Контакти</h2>
           <p>
             З питань щодо замовлень та умов звертайтесь:
           </p>

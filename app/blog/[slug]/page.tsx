@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
@@ -184,11 +185,14 @@ export default async function BlogPostPage({ params }: Props) {
         </header>
 
         {post.cover_image && (
-          <div className="rounded overflow-hidden mb-8">
-            <img
+          <div className="relative aspect-video rounded overflow-hidden mb-8">
+            <Image
               src={post.cover_image}
               alt={post.title}
-              className="w-full h-auto"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 720px"
+              priority
             />
           </div>
         )}

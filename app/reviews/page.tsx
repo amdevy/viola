@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import ReviewsList from "./ReviewsList";
 
@@ -37,11 +38,50 @@ async function getReviews(): Promise<Review[]> {
 export default async function ReviewsPage() {
   const reviews = await getReviews();
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
+  const avgRating = reviews.length
+    ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1)
+    : null;
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Головна", item: siteUrl },
+      { "@type": "ListItem", position: 2, name: "Відгуки" },
+    ],
+  };
+
+  const aggregateRd = reviews.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": "https://violamukachevo.com/#business",
+    name: "Салон краси Viola",
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: avgRating,
+      reviewCount: reviews.length,
+      bestRating: "5",
+      worstRating: "1",
+    },
+  } : null;
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
+      {aggregateRd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(aggregateRd) }}
+        />
+      )}
+
       {/* Breadcrumb */}
       <nav className="text-xs text-[#6B6B6B] mb-8">
-        <span>Головна</span>
+        <Link href="/" className="hover:text-[#C4A882]">Головна</Link>
         <span className="mx-2">/</span>
         <span className="text-[#1A1A1A]">Відгуки</span>
       </nav>

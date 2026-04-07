@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect, useRef } from "react";
 import { useCategories } from "@/hooks/useProducts";
 import { HAIR_TYPES } from "@/lib/utils";
 
@@ -30,6 +31,25 @@ export default function ProductFilter({ filters, onChange }: ProductFilterProps)
   const sortedCategories = [...categories].sort(
     (a, b) => (CATEGORY_ORDER[a.slug] ?? 99) - (CATEGORY_ORDER[b.slug] ?? 99)
   );
+
+  // Debounced price inputs
+  const [localMin, setLocalMin] = useState(filters.minPrice);
+  const [localMax, setLocalMax] = useState(filters.maxPrice);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => {
+    setLocalMin(filters.minPrice);
+    setLocalMax(filters.maxPrice);
+  }, [filters.minPrice, filters.maxPrice]);
+
+  const updatePrice = (key: "minPrice" | "maxPrice", value: string) => {
+    if (key === "minPrice") setLocalMin(value);
+    else setLocalMax(value);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      onChange({ ...filters, [key]: value });
+    }, 400);
+  };
 
   const update = (key: keyof FilterState, value: string) => {
     onChange({ ...filters, [key]: value });
@@ -103,15 +123,15 @@ export default function ProductFilter({ filters, onChange }: ProductFilterProps)
           <input
             type="number"
             placeholder="Від"
-            value={filters.minPrice}
-            onChange={(e) => update("minPrice", e.target.value)}
+            value={localMin}
+            onChange={(e) => updatePrice("minPrice", e.target.value)}
             className="w-full border border-[#E8E4DE] rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#C4A882]"
           />
           <input
             type="number"
             placeholder="До"
-            value={filters.maxPrice}
-            onChange={(e) => update("maxPrice", e.target.value)}
+            value={localMax}
+            onChange={(e) => updatePrice("maxPrice", e.target.value)}
             className="w-full border border-[#E8E4DE] rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#C4A882]"
           />
         </div>

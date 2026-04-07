@@ -113,6 +113,10 @@ export default function RootLayout({
                 "https://www.instagram.com/viola.mukachevo",
                 "https://t.me/violagegedosh",
               ],
+              areaServed: {
+                "@type": "Country",
+                name: "Ukraine",
+              },
               brand: {
                 "@type": "Brand",
                 name: "Na Gólov[y]",
