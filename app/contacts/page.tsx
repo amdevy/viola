@@ -12,8 +12,19 @@ export default function ContactsPage() {
   return (
     <>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Головна", item: "https://violamukachevo.com" },
+              { "@type": "ListItem", position: 2, name: "Контакти" },
+            ],
+          }) }}
+        />
         <nav className="text-xs text-[#6B6B6B] mb-8">
-          <span>Головна</span>
+          <Link href="/" className="hover:text-[#C4A882]">Головна</Link>
           <span className="mx-2">/</span>
           <span className="text-[#1A1A1A]">Контакти</span>
         </nav>

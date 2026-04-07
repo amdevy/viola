@@ -32,8 +32,20 @@ export default async function SuccessPage({
             Номер замовлення: <span className="font-mono font-medium text-[#1A1A1A]">{orderId.slice(0, 8).toUpperCase()}</span>
           </p>
         )}
+        <p className="text-sm text-[#6B6B6B] mb-6">
+          Ми зв&apos;яжемося з вами для підтвердження замовлення.
+        </p>
         <p className="text-sm text-[#6B6B6B] mb-8">
-          Ми зв'яжемося з вами для підтвердження замовлення.
+          Якщо вам сподобався наш сервіс, будемо вдячні за{" "}
+          <a
+            href="https://g.page/r/CelormETodeaAQ0/review"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#C4A882] hover:underline font-medium"
+          >
+            відгук у Google
+          </a>
+          {" "}— це займе лише 30 секунд.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
