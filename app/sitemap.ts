@@ -12,20 +12,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   );
 
   const [{ data: products }, { data: posts }] = await Promise.all([
-    supabase.from("products").select("slug, updated_at").eq("in_stock", true),
-    supabase.from("blog_posts").select("slug, updated_at").eq("published", true),
+    supabase.from("products").select("slug, created_at").eq("in_stock", true),
+    supabase.from("blog_posts").select("slug, created_at").eq("published", true),
   ]);
 
-  // Use the most recent product update as a proxy for shop/home freshness
+  // Use the most recent product as a proxy for shop/home freshness
   const latestProduct = (products ?? []).reduce((latest, p) => {
-    if (!p.updated_at) return latest;
-    const d = new Date(p.updated_at);
+    if (!p.created_at) return latest;
+    const d = new Date(p.created_at);
     return d > latest ? d : latest;
   }, new Date("2026-03-01"));
 
   const latestPost = (posts ?? []).reduce((latest, p) => {
-    if (!p.updated_at) return latest;
-    const d = new Date(p.updated_at);
+    if (!p.created_at) return latest;
+    const d = new Date(p.created_at);
     return d > latest ? d : latest;
   }, new Date("2026-03-01"));
 
@@ -45,14 +45,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const productRoutes: MetadataRoute.Sitemap = (products ?? []).map((p) => ({
     url: `${BASE}/shop/${p.slug}`,
-    lastModified: p.updated_at ? new Date(p.updated_at) : new Date(),
+    lastModified: p.created_at ? new Date(p.created_at) : new Date(),
     changeFrequency: "weekly",
     priority: 0.8,
   }));
 
   const blogRoutes: MetadataRoute.Sitemap = (posts ?? []).map((post) => ({
     url: `${BASE}/blog/${post.slug}`,
-    lastModified: post.updated_at ? new Date(post.updated_at) : new Date(),
+    lastModified: post.created_at ? new Date(post.created_at) : new Date(),
     changeFrequency: "monthly",
     priority: 0.6,
   }));
