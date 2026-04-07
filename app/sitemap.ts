@@ -1,10 +1,15 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient as createBrowserClient } from "@supabase/supabase-js";
 import { MetadataRoute } from "next";
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
 
+export const dynamic = "force-dynamic";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const supabase = await createClient();
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  );
 
   const [{ data: products }, { data: posts }] = await Promise.all([
     supabase.from("products").select("slug, updated_at").eq("in_stock", true),
