@@ -21,6 +21,25 @@ async function getProduct(slug: string): Promise<Product | null> {
   return (data as Product) ?? null;
 }
 
+interface ProductReview {
+  id: string;
+  author_name: string;
+  rating: number;
+  text: string;
+  created_at: string;
+}
+
+async function getProductReviews(productId: string): Promise<ProductReview[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("reviews")
+    .select("id, author_name, rating, text, created_at")
+    .eq("product_id", productId)
+    .eq("approved", true)
+    .order("created_at", { ascending: false });
+  return (data as ProductReview[]) ?? [];
+}
+
 async function getRelated(product: Product): Promise<Product[]> {
   if (!product.category_id) return [];
   const supabase = await createClient();
@@ -61,18 +80,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-const TABS = [
-  { id: "description", label: "Опис" },
-  { id: "ingredients", label: "Склад" },
-  { id: "how_to_use", label: "Застосування" },
-];
-
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
   const product = await getProduct(slug);
   if (!product) notFound();
 
-  const related = await getRelated(product);
+  const [related, reviews] = await Promise.all([
+    getRelated(product),
+    getProductReviews(product.id),
+  ]);
   const hairTypeLabels = HAIR_TYPES.filter((h) =>
     product.hair_type?.includes(h.value)
   ).map((h) => h.label);
@@ -124,6 +140,27 @@ export default async function ProductPage({ params }: Props) {
         returnMethod: "https://schema.org/ReturnByMail",
       },
     },
+    ...(reviews.length > 0 && {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1),
+        reviewCount: reviews.length,
+        bestRating: "5",
+        worstRating: "1",
+      },
+      review: reviews.slice(0, 5).map((r) => ({
+        "@type": "Review",
+        author: { "@type": "Person", name: r.author_name },
+        datePublished: r.created_at.split("T")[0],
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: r.rating,
+          bestRating: "5",
+          worstRating: "1",
+        },
+        reviewBody: r.text,
+      })),
+    }),
   };
 
   const breadcrumbItems: { "@type": string; position: number; name: string; item?: string }[] = [
