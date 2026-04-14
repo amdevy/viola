@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
 import { useRouter } from "@/i18n/routing";
 import { useCart } from "@/hooks/useCart";
@@ -16,6 +16,7 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const t = useTranslations("productCard");
   const tc = useTranslations("common");
+  const locale = useLocale();
   const [hovered, setHovered] = useState(false);
   const router = useRouter();
   const { addItem, openCart } = useCart();
@@ -110,11 +111,11 @@ export default function ProductCard({ product }: ProductCardProps) {
         )}
         <div className="flex items-center gap-2 mt-auto pt-1">
           <span className="text-sm font-semibold text-[#1A1A1A]">
-            {formatPrice(product.price)}
+            {formatPrice(product.price, locale)}
           </span>
           {product.compare_price && (
             <span className="text-xs text-[#A0A0A0] line-through">
-              {formatPrice(product.compare_price)}
+              {formatPrice(product.compare_price, locale)}
             </span>
           )}
         </div>

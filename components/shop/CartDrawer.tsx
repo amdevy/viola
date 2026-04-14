@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { useCart } from "@/hooks/useCart";
 import CartItem from "./CartItem";
@@ -9,6 +9,7 @@ import { formatPrice } from "@/lib/utils";
 
 export default function CartDrawer() {
   const t = useTranslations("cart");
+  const locale = useLocale();
   const { items, isOpen, closeCart } = useCart();
   const cartTotal = useCart((s) => s.total());
   const count = useCart((s) => s.itemCount());
@@ -88,7 +89,7 @@ export default function CartDrawer() {
           <div className="border-t border-[#E8E4DE] px-6 py-4 space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-sm text-[#6B6B6B]">{t("total")}</span>
-              <span className="text-lg font-semibold text-[#1A1A1A]">{formatPrice(cartTotal)}</span>
+              <span className="text-lg font-semibold text-[#1A1A1A]">{formatPrice(cartTotal, locale)}</span>
             </div>
             <Link
               href="/checkout"

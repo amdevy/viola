@@ -310,11 +310,11 @@ export default async function ProductPage({ params }: Props) {
             {/* Price */}
             <div className="flex items-center gap-3 mb-6">
               <span className="text-2xl font-bold text-[#1A1A1A]">
-                {formatPrice(product.price)}
+                {formatPrice(product.price, locale)}
               </span>
               {product.compare_price && (
                 <span className="text-base text-[#A0A0A0] line-through">
-                  {formatPrice(product.compare_price)}
+                  {formatPrice(product.compare_price, locale)}
                 </span>
               )}
               {discount && (

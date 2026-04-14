@@ -1,5 +1,10 @@
-export function formatPrice(price: number): string {
-  const formatted = Math.round(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+export function formatPrice(price: number, locale: string = "uk"): string {
+  const rounded = Math.round(price).toString();
+  if (locale === "en") {
+    const formatted = rounded.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return `${formatted} UAH`;
+  }
+  const formatted = rounded.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   return `${formatted} грн`;
 }
 

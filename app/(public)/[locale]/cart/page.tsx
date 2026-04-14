@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { useCart } from "@/hooks/useCart";
 import CartItem from "@/components/shop/CartItem";
@@ -9,6 +9,7 @@ import { formatPrice } from "@/lib/utils";
 export default function CartPage() {
   const t = useTranslations("cart");
   const tc = useTranslations("common");
+  const locale = useLocale();
   const { items, clearCart } = useCart();
   const cartTotal = useCart((s) => s.total());
   const count = useCart((s) => s.itemCount());
@@ -58,7 +59,7 @@ export default function CartPage() {
               <div className="space-y-2 mb-4">
                 <div className="flex justify-between text-sm text-[#6B6B6B]">
                   <span>{t("products", { count })}</span>
-                  <span>{formatPrice(cartTotal)}</span>
+                  <span>{formatPrice(cartTotal, locale)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-[#6B6B6B]">
                   <span>{t("delivery")}</span>
@@ -68,7 +69,7 @@ export default function CartPage() {
               <div className="border-t border-[#E8E4DE] pt-4 mb-6">
                 <div className="flex justify-between font-semibold text-[#1A1A1A]">
                   <span>{t("total")}</span>
-                  <span>{formatPrice(cartTotal)}</span>
+                  <span>{formatPrice(cartTotal, locale)}</span>
                 </div>
               </div>
               <Link
