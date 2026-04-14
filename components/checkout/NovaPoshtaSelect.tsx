@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import type { NovaPoshtaCity, NovaPoshtaWarehouse } from "@/types";
 
 interface NovaPoshtaSelectProps {
@@ -16,6 +17,7 @@ export default function NovaPoshtaSelect({
   cityError,
   warehouseError,
 }: NovaPoshtaSelectProps) {
+  const t = useTranslations("checkout");
   const [cityQuery, setCityQuery] = useState("");
   const [cities, setCities] = useState<NovaPoshtaCity[]>([]);
   const [selectedCity, setSelectedCity] = useState<NovaPoshtaCity | null>(null);
@@ -95,11 +97,11 @@ export default function NovaPoshtaSelect({
     <div className="space-y-4">
       {/* City */}
       <div className="flex flex-col gap-1" ref={cityRef}>
-        <label className="text-sm font-medium text-[#1A1A1A]">Місто</label>
+        <label className="text-sm font-medium text-[#1A1A1A]">{t("city")}</label>
         <div className="relative">
           <input
             type="text"
-            placeholder="Введіть назву міста..."
+            placeholder={t("cityPlaceholder")}
             value={cityQuery}
             onChange={(e) => {
               setCityQuery(e.target.value);
@@ -143,11 +145,11 @@ export default function NovaPoshtaSelect({
       {/* Warehouse */}
       {selectedCity && (
         <div className="flex flex-col gap-1" ref={warehouseRef}>
-          <label className="text-sm font-medium text-[#1A1A1A]">Відділення / Поштомат Нової Пошти</label>
+          <label className="text-sm font-medium text-[#1A1A1A]">{t("warehouse")}</label>
           <div className="relative">
             <input
               type="text"
-              placeholder={warehouseLoading ? "Завантаження..." : "Пошук відділення або поштомату..."}
+              placeholder={warehouseLoading ? t("warehouseLoading") : t("warehousePlaceholder")}
               value={selectedWarehouse ? selectedWarehouse.Description : warehouseQuery}
               onChange={(e) => {
                 setWarehouseQuery(e.target.value);

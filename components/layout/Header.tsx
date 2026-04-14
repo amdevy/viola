@@ -1,19 +1,20 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/routing";
 import { useCart } from "@/hooks/useCart";
 import { useCategories } from "@/hooks/useProducts";
 import MobileMenu from "./MobileMenu";
+import LanguageSwitcher from "./LanguageSwitcher";
 import CartDrawer from "@/components/shop/CartDrawer";
 
-const CATEGORY_ORDER: Record<string, { name: string; order: number }> = {
-  shampoos: { name: 'Шампуні', order: 1 },
-  conditioners: { name: 'Кондиціонери', order: 2 },
-  masks: { name: 'Маски', order: 3 },
-  'leave-in': { name: 'Незмивні засоби', order: 4 },
-  // additions:    { name: "Пілінги",         order: 5 },
+const CATEGORY_ORDER: Record<string, number> = {
+  shampoos: 1,
+  conditioners: 2,
+  masks: 3,
+  'leave-in': 4,
 };
 
 export default function Header() {
@@ -23,6 +24,8 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const t = useTranslations("header");
+  const tc = useTranslations("categories");
 
   useEffect(() => setMounted(true), []);
   useEffect(() => {
@@ -33,18 +36,18 @@ export default function Header() {
 
   const sortedCategories = [...categories]
     .filter((cat) => cat.slug in CATEGORY_ORDER)
-    .sort((a, b) => CATEGORY_ORDER[a.slug].order - CATEGORY_ORDER[b.slug].order);
+    .sort((a, b) => (CATEGORY_ORDER[a.slug] ?? 99) - (CATEGORY_ORDER[b.slug] ?? 99));
 
   return (
     <>
       {/* Announcement Bar */}
       <div className='bg-[#1A1A1A] text-white text-center py-2 px-4 text-xs tracking-wide'>
-        Доставка Новою Поштою по всій Україні.{' '}
+        {t("announcement")}{' '}
         <Link
           href='/shop'
           className='underline hover:text-[#C4A882] transition-colors'
         >
-          Перейти у магазин
+          {t("goToShop")}
         </Link>
       </div>
 
@@ -55,13 +58,13 @@ export default function Header() {
         <div className='border-b border-[#E8E4DE]'>
           <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
             <div className='flex items-center justify-between h-16 md:h-24'>
-              {/* Left nav — outer div always takes flex-1 space to center logo on mobile */}
+              {/* Left nav */}
               <div className='flex flex-1 justify-end'>
                 <nav className='hidden md:flex items-center gap-7 justify-end'>
                   {[
-                    { href: '/shop', label: 'Каталог товарів' },
-                    { href: '/contacts', label: 'Контакти' },
-                    { href: '/about', label: 'Про бренд' },
+                    { href: '/shop' as const, label: t("catalog") },
+                    { href: '/contacts' as const, label: t("contacts") },
+                    { href: '/about' as const, label: t("about") },
                   ].map((link) => (
                     <Link
                       key={link.label}
@@ -81,14 +84,14 @@ export default function Header() {
               >
                 <Image
                   src='/logo.png'
-                  alt='Viola — Салон краси'
+                  alt={t("logoAlt")}
                   width={200}
                   height={80}
                   className='h-9 md:h-16 w-auto mix-blend-multiply'
                   priority
                 />
                 <span className='text-[9px] md:text-[10px] uppercase tracking-[0.2em] text-[#6B6B6B] font-light whitespace-nowrap'>
-                  Косметика Na Gólov[y]
+                  {t("cosmetics")}
                 </span>
               </Link>
 
@@ -96,12 +99,9 @@ export default function Header() {
               <div className='flex items-center flex-1'>
                 <nav className='hidden md:flex items-center gap-5 mr-3'>
                   {[
-                    { href: '/reviews', label: 'Відгуки' },
-                    { href: '/blog', label: 'Блог' },
-                    {
-                      href: '/contacts',
-                      label: 'Де отримати консультацію та придбати',
-                    },
+                    { href: '/reviews' as const, label: t("reviews") },
+                    { href: '/blog' as const, label: t("blog") },
+                    { href: '/contacts' as const, label: t("whereToConsult") },
                   ].map((link) => (
                     <Link
                       key={link.label}
@@ -112,11 +112,12 @@ export default function Header() {
                     </Link>
                   ))}
                 </nav>
-                <div className='ml-auto flex items-center'>
+                <div className='ml-auto flex items-center gap-1'>
+                  <LanguageSwitcher />
                   <button
                     onClick={openCart}
                     className='relative p-2 text-[#1A1A1A] hover:text-[#C4A882] transition-colors'
-                    aria-label='Кошик'
+                    aria-label={t("cart")}
                   >
                     <svg
                       className='w-5 h-5'
@@ -141,7 +142,7 @@ export default function Header() {
                   <button
                     onClick={() => setMenuOpen(true)}
                     className='md:hidden p-2 text-[#1A1A1A] hover:text-[#C4A882] transition-colors'
-                    aria-label='Меню'
+                    aria-label={t("menu")}
                   >
                     <svg
                       className='w-5 h-5'
@@ -174,7 +175,7 @@ export default function Header() {
                     href={`/shop?category=${cat.slug}`}
                     className='text-xs uppercase tracking-widest text-[#1A1A1A] hover:text-[#C4A882] transition-colors whitespace-nowrap font-medium py-2'
                   >
-                    {CATEGORY_ORDER[cat.slug].name}
+                    {tc(cat.slug as "shampoos" | "conditioners" | "masks" | "leave-in")}
                   </Link>
                 ))}
               </div>

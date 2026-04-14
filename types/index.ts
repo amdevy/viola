@@ -1,6 +1,7 @@
 export interface Category {
   id: string;
   name: string;
+  name_en?: string | null;
   slug: string;
   created_at: string;
 }
@@ -9,9 +10,13 @@ export interface Product {
   id: string;
   slug: string;
   name: string;
+  name_en?: string | null;
   description: string | null;
+  description_en?: string | null;
   ingredients: string | null;
+  ingredients_en?: string | null;
   how_to_use: string | null;
+  how_to_use_en?: string | null;
   price: number;
   compare_price: number | null;
   images: string[];
