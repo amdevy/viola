@@ -121,8 +121,14 @@ export default async function BlogPostPage({ params }: Props) {
   const { slug, locale } = await params;
   const t = await getTranslations({ locale, namespace: "blogPost" });
   const tc = await getTranslations({ locale, namespace: "common" });
-  const post = await getPost(slug);
-  if (!post) notFound();
+  const raw = await getPost(slug);
+  if (!raw) notFound();
+
+  const { row: post } = localize(
+    raw as unknown as Record<string, unknown>,
+    locale,
+    BLOG_I18N_FIELDS,
+  ) as unknown as { row: { title: string; excerpt: string | null; content: string | null; cover_image: string | null; published_at: string; updated_at?: string; reading_time: number | null } };
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
 

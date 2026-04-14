@@ -18,7 +18,7 @@ async function getProduct(slug: string): Promise<Product | null> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("products")
-    .select("*, category:categories(id,name,slug)")
+    .select("*, category:categories(id,name,name_en,slug)")
     .eq("slug", slug)
     .single();
   return (data as Product) ?? null;
@@ -48,7 +48,7 @@ async function getRelated(product: Product): Promise<Product[]> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("products")
-    .select("*, category:categories(id,name,slug)")
+    .select("*, category:categories(id,name,name_en,slug)")
     .eq("category_id", product.category_id)
     .neq("id", product.id)
     .eq("in_stock", true)
