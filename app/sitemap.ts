@@ -47,6 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: BASE, lastModified: latestProduct, changeFrequency: "weekly", priority: 1, alternates: withAlternates("") },
     { url: `${BASE}/shop`, lastModified: latestProduct, changeFrequency: "daily", priority: 0.9, alternates: withAlternates("/shop") },
+    { url: `${BASE}/na-golovy`, lastModified: new Date("2026-04-15"), changeFrequency: "monthly", priority: 0.9, alternates: withAlternates("/na-golovy") },
     { url: `${BASE}/about`, lastModified: new Date("2026-04-13"), changeFrequency: "monthly", priority: 0.7, alternates: withAlternates("/about") },
     { url: `${BASE}/contacts`, lastModified: new Date("2026-04-13"), changeFrequency: "monthly", priority: 0.7, alternates: withAlternates("/contacts") },
     { url: `${BASE}/blog`, lastModified: latestPost, changeFrequency: "weekly", priority: 0.7, alternates: withAlternates("/blog") },

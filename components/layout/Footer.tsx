@@ -62,6 +62,7 @@ export default function Footer() {
             <ul className='space-y-2'>
               {[
                 { href: '/shop' as const, label: t("shop") },
+                { href: '/na-golovy' as const, label: "Na Gólov[y]" },
                 { href: '/shop?category=shampoos' as const, label: tc("shampoos") },
                 { href: '/shop?category=conditioners' as const, label: tc("conditioners") },
                 { href: '/shop?category=masks' as const, label: tc("masks") },
