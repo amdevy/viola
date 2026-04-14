@@ -4,6 +4,7 @@ import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import ProductCard from "@/components/shop/ProductCard";
 import { ProductGridSkeleton } from "@/components/ui/Skeleton";
+import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
 import type { Product } from "@/types";
 import type { Metadata } from "next";
 
@@ -27,15 +28,31 @@ export async function generateMetadata({
   };
 }
 
-async function getBestsellers(): Promise<Product[]> {
+async function getBestsellers(locale: string): Promise<Product[]> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("products")
-    .select("*, category:categories(id,name,slug)")
+    .select("*, category:categories(id,name,name_en,slug)")
     .eq("in_stock", true)
     .order("created_at", { ascending: false })
     .limit(8);
-  return (data as Product[]) ?? [];
+
+  return ((data as Product[]) ?? []).map((p) => {
+    const { row } = localize(
+      p as unknown as Record<string, unknown>,
+      locale,
+      PRODUCT_I18N_FIELDS,
+    ) as unknown as { row: Product };
+    if (row.category) {
+      const { row: cat } = localize(
+        row.category as unknown as Record<string, unknown>,
+        locale,
+        CATEGORY_I18N_FIELDS,
+      ) as unknown as { row: typeof row.category };
+      row.category = cat;
+    }
+    return row;
+  });
 }
 
 export default async function HomePage({
@@ -47,7 +64,7 @@ export default async function HomePage({
   const t = await getTranslations({ locale, namespace: "home" });
   const tc = await getTranslations({ locale, namespace: "common" });
   const tCat = await getTranslations({ locale, namespace: "categories" });
-  const bestsellers = await getBestsellers();
+  const bestsellers = await getBestsellers(locale);
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
 
