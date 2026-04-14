@@ -238,12 +238,20 @@ export default async function HomePage({
               <p className='text-[#6B6B6B] mb-8 leading-relaxed'>
                 {t("storyP2")}
               </p>
-              <Link
-                href='/about'
-                className='inline-flex items-center gap-2 text-sm font-medium text-[#1A1A1A] border-b border-[#1A1A1A] pb-0.5 hover:text-[#C4A882] hover:border-[#C4A882] transition-colors'
-              >
-                {tc("learnMore")}
-              </Link>
+              <div className='flex flex-wrap gap-6'>
+                <Link
+                  href='/about'
+                  className='inline-flex items-center gap-2 text-sm font-medium text-[#1A1A1A] border-b border-[#1A1A1A] pb-0.5 hover:text-[#C4A882] hover:border-[#C4A882] transition-colors'
+                >
+                  {tc("learnMore")}
+                </Link>
+                <Link
+                  href='/na-golovy'
+                  className='inline-flex items-center gap-2 text-sm font-medium text-[#1A1A1A] border-b border-[#1A1A1A] pb-0.5 hover:text-[#C4A882] hover:border-[#C4A882] transition-colors'
+                >
+                  {tc("aboutNaGolovy")}
+                </Link>
+              </div>
             </div>
           </div>
         </div>
