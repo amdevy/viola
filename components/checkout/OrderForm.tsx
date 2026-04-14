@@ -2,24 +2,24 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 import { checkoutSchema, type CheckoutFormData } from "@/lib/validations";
 import Input from "@/components/ui/Input";
 import NovaPoshtaSelect from "./NovaPoshtaSelect";
-import PaymentButton from "./PaymentButton";
 import { useCart } from "@/hooks/useCart";
-import { formatPrice } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
 import type { NovaPoshtaCity, NovaPoshtaWarehouse } from "@/types";
 
 export default function OrderForm() {
+  const t = useTranslations("checkout");
   const router = useRouter();
-  const { items, total, clearCart } = useCart();
+  const { items, clearCart } = useCart();
   const cartTotal = useCart((s) => s.total());
   const [submitting, setSubmitting] = useState(false);
-  const [city, setCity] = useState<NovaPoshtaCity | null>(null);
-  const [warehouse, setWarehouse] = useState<NovaPoshtaWarehouse | null>(null);
+  const [, setCity] = useState<NovaPoshtaCity | null>(null);
+  const [, setWarehouse] = useState<NovaPoshtaWarehouse | null>(null);
 
   const {
     register,
@@ -36,7 +36,7 @@ export default function OrderForm() {
 
   const onSubmit = async (data: CheckoutFormData) => {
     if (items.length === 0) {
-      toast.error("Ваш кошик порожній");
+      toast.error(t("cartEmpty"));
       return;
     }
     setSubmitting(true);
@@ -56,7 +56,7 @@ export default function OrderForm() {
         }),
       });
 
-      if (!res.ok) throw new Error("Помилка створення замовлення");
+      if (!res.ok) throw new Error(t("orderCreateError"));
 
       const { orderId } = await res.json();
 
@@ -111,8 +111,8 @@ export default function OrderForm() {
       const form = div.querySelector("form");
       if (form) form.submit();
       clearCart();
-    } catch (err) {
-      toast.error("Виникла помилка. Спробуйте ще раз.");
+    } catch {
+      toast.error(t("errorGeneric"));
       setSubmitting(false);
     }
   };
@@ -120,7 +120,7 @@ export default function OrderForm() {
   if (items.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-[#6B6B6B]">Ваш кошик порожній.</p>
+        <p className="text-[#6B6B6B]">{t("cartEmpty")}</p>
       </div>
     );
   }
@@ -129,30 +129,30 @@ export default function OrderForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {/* Contact info */}
       <div>
-        <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-4">Контактні дані</h2>
+        <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-4">{t("contactInfo")}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
-            label="Ім'я"
-            placeholder="Олена"
+            label={t("firstName")}
+            placeholder={t("firstNamePlaceholder")}
             error={errors.firstName?.message}
             {...register("firstName")}
           />
           <Input
-            label="Прізвище"
-            placeholder="Іваненко"
+            label={t("lastName")}
+            placeholder={t("lastNamePlaceholder")}
             error={errors.lastName?.message}
             {...register("lastName")}
           />
           <Input
-            label="Телефон"
-            placeholder="+380500582175"
+            label={t("phone")}
+            placeholder={t("phonePlaceholder")}
             type="tel"
             error={errors.phone?.message}
             {...register("phone")}
           />
           <Input
-            label="Email (необов'язково)"
-            placeholder="email@example.com"
+            label={t("email")}
+            placeholder={t("emailPlaceholder")}
             type="email"
             error={errors.email?.message}
             {...register("email")}
@@ -162,7 +162,7 @@ export default function OrderForm() {
 
       {/* Delivery */}
       <div>
-        <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-4">Доставка</h2>
+        <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-4">{t("deliverySection")}</h2>
         <NovaPoshtaSelect
           onCityChange={(c) => {
             setCity(c);
@@ -181,11 +181,10 @@ export default function OrderForm() {
 
       {/* Payment */}
       <div>
-        <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-4">Оплата</h2>
+        <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-4">{t("paymentSection")}</h2>
         <div className="grid grid-cols-2 gap-3">
           {[
-            // { value: "card", icon: "💳", label: "Карткою онлайн", sub: "WayForPay" },
-            { value: "callback", icon: "📞", label: "Зворотній зв'язок", sub: "Ми зателефонуємо вам" },
+            { value: "callback", icon: "📞", label: t("callback"), sub: t("callbackSub") },
           ].map((opt) => (
             <label
               key={opt.value}
@@ -207,11 +206,11 @@ export default function OrderForm() {
       {/* Notes */}
       <div>
         <label className="text-sm font-medium text-[#1A1A1A] block mb-1">
-          Коментар до замовлення (необов'язково)
+          {t("notes")}
         </label>
         <textarea
           rows={2}
-          placeholder="Додаткові побажання..."
+          placeholder={t("notesPlaceholder")}
           className="w-full px-4 py-3 text-sm border border-[#E8E4DE] rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#C4A882] resize-none"
           {...register("notes")}
         />
@@ -223,10 +222,10 @@ export default function OrderForm() {
         className="w-full bg-[#1A1A1A] text-white py-4 text-sm font-medium rounded hover:bg-[#C4A882] transition-colors disabled:opacity-50 uppercase tracking-wider"
       >
         {submitting
-          ? "Оформлення..."
+          ? t("submitting")
           : paymentMethod === "callback"
-          ? "Залишити заявку"
-          : "Оформити замовлення"}
+          ? t("submit")
+          : t("submitPay")}
       </button>
     </form>
   );

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/routing";
 import type { Category } from "@/types";
 
 interface MobileMenuProps {
@@ -10,14 +11,6 @@ interface MobileMenuProps {
   categories: Category[];
 }
 
-const NAV_LINKS = [
-  { href: "/shop", label: "Каталог" },
-  { href: "/about", label: "Про бренд" },
-  { href: "/blog", label: "Блог" },
-  { href: "/reviews", label: "Відгуки" },
-  { href: "/contacts", label: "Контакти" },
-];
-
 const CATEGORY_ORDER = ["shampoos", "masks", "conditioners", "leave-in", "additions", "gifts"];
 
 export default function MobileMenu({
@@ -25,6 +18,9 @@ export default function MobileMenu({
   onClose,
   categories,
 }: MobileMenuProps) {
+  const t = useTranslations("mobileMenu");
+  const th = useTranslations("header");
+
   useEffect(() => {
     if (isOpen) document.body.style.overflow = "hidden";
     else document.body.style.overflow = "";
@@ -32,6 +28,14 @@ export default function MobileMenu({
   }, [isOpen]);
 
   if (!isOpen) return null;
+
+  const NAV_LINKS = [
+    { href: "/shop" as const, label: th("catalog") },
+    { href: "/about" as const, label: th("about") },
+    { href: "/blog" as const, label: th("blog") },
+    { href: "/reviews" as const, label: th("reviews") },
+    { href: "/contacts" as const, label: th("contacts") },
+  ];
 
   return (
     <div className="fixed inset-0 z-50 flex">
@@ -41,7 +45,7 @@ export default function MobileMenu({
       />
       <div className="relative w-80 max-w-[85vw] bg-white h-full flex flex-col shadow-xl">
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#E8E4DE]">
-          <span className="font-serif text-xl font-bold text-[#1A1A1A]">Меню</span>
+          <span className="font-serif text-xl font-bold text-[#1A1A1A]">{t("menu")}</span>
           <button
             onClick={onClose}
             className="p-2 text-[#6B6B6B] hover:text-[#1A1A1A]"
@@ -61,7 +65,7 @@ export default function MobileMenu({
             >
               Na Gólov[y]
             </Link>
-            <p className="text-xs uppercase tracking-widest text-[#6B6B6B] mb-3">Навігація</p>
+            <p className="text-xs uppercase tracking-widest text-[#6B6B6B] mb-3">{t("navigation")}</p>
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
@@ -76,7 +80,7 @@ export default function MobileMenu({
 
           {categories.length > 0 && (
             <div>
-              <p className="text-xs uppercase tracking-widest text-[#6B6B6B] mb-3">Категорії</p>
+              <p className="text-xs uppercase tracking-widest text-[#6B6B6B] mb-3">{t("categories")}</p>
               {[...categories]
                 .sort((a, b) => {
                   const ai = CATEGORY_ORDER.indexOf(a.slug);

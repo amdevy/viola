@@ -1,6 +1,13 @@
-import Link from "next/link";
+"use client";
+
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/routing";
 
 export default function Footer() {
+  const t = useTranslations("footer");
+  const tc = useTranslations("categories");
+  const th = useTranslations("header");
+
   return (
     <footer className='bg-[#1A1A1A] text-white'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
@@ -11,8 +18,7 @@ export default function Footer() {
               Viola
             </h3>
             <p className='text-sm text-[#A0A0A0] leading-relaxed mb-4'>
-              Салон краси &quot;Viola&quot; — простір, де кожен клієнт отримує
-              увагу, професійність та турботу в догляді за волоссям.
+              {t("description")}
             </p>
             <div className='flex gap-3'>
               <a
@@ -51,26 +57,17 @@ export default function Footer() {
           {/* Shop */}
           <div>
             <h4 className='text-sm font-semibold uppercase tracking-widest text-white mb-4'>
-              Магазин
+              {t("shop")}
             </h4>
             <ul className='space-y-2'>
               {[
-                { href: '/shop', label: 'Всі товари' },
-                { href: '/shop?category=shampoos', label: 'Шампуні' },
-                { href: '/shop?category=conditioners', label: 'Кондиціонери' },
-                { href: '/shop?category=masks', label: 'Маски' },
-                {
-                  href: '/shop?category=leave-in',
-                  label: 'Незмивний догляд термозахист',
-                },
-                {
-                  href: '/shop?category=additions',
-                  label: 'Доповнення догляду',
-                },
-                {
-                  href: '/shop?category=gift-sets',
-                  label: 'Подарункові набори',
-                },
+                { href: '/shop' as const, label: t("shop") },
+                { href: '/shop?category=shampoos' as const, label: tc("shampoos") },
+                { href: '/shop?category=conditioners' as const, label: tc("conditioners") },
+                { href: '/shop?category=masks' as const, label: tc("masks") },
+                { href: '/shop?category=leave-in' as const, label: tc("leavein-care") },
+                { href: '/shop?category=additions' as const, label: tc("additions") },
+                { href: '/shop?category=gift-sets' as const, label: tc("gift-sets") },
               ].map((l) => (
                 <li key={l.href}>
                   <Link
@@ -87,17 +84,17 @@ export default function Footer() {
           {/* Info */}
           <div>
             <h4 className='text-sm font-semibold uppercase tracking-widest text-white mb-4'>
-              Інформація
+              {t("information")}
             </h4>
             <ul className='space-y-2'>
               {[
-                { href: '/about', label: 'Про бренд' },
-                { href: '/poslugy', label: 'Послуги' },
-                { href: '/blog', label: 'Блог' },
-                { href: '/reviews', label: 'Відгуки' },
-                { href: '/contacts', label: 'Контакти' },
-                { href: '/delivery', label: 'Доставка та оплата' },
-                { href: '/offer', label: 'Публічна оферта' },
+                { href: '/about' as const, label: t("aboutBrand") },
+                { href: '/poslugy' as const, label: t("services") },
+                { href: '/blog' as const, label: th("blog") },
+                { href: '/reviews' as const, label: th("reviews") },
+                { href: '/contacts' as const, label: t("contacts") },
+                { href: '/delivery' as const, label: t("deliveryPayment") },
+                { href: '/offer' as const, label: t("publicOffer") },
               ].map((l) => (
                 <li key={l.href}>
                   <Link
@@ -114,7 +111,7 @@ export default function Footer() {
           {/* Contact */}
           <div>
             <h4 className='text-sm font-semibold uppercase tracking-widest text-white mb-4'>
-              Контакти
+              {t("contacts")}
             </h4>
             <ul className='space-y-2 text-sm text-[#A0A0A0]'>
               <li>
@@ -125,16 +122,8 @@ export default function Footer() {
                   +380 50 058 21 75
                 </a>
               </li>
-              <li>
-                <a
-                  href='mailto:hello@viola.com.ua'
-                  className='hover:text-[#C4A882] transition-colors'
-                >
-                  hello@viola.com.ua
-                </a>
-              </li>
               <li className='mt-4'>
-                <p className='text-xs text-[#6B6B6B]'>Пн–Сб: 9:00 — 19:00</p>
+                <p className='text-xs text-[#6B6B6B]'>{t("workingHours")}</p>
               </li>
             </ul>
           </div>
@@ -142,7 +131,7 @@ export default function Footer() {
 
         <div className='border-t border-white/10 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2'>
           <p className='text-xs text-[#6B6B6B]'>
-            © {new Date().getFullYear()} Viola. Всі права захищені.
+            {t("allRights", { year: new Date().getFullYear() })}
           </p>
           <a
             href='https://t.me/AndriiMatt'
@@ -150,20 +139,20 @@ export default function Footer() {
             rel='noopener noreferrer'
             className='text-xs text-[#6B6B6B] hover:text-[#C4A882] transition-colors'
           >
-            Розробка сайту — Andrii Matsiuk
+            {t("developedBy")}
           </a>
           <div className='flex gap-4'>
             <Link
               href='/privacy'
               className='text-xs text-[#6B6B6B] hover:text-[#C4A882] transition-colors'
             >
-              Політика конфіденційності
+              {t("privacyPolicy")}
             </Link>
             <Link
               href='/terms'
               className='text-xs text-[#6B6B6B] hover:text-[#C4A882] transition-colors'
             >
-              Умови використання
+              {t("termsOfUse")}
             </Link>
           </div>
         </div>

@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
+import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
 import type { Product, Category } from "@/types";
 
 export function useProducts(filters?: {
@@ -12,6 +14,7 @@ export function useProducts(filters?: {
   sort?: string;
   search?: string;
 }) {
+  const locale = useLocale();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -65,8 +68,27 @@ export function useProducts(filters?: {
       }
 
       const { data, error } = await query;
-      if (error) setError(error.message);
-      else setProducts(data as Product[]);
+      if (error) {
+        setError(error.message);
+      } else {
+        const localized = (data as Product[]).map((p) => {
+          const { row } = localize(
+            p as unknown as Record<string, unknown>,
+            locale,
+            PRODUCT_I18N_FIELDS,
+          ) as unknown as { row: Product };
+          if (row.category) {
+            const { row: cat } = localize(
+              row.category as unknown as Record<string, unknown>,
+              locale,
+              CATEGORY_I18N_FIELDS,
+            ) as unknown as { row: typeof row.category };
+            row.category = cat;
+          }
+          return row;
+        });
+        setProducts(localized);
+      }
       setLoading(false);
     };
 
@@ -78,12 +100,14 @@ export function useProducts(filters?: {
     filters?.hairType,
     filters?.sort,
     filters?.search,
+    locale,
   ]);
 
   return { products, loading, error };
 }
 
 export function useCategories() {
+  const locale = useLocale();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -94,11 +118,19 @@ export function useCategories() {
         .from("categories")
         .select("*")
         .order("name");
-      setCategories(data ?? []);
+      const localized = (data ?? []).map((c) => {
+        const { row } = localize(
+          c as unknown as Record<string, unknown>,
+          locale,
+          CATEGORY_I18N_FIELDS,
+        ) as unknown as { row: Category };
+        return row;
+      });
+      setCategories(localized);
       setLoading(false);
     };
     fetch();
-  }, []);
+  }, [locale]);
 
   return { categories, loading };
 }

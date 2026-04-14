@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { useCategories } from "@/hooks/useProducts";
 import { HAIR_TYPES } from "@/lib/utils";
 
@@ -27,6 +28,9 @@ const CATEGORY_ORDER: Record<string, number> = {
 };
 
 export default function ProductFilter({ filters, onChange }: ProductFilterProps) {
+  const t = useTranslations("filter");
+  const tc = useTranslations("categories");
+  const th = useTranslations("hairTypes");
   const { categories } = useCategories();
   const sortedCategories = [...categories].sort(
     (a, b) => (CATEGORY_ORDER[a.slug] ?? 99) - (CATEGORY_ORDER[b.slug] ?? 99)
@@ -67,16 +71,16 @@ export default function ProductFilter({ filters, onChange }: ProductFilterProps)
       {/* Sort */}
       <div>
         <label className="text-xs uppercase tracking-widest text-[#6B6B6B] block mb-2">
-          Сортування
+          {t("sorting")}
         </label>
         <select
           value={filters.sort}
           onChange={(e) => update("sort", e.target.value)}
           className="w-full border border-[#E8E4DE] rounded px-3 py-2 text-sm text-[#1A1A1A] bg-white focus:outline-none focus:ring-2 focus:ring-[#C4A882]"
         >
-          <option value="newest">Новинки</option>
-          <option value="price_asc">Ціна: зростання</option>
-          <option value="price_desc">Ціна: спадання</option>
+          <option value="newest">{t("newest")}</option>
+          <option value="price_asc">{t("priceAsc")}</option>
+          <option value="price_desc">{t("priceDesc")}</option>
         </select>
       </div>
 
@@ -84,7 +88,7 @@ export default function ProductFilter({ filters, onChange }: ProductFilterProps)
       {categories.length > 0 && (
         <div>
           <label className="text-xs uppercase tracking-widest text-[#6B6B6B] block mb-2">
-            Категорія
+            {t("category")}
           </label>
           <div className="space-y-1">
             <button
@@ -95,7 +99,7 @@ export default function ProductFilter({ filters, onChange }: ProductFilterProps)
                   : "text-[#1A1A1A] hover:bg-[#F0EDE8]"
               }`}
             >
-              Всі категорії
+              {tc("allCategories")}
             </button>
             {sortedCategories.map((cat) => (
               <button
@@ -117,19 +121,19 @@ export default function ProductFilter({ filters, onChange }: ProductFilterProps)
       {/* Price range */}
       <div>
         <label className="text-xs uppercase tracking-widest text-[#6B6B6B] block mb-2">
-          Ціна (грн)
+          {t("priceRange")}
         </label>
         <div className="flex gap-2">
           <input
             type="number"
-            placeholder="Від"
+            placeholder={t("from")}
             value={localMin}
             onChange={(e) => updatePrice("minPrice", e.target.value)}
             className="w-full border border-[#E8E4DE] rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#C4A882]"
           />
           <input
             type="number"
-            placeholder="До"
+            placeholder={t("to")}
             value={localMax}
             onChange={(e) => updatePrice("maxPrice", e.target.value)}
             className="w-full border border-[#E8E4DE] rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#C4A882]"
@@ -140,7 +144,7 @@ export default function ProductFilter({ filters, onChange }: ProductFilterProps)
       {/* Hair type */}
       <div>
         <label className="text-xs uppercase tracking-widest text-[#6B6B6B] block mb-2">
-          Тип волосся
+          {t("hairType")}
         </label>
         <div className="space-y-1">
           {HAIR_TYPES.map((ht) => (
@@ -156,7 +160,7 @@ export default function ProductFilter({ filters, onChange }: ProductFilterProps)
                 className="accent-[#C4A882]"
               />
               <span className="text-sm text-[#1A1A1A] group-hover:text-[#C4A882] transition-colors">
-                {ht.label}
+                {th(ht.value as "oily" | "dry" | "normal" | "colored" | "damaged" | "curly")}
               </span>
             </label>
           ))}
@@ -168,7 +172,7 @@ export default function ProductFilter({ filters, onChange }: ProductFilterProps)
           onClick={reset}
           className="w-full text-sm text-[#C4A882] hover:text-[#A8875E] underline transition-colors text-center"
         >
-          Скинути фільтри
+          {t("resetFilters")}
         </button>
       )}
     </div>

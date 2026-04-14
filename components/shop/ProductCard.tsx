@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
+import { useRouter } from "@/i18n/routing";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice } from "@/lib/utils";
 import toast from "react-hot-toast";
@@ -13,6 +14,8 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const t = useTranslations("productCard");
+  const tc = useTranslations("common");
   const [hovered, setHovered] = useState(false);
   const router = useRouter();
   const { addItem, openCart } = useCart();
@@ -31,7 +34,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       quantity: 1,
       volume: product.volume ?? undefined,
     });
-    toast.success(`${product.name} додано до кошика`);
+    toast.success(`${product.name} ${t("addedToCart")}`);
     openCart();
   };
 
@@ -71,7 +74,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           )}
           {!product.in_stock && (
             <span className="bg-[#1A1A1A] text-white text-[10px] font-bold px-2 py-0.5 rounded">
-              Немає в наявності
+              {t("outOfStock")}
             </span>
           )}
         </div>
@@ -83,7 +86,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             disabled={!product.in_stock}
             className="flex-1 bg-[#1A1A1A] text-white text-xs font-medium py-3 hover:bg-[#C4A882] transition-colors disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider"
           >
-            {product.in_stock ? "В кошик" : "Немає"}
+            {product.in_stock ? t("addToCart") : t("out")}
           </button>
           <a
             href="https://t.me/violagegedosh"
@@ -92,7 +95,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             onClick={(e) => e.stopPropagation()}
             className="flex-1 bg-[#C4A882] text-white text-xs font-medium py-3 text-center hover:bg-[#b89970] transition-colors uppercase tracking-wider"
           >
-            Консультація
+            {tc("consultation")}
           </a>
         </div>
       </div>
