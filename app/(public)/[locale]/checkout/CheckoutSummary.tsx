@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice } from "@/lib/utils";
 
 export default function CheckoutSummary() {
   const t = useTranslations("checkout");
   const tc = useTranslations("cart");
+  const locale = useLocale();
   const items = useCart((s) => s.items);
   const cartTotal = useCart((s) => s.total());
   const [mounted, setMounted] = useState(false);
@@ -40,7 +41,7 @@ export default function CheckoutSummary() {
               {item.volume && <p className="text-[10px] text-[#6B6B6B]">{item.volume}</p>}
             </div>
             <div className="text-xs font-medium text-[#1A1A1A] whitespace-nowrap">
-              {formatPrice(item.price * item.quantity)}
+              {formatPrice(item.price * item.quantity, locale)}
             </div>
           </div>
         ))}
@@ -49,7 +50,7 @@ export default function CheckoutSummary() {
       <div className="border-t border-[#E8E4DE] pt-4 space-y-2">
         <div className="flex justify-between text-sm text-[#6B6B6B]">
           <span>{tc("summary")}</span>
-          <span>{mounted ? formatPrice(cartTotal) : ""}</span>
+          <span>{mounted ? formatPrice(cartTotal, locale) : ""}</span>
         </div>
         <div className="flex justify-between text-sm text-[#6B6B6B]">
           <span>{tc("delivery")}</span>
@@ -57,7 +58,7 @@ export default function CheckoutSummary() {
         </div>
         <div className="flex justify-between font-semibold text-[#1A1A1A] pt-2 border-t border-[#E8E4DE]">
           <span>{tc("total")}</span>
-          <span>{mounted ? formatPrice(cartTotal) : ""}</span>
+          <span>{mounted ? formatPrice(cartTotal, locale) : ""}</span>
         </div>
       </div>
     </div>

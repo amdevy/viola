@@ -1,12 +1,14 @@
 "use client";
 
 import Image from "next/image";
+import { useLocale } from "next-intl";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice } from "@/lib/utils";
 import type { CartItem as CartItemType } from "@/types";
 
 export default function CartItem({ item }: { item: CartItemType }) {
   const { updateQuantity, removeItem } = useCart();
+  const locale = useLocale();
 
   return (
     <div className="flex gap-3 py-3 border-b border-[#E8E4DE] last:border-0">
@@ -28,7 +30,7 @@ export default function CartItem({ item }: { item: CartItemType }) {
           <p className="text-xs text-[#6B6B6B] mt-0.5">{item.volume}</p>
         )}
         <p className="text-sm font-semibold text-[#C4A882] mt-1">
-          {formatPrice(item.price * item.quantity)}
+          {formatPrice(item.price * item.quantity, locale)}
         </p>
 
         {/* Quantity controls */}
