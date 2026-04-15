@@ -57,7 +57,11 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div className="relative aspect-[3/4] overflow-hidden rounded bg-[#F0EDE8] mb-3">
         <Image
           src={hovered ? secondaryImage : primaryImage}
-          alt={product.name}
+          alt={
+            locale === "en"
+              ? `Na Gólov[y] ${product.name} — buy in Ukraine`
+              : `Na Gólov[y] (На Голову) ${product.name} — купити в Україні`
+          }
           fill
           className="object-cover transition-all duration-500 group-hover:scale-105"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

@@ -109,7 +109,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
       locale: locale === "en" ? "en_US" : "uk_UA",
-      images: product.images?.[0] ? [{ url: product.images[0] }] : [],
+      images: product.images?.[0]
+        ? [
+            {
+              url: product.images[0],
+              alt:
+                locale === "en"
+                  ? `Na Gólov[y] ${product.name} — buy in Ukraine`
+                  : `Na Gólov[y] (На Голову) ${product.name} — купити в Україні`,
+            },
+          ]
+        : [],
     },
   };
 }

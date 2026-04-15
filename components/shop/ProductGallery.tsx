@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLocale } from "next-intl";
 import Image from "next/image";
 
 interface ProductGalleryProps {
@@ -9,11 +10,19 @@ interface ProductGalleryProps {
 }
 
 export default function ProductGallery({ images, name }: ProductGalleryProps) {
+  const locale = useLocale();
   const [activeIdx, setActiveIdx] = useState(0);
   const [zoomed, setZoomed] = useState(false);
 
   const safeImages = images?.length ? images : ["/placeholder-product.png"];
   const active = safeImages[activeIdx];
+
+  const mainAlt =
+    locale === "en"
+      ? `Na Gólov[y] ${name} — buy in Ukraine`
+      : `Na Gólov[y] (На Голову) ${name} — купити в Україні`;
+
+  const thumbLabel = locale === "en" ? "photo" : "фото";
 
   return (
     <div className="flex flex-col gap-3">
@@ -24,7 +33,7 @@ export default function ProductGallery({ images, name }: ProductGalleryProps) {
       >
         <Image
           src={active}
-          alt={`${name} — фото ${activeIdx + 1}`}
+          alt={mainAlt}
           fill
           className={`object-cover transition-transform duration-500 ${
             zoomed ? "scale-150" : "scale-100"
@@ -52,7 +61,7 @@ export default function ProductGallery({ images, name }: ProductGalleryProps) {
             >
               <Image
                 src={img}
-                alt={`${name} — мініатюра ${i + 1}`}
+                alt={`${mainAlt} — ${thumbLabel} ${i + 1}`}
                 fill
                 className="object-cover"
                 sizes="64px"

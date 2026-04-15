@@ -4,7 +4,7 @@ import { hasEnTranslation, PRODUCT_I18N_FIELDS, BLOG_I18N_FIELDS } from "@/lib/i
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 function withAlternates(path: string, includeEn = true) {
   const ukUrl = `${BASE}${path}`;

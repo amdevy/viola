@@ -151,7 +151,11 @@ export default async function HomePage({
               >
                 <Image
                   src={cat.image}
-                  alt={cat.name}
+                  alt={
+                    locale === "en"
+                      ? `Na Gólov[y] ${cat.name} — buy in Ukraine`
+                      : `Na Gólov[y] (На Голову) ${cat.name} — купити в Україні`
+                  }
                   fill
                   className='object-cover transition-transform duration-500 group-hover:scale-105'
                   sizes='(max-width: 640px) 50vw, 25vw'
