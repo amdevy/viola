@@ -343,7 +343,11 @@ export default async function NaGolovyPage({ params }: Props) {
             <div className="relative aspect-[3/4] w-full max-w-sm mx-auto rounded overflow-hidden">
               <Image
                 src="/viola.JPG"
-                alt="Viola Hehedosh"
+                alt={
+                  isEn
+                    ? "Viola Hehedosh — Na Gólov[y] brand technologist"
+                    : "Віола Гегедош — технолог бренду Na Gólov[y] (На Голову)"
+                }
                 fill
                 className="object-cover object-[center_15%]"
                 sizes="(max-width: 1024px) 100vw, 50vw"

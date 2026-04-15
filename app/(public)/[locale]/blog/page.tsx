@@ -87,7 +87,11 @@ export default async function BlogPage({
                 {post.cover_image && (
                   <Image
                     src={post.cover_image}
-                    alt={post.title}
+                    alt={
+                      locale === "en"
+                        ? `${post.title} — Viola Hehedosh blog, Na Gólov[y] hair care`
+                        : `${post.title} — блог Віоли Гегедош про догляд Na Gólov[y]`
+                    }
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"

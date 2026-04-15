@@ -154,8 +154,8 @@ export default async function BlogPostPage({ params }: Props) {
     author: {
       "@type": "Person",
       "@id": "https://violamukachevo.com/#viola",
-      name: "Віола Гегедош",
-      url: `${siteUrl}/about`,
+      name: locale === "en" ? "Viola Hehedosh" : "Віола Гегедош",
+      url: locale === "en" ? `${siteUrl}/en/about` : `${siteUrl}/about`,
       jobTitle: locale === "en" ? "Na Gólov[y] Brand Technologist" : "Технолог бренду Na Gólov[y]",
     },
     publisher: {
@@ -218,7 +218,11 @@ export default async function BlogPostPage({ params }: Props) {
           <div className="relative aspect-video rounded overflow-hidden mb-8">
             <Image
               src={post.cover_image}
-              alt={post.title}
+              alt={
+                locale === "en"
+                  ? `${post.title} — Viola Hehedosh blog, Na Gólov[y] hair care`
+                  : `${post.title} — блог Віоли Гегедош про догляд Na Gólov[y]`
+              }
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 720px"
@@ -233,11 +237,15 @@ export default async function BlogPostPage({ params }: Props) {
       {/* Author card */}
       <div className="mt-12 pt-8 border-t border-[#E8E4DE]">
         <Link href="/about" className="flex items-center gap-4 group">
-          <img
-            src="/viola.JPG"
-            alt={t("authorName")}
-            className="w-12 h-12 rounded-full object-cover object-[center_15%]"
-          />
+          <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+            <Image
+              src="/viola.JPG"
+              alt={t("authorName")}
+              fill
+              sizes="48px"
+              className="object-cover object-[center_15%]"
+            />
+          </div>
           <div>
             <p className="text-sm font-semibold text-[#1A1A1A] group-hover:text-[#C4A882] transition-colors">
               {t("authorName")}
