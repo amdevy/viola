@@ -1,5 +1,16 @@
 import { createServerClient } from "@supabase/ssr";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
+
+// Cookie-less client for public, cacheable reads (products, blog, reviews).
+// Using this on a page with `export const revalidate = N` lets Vercel edge-cache the response.
+export function createPublicClient() {
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { auth: { persistSession: false } },
+  );
+}
 
 export async function createClient() {
   const cookieStore = await cookies();

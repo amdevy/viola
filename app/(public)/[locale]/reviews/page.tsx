@@ -1,8 +1,10 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/server";
 import ReviewsList from "./ReviewsList";
 import type { Metadata } from "next";
+
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,
@@ -39,7 +41,7 @@ export interface Review {
 
 async function getReviews(): Promise<Review[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data } = await supabase
       .from("reviews")
       .select("*, product:products(name, slug)")

@@ -1,9 +1,11 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/server";
 import { localize, BLOG_I18N_FIELDS } from "@/lib/i18n/localize";
 import type { Metadata } from "next";
+
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,
@@ -39,7 +41,7 @@ interface BlogPost {
 
 async function getPosts(locale: string): Promise<BlogPost[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data } = await supabase
       .from("blog_posts")
       .select(

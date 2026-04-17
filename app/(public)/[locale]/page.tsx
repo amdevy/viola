@@ -1,12 +1,14 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/server";
 import ProductCard from "@/components/shop/ProductCard";
 import { ProductGridSkeleton } from "@/components/ui/Skeleton";
 import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
 import type { Product } from "@/types";
 import type { Metadata } from "next";
+
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,
@@ -29,7 +31,7 @@ export async function generateMetadata({
 }
 
 async function getBestsellers(locale: string): Promise<Product[]> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
   const { data } = await supabase
     .from("products")
     .select("*, category:categories(id,name,name_en,slug)")

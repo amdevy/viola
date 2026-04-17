@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/server";
 import ProductGallery from "@/components/shop/ProductGallery";
 import ProductCard from "@/components/shop/ProductCard";
 import AddToCartButton from "./AddToCartButton";
@@ -10,12 +10,14 @@ import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/
 import type { Product } from "@/types";
 import type { Metadata } from "next";
 
+export const revalidate = 3600;
+
 interface Props {
   params: Promise<{ slug: string; locale: string }>;
 }
 
 async function getProduct(slug: string): Promise<Product | null> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
   const { data } = await supabase
     .from("products")
     .select("*, category:categories(id,name,name_en,slug)")
@@ -33,7 +35,7 @@ interface ProductReview {
 }
 
 async function getProductReviews(productId: string): Promise<ProductReview[]> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
   const { data } = await supabase
     .from("reviews")
     .select("id, author_name, rating, text, created_at")
@@ -45,7 +47,7 @@ async function getProductReviews(productId: string): Promise<ProductReview[]> {
 
 async function getRelated(product: Product): Promise<Product[]> {
   if (!product.category_id) return [];
-  const supabase = await createClient();
+  const supabase = createPublicClient();
   const { data } = await supabase
     .from("products")
     .select("*, category:categories(id,name,name_en,slug)")
@@ -71,10 +73,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     locale === "en"
       ? `${product.name} — buy Na Gólov[y]`
       : `${product.name} — купити Na Gólov[y]`;
+  const truncateAtWord = (text: string, max: number) => {
+    if (text.length <= max) return text;
+    const cut = text.slice(0, max);
+    const lastSpace = cut.lastIndexOf(" ");
+    return (lastSpace > 0 ? cut.slice(0, lastSpace) : cut) + "…";
+  };
+
   const description = product.description
     ? locale === "en"
-      ? `${product.description.slice(0, 120)} Buy Na Golovy in Ukraine.`
-      : `${product.description.slice(0, 120)} Купити Na Golovy в Україні.`
+      ? `${truncateAtWord(product.description, 130)} Buy Na Golovy in Ukraine.`
+      : `${truncateAtWord(product.description, 130)} Купити Na Golovy в Україні.`
     : locale === "en"
       ? `Buy ${product.name} Na Golovy with Nova Poshta delivery across Ukraine. Price ${product.price} UAH.`
       : `Купити ${product.name} Na Golovy (На Голову) з доставкою Новою Поштою по Україні. Ціна ${product.price} грн.`;

@@ -1,5 +1,5 @@
-import { createClient as createBrowserClient } from "@supabase/supabase-js";
 import { MetadataRoute } from "next";
+import { createPublicClient } from "@/lib/supabase/server";
 import { hasEnTranslation, PRODUCT_I18N_FIELDS, BLOG_I18N_FIELDS } from "@/lib/i18n/localize";
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
@@ -15,10 +15,7 @@ function withAlternates(path: string, includeEn = true) {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  );
+  const supabase = createPublicClient();
 
   const [{ data: products }, { data: posts }] = await Promise.all([
     supabase
