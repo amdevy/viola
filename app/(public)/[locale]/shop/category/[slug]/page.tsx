@@ -34,12 +34,6 @@ async function getProductsByCategory(categoryId: string): Promise<Product[]> {
   return (data as Product[]) ?? [];
 }
 
-export async function generateStaticParams() {
-  const supabase = createPublicClient();
-  const { data } = await supabase.from("categories").select("slug");
-  return (data ?? []).map((c: { slug: string }) => ({ slug: c.slug }));
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, locale } = await params;
   const raw = await getCategory(slug);
