@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import type { Metadata } from "next";
 
@@ -29,6 +29,7 @@ export default async function DeliveryPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "delivery" });
   const tc = await getTranslations({ locale, namespace: "common" });
 
