@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/server";
 import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
 import ProductCard from "@/components/shop/ProductCard";
 import type { Product } from "@/types";
+
+export const revalidate = 3600;
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -51,7 +53,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 async function getFeatured(locale: string): Promise<Product[]> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
   const { data } = await supabase
     .from("products")
     .select("*, category:categories(id,name,name_en,slug)")

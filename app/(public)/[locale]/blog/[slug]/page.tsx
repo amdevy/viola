@@ -4,8 +4,10 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/server";
 import { localize, BLOG_I18N_FIELDS } from "@/lib/i18n/localize";
+
+export const revalidate = 3600;
 
 interface Props {
   params: Promise<{ slug: string; locale: string }>;
@@ -13,7 +15,7 @@ interface Props {
 
 async function getPost(slug: string) {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data } = await supabase
       .from("blog_posts")
       .select("*")

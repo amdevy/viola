@@ -159,6 +159,13 @@ export default function AdminProductsPage() {
       toast.success(editing ? "Товар оновлено" : "Товар додано");
       setShowModal(false);
       loadData();
+      fetch("/api/indexnow", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          urls: [`/shop/${form.slug}`, "/shop", "/sitemap.xml"],
+        }),
+      }).catch(() => {});
     }
     setSaving(false);
   };
