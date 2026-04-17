@@ -99,51 +99,91 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className={`${inter.variable} ${cormorant.variable}`}>
       <head>
+        <link rel="alternate" type="application/rss+xml" title="Viola — Na Gólov[y] Блог" href={`${siteUrl}/feed.xml`} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "BeautySalon",
-              "@id": "https://violamukachevo.com/#business",
-              name: salonName,
-              description: salonDesc,
-              url: siteUrl,
-              telephone: "+380500582175",
-              image: `${siteUrl}/preview.jpg`,
-              priceRange: "₴₴",
-              inLanguage: locale === "en" ? "en-US" : "uk-UA",
-              address: {
-                "@type": "PostalAddress",
-                streetAddress: "вул. Шевченка 13А/35",
-                addressLocality: "Мукачево",
-                addressRegion: "Закарпатська область",
-                postalCode: "89600",
-                addressCountry: "UA",
-              },
-              geo: {
-                "@type": "GeoCoordinates",
-                latitude: 48.4354842,
-                longitude: 22.7100357,
-              },
-              openingHoursSpecification: [
+              "@graph": [
                 {
-                  "@type": "OpeningHoursSpecification",
-                  dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-                  opens: "09:00",
-                  closes: "19:00",
+                  "@type": "BeautySalon",
+                  "@id": "https://violamukachevo.com/#business",
+                  name: salonName,
+                  description: salonDesc,
+                  url: siteUrl,
+                  telephone: "+380500582175",
+                  email: "hello@viola.com.ua",
+                  image: `${siteUrl}/preview.jpg`,
+                  priceRange: "₴₴",
+                  inLanguage: locale === "en" ? "en-US" : "uk-UA",
+                  address: {
+                    "@type": "PostalAddress",
+                    streetAddress: "вул. Шевченка 13А/35",
+                    addressLocality: "Мукачево",
+                    addressRegion: "Закарпатська область",
+                    postalCode: "89600",
+                    addressCountry: "UA",
+                  },
+                  geo: {
+                    "@type": "GeoCoordinates",
+                    latitude: 48.4354842,
+                    longitude: 22.7100357,
+                  },
+                  openingHoursSpecification: [
+                    {
+                      "@type": "OpeningHoursSpecification",
+                      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                      opens: "09:00",
+                      closes: "19:00",
+                    },
+                  ],
+                  sameAs: [
+                    "https://www.instagram.com/viola.mukachevo",
+                    "https://t.me/violagegedosh",
+                  ],
+                  areaServed: { "@type": "Country", name: "Ukraine" },
+                  brand: { "@id": "https://violamukachevo.com/#brand" },
+                },
+                {
+                  "@type": "Organization",
+                  "@id": "https://violamukachevo.com/#organization",
+                  name: salonName,
+                  url: siteUrl,
+                  logo: `${siteUrl}/logo.png`,
+                  email: "hello@viola.com.ua",
+                  telephone: "+380500582175",
+                  sameAs: [
+                    "https://www.instagram.com/viola.mukachevo",
+                    "https://t.me/violagegedosh",
+                  ],
+                },
+                {
+                  "@type": "Brand",
+                  "@id": "https://violamukachevo.com/#brand",
+                  name: "Na Gólov[y]",
+                  alternateName: ["Na Golovy", "На Голову", "na golovy"],
+                  url: "https://www.nagolovy.pro/",
+                  logo: `${siteUrl}/logo.png`,
+                },
+                {
+                  "@type": "WebSite",
+                  "@id": "https://violamukachevo.com/#website",
+                  url: siteUrl,
+                  name: salonName,
+                  description: salonDesc,
+                  inLanguage: locale === "en" ? "en-US" : "uk-UA",
+                  publisher: { "@id": "https://violamukachevo.com/#organization" },
+                  potentialAction: {
+                    "@type": "SearchAction",
+                    target: {
+                      "@type": "EntryPoint",
+                      urlTemplate: `${siteUrl}${locale === "en" ? "/en" : ""}/shop?search={search_term_string}`,
+                    },
+                    "query-input": "required name=search_term_string",
+                  },
                 },
               ],
-              sameAs: [
-                "https://www.instagram.com/viola.mukachevo",
-                "https://t.me/violagegedosh",
-              ],
-              areaServed: { "@type": "Country", name: "Ukraine" },
-              brand: {
-                "@type": "Brand",
-                name: "Na Gólov[y]",
-                url: "https://www.nagolovy.pro/",
-              },
             }),
           }}
         />

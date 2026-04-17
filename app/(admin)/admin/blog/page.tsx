@@ -177,6 +177,16 @@ export default function AdminBlogPage() {
     setSaving(false);
     setModalOpen(false);
     fetchPosts();
+
+    if (form.published) {
+      fetch("/api/indexnow", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          urls: [`/blog/${form.slug}`, "/blog", "/feed.xml", "/sitemap.xml"],
+        }),
+      }).catch(() => {});
+    }
   }
 
   async function handleDelete(id: string) {
