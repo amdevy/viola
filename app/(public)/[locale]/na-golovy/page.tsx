@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { createPublicClient } from "@/lib/supabase/server";
@@ -80,6 +80,7 @@ async function getFeatured(locale: string): Promise<Product[]> {
 
 export default async function NaGolovyPage({ params }: Props) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const tc = await getTranslations({ locale, namespace: "common" });
   const isEn = locale === "en";
 

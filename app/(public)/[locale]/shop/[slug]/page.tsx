@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import { createPublicClient } from "@/lib/supabase/server";
@@ -135,6 +135,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductPage({ params }: Props) {
   const { slug, locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "product" });
   const tc = await getTranslations({ locale, namespace: "common" });
   const ts = await getTranslations({ locale, namespace: "shop" });

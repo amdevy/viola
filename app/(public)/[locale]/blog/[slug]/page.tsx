@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type React from "react";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -121,6 +121,7 @@ function renderContent(content: string) {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug, locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "blogPost" });
   const tc = await getTranslations({ locale, namespace: "common" });
   const raw = await getPost(slug);
