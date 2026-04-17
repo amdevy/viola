@@ -263,7 +263,7 @@ export default async function ProductPage({ params }: Props) {
       "@type": "ListItem",
       position: 3,
       name: product.category.name,
-      item: locale === "en" ? `${siteUrl}/en/shop?category=${product.category.slug}` : `${siteUrl}/shop?category=${product.category.slug}`,
+      item: locale === "en" ? `${siteUrl}/en/shop/category/${product.category.slug}` : `${siteUrl}/shop/category/${product.category.slug}`,
     });
   }
   breadcrumbItems.push({
@@ -298,7 +298,7 @@ export default async function ProductPage({ params }: Props) {
           {product.category && (
             <>
               <span>/</span>
-              <Link href={`/shop?category=${product.category.slug}`} className="hover:text-[#C4A882]">
+              <Link href={`/shop/category/${product.category.slug}`} className="hover:text-[#C4A882]">
                 {product.category.name}
               </Link>
             </>

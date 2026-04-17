@@ -17,7 +17,7 @@ function withAlternates(path: string, includeEn = true) {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = createPublicClient();
 
-  const [{ data: products }, { data: posts }] = await Promise.all([
+  const [{ data: products }, { data: posts }, { data: categories }] = await Promise.all([
     supabase
       .from("products")
       .select("slug, created_at, name_en, description_en, ingredients_en, how_to_use_en")
@@ -26,6 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .from("blog_posts")
       .select("slug, created_at, title_en, excerpt_en, content_en")
       .eq("published", true),
+    supabase.from("categories").select("slug, created_at"),
   ]);
 
   // Use the most recent product as a proxy for shop/home freshness
@@ -84,5 +85,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     };
   });
 
-  return [...staticRoutes, ...productRoutes, ...blogRoutes];
+  const categoryRoutes: MetadataRoute.Sitemap = (categories ?? []).map((c) => ({
+    url: `${BASE}/shop/category/${c.slug}`,
+    lastModified: c.created_at ? new Date(c.created_at) : new Date("2026-04-17"),
+    changeFrequency: "weekly",
+    priority: 0.8,
+    alternates: withAlternates(`/shop/category/${c.slug}`),
+  }));
+
+  return [...staticRoutes, ...productRoutes, ...blogRoutes, ...categoryRoutes];
 }

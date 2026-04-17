@@ -4,9 +4,36 @@ import Image from "next/image";
 import { createPublicClient } from "@/lib/supabase/server";
 import ProductCard from "@/components/shop/ProductCard";
 import { ProductGridSkeleton } from "@/components/ui/Skeleton";
-import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
+import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS, BLOG_I18N_FIELDS } from "@/lib/i18n/localize";
 import type { Product } from "@/types";
 import type { Metadata } from "next";
+
+interface HomeBlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  cover_image: string | null;
+  published_at: string;
+  reading_time: number | null;
+}
+
+async function getRecentPosts(locale: string): Promise<HomeBlogPost[]> {
+  const supabase = createPublicClient();
+  const { data } = await supabase
+    .from("blog_posts")
+    .select("id, slug, title, title_en, excerpt, excerpt_en, cover_image, published_at, reading_time")
+    .eq("published", true)
+    .order("published_at", { ascending: false })
+    .limit(3);
+
+  return ((data ?? []) as unknown as Record<string, unknown>[]).map((p) => {
+    const { row } = localize(p, locale, BLOG_I18N_FIELDS) as unknown as {
+      row: HomeBlogPost;
+    };
+    return row;
+  });
+}
 
 export const revalidate = 3600;
 
@@ -66,9 +93,10 @@ export default async function HomePage({
   const t = await getTranslations({ locale, namespace: "home" });
   const tc = await getTranslations({ locale, namespace: "common" });
   const tCat = await getTranslations({ locale, namespace: "categories" });
-  const bestsellers = await getBestsellers(locale);
-
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
+  const [bestsellers, recentPosts] = await Promise.all([
+    getBestsellers(locale),
+    getRecentPosts(locale),
+  ]);
 
   const BENEFITS = [
     { icon: '/icons/heliconia.png', title: t("benefitNatural"), desc: t("benefitNaturalDesc") },
@@ -148,7 +176,7 @@ export default async function HomePage({
             {CATS.map((cat) => (
               <Link
                 key={cat.slug}
-                href={`/shop?category=${cat.slug}`}
+                href={`/shop/category/${cat.slug}`}
                 className='relative aspect-[3/4] rounded overflow-hidden flex items-end p-4 group'
               >
                 <Image
@@ -280,6 +308,67 @@ export default async function HomePage({
         </div>
       </section>
 
+      {/* Recent blog posts */}
+      {recentPosts.length > 0 && (
+        <section className='py-16 bg-white'>
+          <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+            <div className='flex items-end justify-between mb-10'>
+              <div>
+                <p className='text-[#C4A882] text-xs uppercase tracking-[0.3em] mb-3'>
+                  {locale === "en" ? "Blog" : "Блог"}
+                </p>
+                <h2 className='font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A]'>
+                  {locale === "en" ? "Hair care advice" : "Поради по догляду"}
+                </h2>
+              </div>
+              <Link
+                href='/blog'
+                className='hidden md:flex items-center gap-2 text-sm font-medium text-[#1A1A1A] border-b border-[#1A1A1A] pb-0.5 hover:text-[#C4A882] hover:border-[#C4A882] transition-colors'
+              >
+                {locale === "en" ? "All posts" : "Всі статті"}
+              </Link>
+            </div>
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+              {recentPosts.map((post) => (
+                <Link
+                  key={post.id}
+                  href={`/blog/${post.slug}`}
+                  className='group block'
+                >
+                  {post.cover_image && (
+                    <div className='relative aspect-[16/10] rounded overflow-hidden mb-4 bg-[#E8E4DE]'>
+                      <Image
+                        src={post.cover_image}
+                        alt={post.title}
+                        fill
+                        className='object-cover group-hover:scale-105 transition-transform duration-500'
+                        sizes='(max-width: 768px) 100vw, 33vw'
+                      />
+                    </div>
+                  )}
+                  <h3 className='font-serif text-xl font-semibold text-[#1A1A1A] mb-2 group-hover:text-[#C4A882] transition-colors leading-snug'>
+                    {post.title}
+                  </h3>
+                  {post.excerpt && (
+                    <p className='text-sm text-[#6B6B6B] leading-relaxed line-clamp-3'>
+                      {post.excerpt}
+                    </p>
+                  )}
+                </Link>
+              ))}
+            </div>
+            <div className='text-center mt-8 md:hidden'>
+              <Link
+                href='/blog'
+                className='inline-flex items-center gap-2 text-sm font-medium text-[#1A1A1A] border-b border-[#1A1A1A] pb-0.5 hover:text-[#C4A882] transition-colors'
+              >
+                {locale === "en" ? "All posts" : "Всі статті"}
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Instagram CTA */}
       <section className='py-16 bg-[#FAFAF8]'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
@@ -324,21 +413,6 @@ export default async function HomePage({
         </div>
       </section>
 
-      {/* JSON-LD: WebSite */}
-      <script
-        type='application/ld+json'
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'WebSite',
-            '@id': 'https://violamukachevo.com/#website',
-            name: locale === "en" ? "Viola Beauty Salon" : "Салон краси Viola",
-            url: siteUrl,
-            inLanguage: locale === "en" ? "en-US" : "uk-UA",
-            publisher: { '@id': 'https://violamukachevo.com/#business' },
-          }),
-        }}
-      />
     </>
   );
 }
