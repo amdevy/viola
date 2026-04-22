@@ -21,7 +21,24 @@ export async function generateMetadata({
   return {
     title: t("blogTitle"),
     description: t("blogDescription"),
-    keywords: ["Na Golovy blog", "na golovy hair care", "Na Golovy tips"],
+    keywords: locale === "en" ? [
+      "Na Golovy blog",
+      "na golovy hair care",
+      "Na Golovy tips",
+      "Ukrainian hair care blog",
+      "professional hair care tips",
+    ] : [
+      "блог про догляд за волоссям",
+      "поради догляду за волоссям",
+      "Na Golovy блог",
+      "на голову поради",
+      "як доглядати за волоссям",
+      "як підібрати шампунь",
+      "догляд за фарбованим волоссям",
+      "відновлення пошкодженого волосся",
+      "професійний догляд за волоссям",
+      "Віола Гегедош поради",
+    ],
     alternates: {
       canonical: locale === "en" ? enUrl : ukUrl,
       languages: { uk: ukUrl, en: enUrl, "x-default": ukUrl },

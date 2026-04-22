@@ -47,9 +47,44 @@ export async function generateMetadata({
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
   const enUrl = `${siteUrl}/en`;
 
+  const ukKeywords = [
+    "На Голову",
+    "на голову",
+    "на голову купити",
+    "на голову косметика",
+    "косметика на голову",
+    "купити на голову",
+    "на голову шампунь",
+    "на голову маска",
+    "Na Golovy",
+    "Na Gólov[y]",
+    "na golovy",
+    "na golovy купити",
+    "нагол[о]ви",
+    "нагол[о]ви купити",
+    "Віола Гегедош",
+    "технолог Na Golovy",
+    "професійна косметика для волосся",
+    "українська косметика для волосся",
+    "шампунь для фарбованого волосся",
+    "безсульфатний шампунь",
+    "салон Viola Мукачево",
+  ];
+
+  const enKeywords = [
+    "Na Golovy",
+    "Na Gólov[y]",
+    "na golovy buy",
+    "Ukrainian hair cosmetics",
+    "professional hair care Ukraine",
+    "Viola Hehedosh",
+    "Na Golovy brand technologist",
+  ];
+
   return {
     title: t("homeTitle"),
     description: t("homeDescription"),
+    keywords: locale === "en" ? enKeywords : ukKeywords,
     alternates: {
       canonical: locale === "en" ? enUrl : siteUrl,
       languages: { uk: siteUrl, en: enUrl, "x-default": siteUrl },
@@ -94,10 +129,30 @@ export default async function HomePage({
   const t = await getTranslations({ locale, namespace: "home" });
   const tc = await getTranslations({ locale, namespace: "common" });
   const tCat = await getTranslations({ locale, namespace: "categories" });
+  const tf = await getTranslations({ locale, namespace: "faq" });
   const [bestsellers, recentPosts] = await Promise.all([
     getBestsellers(locale),
     getRecentPosts(locale),
   ]);
+
+  const FAQ = [
+    { q: tf("q1"), a: tf("a1") },
+    { q: tf("q2"), a: tf("a2") },
+    { q: tf("q3"), a: tf("a3") },
+    { q: tf("q4"), a: tf("a4") },
+    { q: tf("q5"), a: tf("a5") },
+    { q: tf("q6"), a: tf("a6") },
+  ];
+
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: FAQ.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
 
   const BENEFITS = [
     { icon: '/icons/heliconia.png', title: t("benefitNatural"), desc: t("benefitNaturalDesc") },
@@ -115,6 +170,11 @@ export default async function HomePage({
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+      />
+
       {/* Hero */}
       <section className='relative min-h-[70vh] flex items-center overflow-hidden bg-[#E8E4DE]'>
         <div className='absolute inset-0 lg:left-1/2 lg:right-0'>
@@ -369,6 +429,42 @@ export default async function HomePage({
           </div>
         </section>
       )}
+
+      {/* FAQ */}
+      <section className='py-16 bg-white'>
+        <div className='max-w-3xl mx-auto px-4 sm:px-6 lg:px-8'>
+          <div className='text-center mb-10'>
+            <p className='text-[#C4A882] text-xs uppercase tracking-[0.3em] mb-3'>FAQ</p>
+            <h2 className='font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-3'>
+              {tf("title")}
+            </h2>
+            <p className='text-[#6B6B6B]'>{tf("subtitle")}</p>
+          </div>
+          <div className='space-y-3'>
+            {FAQ.map((item, i) => (
+              <details
+                key={i}
+                className='group border border-[#E8E4DE] rounded bg-[#FAFAF8] overflow-hidden'
+              >
+                <summary className='flex items-center justify-between cursor-pointer list-none px-5 py-4 font-medium text-[#1A1A1A] hover:text-[#C4A882] transition-colors'>
+                  <span className='pr-4'>{item.q}</span>
+                  <svg
+                    className='w-4 h-4 flex-shrink-0 transition-transform group-open:rotate-180'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 9l-7 7-7-7' />
+                  </svg>
+                </summary>
+                <div className='px-5 pb-5 text-[#6B6B6B] leading-relaxed'>
+                  {item.a}
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Instagram CTA */}
       <section className='py-16 bg-[#FAFAF8]'>

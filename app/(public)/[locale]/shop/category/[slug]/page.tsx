@@ -52,25 +52,42 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title =
     locale === "en"
       ? `${category.name} Na Gólov[y] — Buy in Ukraine`
-      : `${category.name} Na Gólov[y] — Купити в Україні`;
+      : `${category.name} На Голову (Na Gólov[y]) — Купити в Україні`;
 
   const description =
     locale === "en"
       ? `Buy ${category.name.toLowerCase()} Na Gólov[y] (На Голову) online. Professional Ukrainian hair cosmetics with Nova Poshta delivery across Ukraine.`
-      : `Купити ${category.name.toLowerCase()} Na Gólov[y] (На Голову) онлайн. Професійна українська косметика для волосся з доставкою Новою Поштою по Україні.`;
+      : `Купити ${category.name.toLowerCase()} На Голову (Na Gólov[y]) онлайн в Україні. Професійна українська аромакосметика для волосся з доставкою Новою Поштою.`;
 
   return {
     title,
     description,
-    keywords: [
+    keywords: locale === "en" ? [
       category.name,
       `${category.name} Na Golovy`,
+      `buy ${category.name}`,
+      `Na Golovy ${category.name}`,
+      "Na Golovy",
+      "Na Gólov[y]",
+      "Ukrainian hair cosmetics",
+      "professional hair care",
+    ] : [
+      category.name,
+      `${category.name} Na Golovy`,
+      `${category.name} На Голову`,
       `${category.name} купити`,
       `купити ${category.name}`,
+      `${category.name} купити Україна`,
+      `На Голову ${category.name}`,
+      `на голову ${category.name.toLowerCase()}`,
       "Na Golovy",
       "Na Gólov[y]",
       "на голову",
+      "На Голову",
       "na golovy купити",
+      "на голову купити",
+      "професійна косметика для волосся",
+      "українська косметика для волосся",
     ],
     alternates: {
       canonical: locale === "en" ? enUrl : ukUrl,
@@ -171,7 +188,7 @@ export default async function CategoryPage({ params }: Props) {
           <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1A1A1A] mb-4 leading-tight">
             {locale === "en"
               ? `${category.name} Na Gólov[y] — Buy in Ukraine`
-              : `${category.name} Na Gólov[y] — Купити в Україні`}
+              : `${category.name} На Голову (Na Gólov[y]) — Купити в Україні`}
           </h1>
           <p className="text-[#6B6B6B] leading-relaxed">{introText}</p>
         </header>

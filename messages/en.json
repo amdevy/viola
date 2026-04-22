@@ -340,5 +340,21 @@
   "schema": {
     "salonName": "Viola Beauty Salon",
     "websiteName": "Viola Beauty Salon"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions about Na Gólov[y]",
+    "subtitle": "Answers to the most common questions about the brand and buying cosmetics",
+    "q1": "What is Na Gólov[y]?",
+    "a1": "Na Golovy is a Ukrainian niche professional aromatic hair cosmetics brand, founded by colorist Nataliya Holovchenko. Formulas are designed to preserve hair color, maintain hair health, and provide full cross-line compatibility.",
+    "q2": "Where to buy Na Golovy in Ukraine?",
+    "a2": "Na Golovy cosmetics are sold exclusively through accredited masters and salons. At Viola salon in Mukachevo you can purchase all Na Golovy lines directly from brand technologist Viola Hehedosh, or order online with Nova Poshta delivery across Ukraine.",
+    "q3": "How is Na Golovy different from mass-market cosmetics?",
+    "a3": "Na Golovy products have a high concentration of active ingredients — one product can replace more than 10 conventional ones. Formulas are sulfate-free, with niche perfumery compositions. Products are developed by colorists for professional use.",
+    "q4": "How to choose a Na Golovy shampoo?",
+    "a4": "Choosing a Na Golovy shampoo depends on hair type, scalp condition, and care goals. The line includes collagen, amino-ceramide, and sulfate-free shampoos. For accurate selection, I recommend a personal consultation — offline in Mukachevo or online via Telegram or Instagram.",
+    "q5": "Are different Na Golovy lines compatible with each other?",
+    "a5": "Yes, all Na Golovy products are designed for full cross-line compatibility. You can combine shampoo from one line, conditioner from another, and mask from a third — they complement each other without formula conflict.",
+    "q6": "Is Na Golovy suitable for color-treated hair?",
+    "a6": "Yes, Na Golovy was created by a colorist specifically to preserve color after dyeing. Formulas protect pigment, support hair structure, and extend color durability. I recommend the amino-ceramide line and sulfate-free shampoos."
   }
 }
