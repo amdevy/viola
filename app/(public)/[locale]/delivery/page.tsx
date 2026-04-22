@@ -16,6 +16,21 @@ export async function generateMetadata({
   return {
     title: t("deliveryTitle"),
     description: t("deliveryDescription"),
+    keywords: locale === "en" ? [
+      "Na Golovy delivery Ukraine",
+      "Nova Poshta delivery",
+      "buy hair cosmetics Ukraine delivery",
+      "Na Golovy shipping",
+    ] : [
+      "доставка косметики по Україні",
+      "доставка Новою Поштою",
+      "Na Golovy доставка",
+      "на голову доставка",
+      "купити косметику з доставкою",
+      "оплата та доставка косметики",
+      "доставка шампуню Україна",
+      "косметика для волосся доставка",
+    ],
     alternates: {
       canonical: locale === "en" ? enUrl : ukUrl,
       languages: { uk: ukUrl, en: enUrl, "x-default": ukUrl },

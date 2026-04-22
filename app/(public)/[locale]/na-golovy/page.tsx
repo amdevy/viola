@@ -22,21 +22,48 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title =
     locale === "en"
       ? "Na Gólov[y] — Buy from Brand Technologist in Ukraine | Viola"
-      : "Na Gólov[y] купити в Україні — Магазин технолога бренду Viola";
+      : "На Голову (Na Gólov[y]) купити — Магазин технолога бренду Viola";
 
   const description =
     locale === "en"
       ? "Na Golovy (На Голову) — Ukrainian niche aromatic hair cosmetics. Buy shampoos, conditioners, masks from accredited brand technologist Viola Hehedosh. Delivery across Ukraine."
-      : "Na Golovy (На Голову) — українська нішева аромакосметика для волосся. Купити шампуні, кондиціонери, маски на голову у акредитованого технолога бренду Віоли Гегедош. Доставка по Україні.";
+      : "На Голову (Na Golovy) — українська нішева аромакосметика для волосся. Купити шампуні, кондиціонери, маски На Голову у акредитованого технолога бренду Віоли Гегедош. Доставка по Україні.";
 
   return {
     title,
     description,
-    keywords: [
-      "Na Golovy", "Na Gólov[y]", "na golovy", "na golovu",
-      "на голову", "на голови", "на голову косметика",
-      "косметика на голову", "купити na golovy", "na golovy купити",
-      "на голову купити", "косметика на голову купити", "na golovy україна",
+    keywords: locale === "en" ? [
+      "Na Golovy",
+      "Na Gólov[y]",
+      "na golovy buy",
+      "Ukrainian hair cosmetics",
+      "Na Golovy brand",
+      "Na Golovy technologist",
+      "niche hair cosmetics Ukraine",
+    ] : [
+      "На Голову",
+      "на голову",
+      "на голову купити",
+      "на голову косметика",
+      "косметика на голову",
+      "косметика на голову купити",
+      "на голову шампунь",
+      "на голову маска",
+      "на голову кондиціонер",
+      "на голови",
+      "Na Golovy",
+      "Na Gólov[y]",
+      "na golovy",
+      "na golovu",
+      "nagolovy",
+      "купити na golovy",
+      "na golovy купити",
+      "na golovy україна",
+      "Na Golovy бренд",
+      "технолог Na Golovy",
+      "Віола Гегедош",
+      "українська косметика для волосся бренд",
+      "нішева косметика для волосся",
     ],
     alternates: {
       canonical: locale === "en" ? enUrl : ukUrl,

@@ -17,6 +17,22 @@ export async function generateMetadata({
   return {
     title: t("contactsTitle"),
     description: t("contactsDescription"),
+    keywords: locale === "en" ? [
+      "Viola salon Mukachevo",
+      "Viola Hehedosh contacts",
+      "Na Golovy Ukraine contacts",
+      "hair salon Mukachevo",
+    ] : [
+      "Viola Мукачево",
+      "салон Viola Мукачево",
+      "салон краси Мукачево",
+      "салон краси Viola",
+      "перукарня Мукачево",
+      "Віола Гегедош контакти",
+      "косметика для волосся Мукачево",
+      "Закарпаття салон краси",
+      "Мукачево Шевченка салон",
+    ],
     alternates: {
       canonical: locale === "en" ? enUrl : ukUrl,
       languages: { uk: ukUrl, en: enUrl, "x-default": ukUrl },
