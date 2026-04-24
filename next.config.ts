@@ -5,6 +5,10 @@ const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 const nextConfig: NextConfig = {
   images: {
+    minimumCacheTTL: 2678400,
+    deviceSizes: [640, 1024, 1280],
+    imageSizes: [48, 96, 192],
+    formats: ["image/webp"],
     remotePatterns: [
       {
         protocol: "https",
