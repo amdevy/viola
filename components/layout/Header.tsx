@@ -15,6 +15,7 @@ const CATEGORY_ORDER: Record<string, number> = {
   conditioners: 2,
   masks: 3,
   'leave-in': 4,
+  'styling-brushes': 5,
 };
 
 export default function Header() {
@@ -175,7 +176,7 @@ export default function Header() {
                     href={`/shop?category=${cat.slug}`}
                     className='text-xs uppercase tracking-widest text-[#1A1A1A] hover:text-[#C4A882] transition-colors whitespace-nowrap font-medium py-2'
                   >
-                    {tc(cat.slug as "shampoos" | "conditioners" | "masks" | "leave-in")}
+                    {tc(cat.slug as "shampoos" | "conditioners" | "masks" | "leave-in" | "styling-brushes")}
                   </Link>
                 ))}
               </div>

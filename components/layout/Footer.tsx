@@ -67,6 +67,7 @@ export default function Footer() {
                 { href: '/shop?category=conditioners' as const, label: tc("conditioners") },
                 { href: '/shop?category=masks' as const, label: tc("masks") },
                 { href: '/shop?category=leave-in' as const, label: tc("leavein-care") },
+                { href: '/shop?category=styling-brushes' as const, label: tc("styling-brushes") },
                 { href: '/shop?category=additions' as const, label: tc("additions") },
                 { href: '/shop?category=gift-sets' as const, label: tc("gift-sets") },
               ].map((l) => (
