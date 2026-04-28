@@ -15,7 +15,7 @@ import type { NovaPoshtaCity, NovaPoshtaWarehouse } from "@/types";
 export default function OrderForm() {
   const t = useTranslations("checkout");
   const router = useRouter();
-  const { items, clearCart } = useCart();
+  const { items } = useCart();
   const cartTotal = useCart((s) => s.total());
   const [submitting, setSubmitting] = useState(false);
   const [, setCity] = useState<NovaPoshtaCity | null>(null);
@@ -81,12 +81,11 @@ export default function OrderForm() {
             novaPoshtaAddress: data.novaPoshtaAddress,
           }),
         });
-        clearCart();
         router.push(`/checkout/success?orderId=${orderId}`);
         return;
       }
 
-      const pfRes = await fetch("/api/wayforpay/checkout", {
+      const pfRes = await fetch("/api/liqpay/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -104,13 +103,29 @@ export default function OrderForm() {
         }),
       });
 
-      const html = await pfRes.text();
-      const div = document.createElement("div");
-      div.innerHTML = html;
-      document.body.appendChild(div);
-      const form = div.querySelector("form");
-      if (form) form.submit();
-      clearCart();
+      if (!pfRes.ok) throw new Error(t("orderCreateError"));
+
+      const { data: lpData, signature, action } = await pfRes.json();
+
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = action;
+      form.acceptCharset = "utf-8";
+
+      const dataInput = document.createElement("input");
+      dataInput.type = "hidden";
+      dataInput.name = "data";
+      dataInput.value = lpData;
+      form.appendChild(dataInput);
+
+      const sigInput = document.createElement("input");
+      sigInput.type = "hidden";
+      sigInput.name = "signature";
+      sigInput.value = signature;
+      form.appendChild(sigInput);
+
+      document.body.appendChild(form);
+      form.submit();
     } catch {
       toast.error(t("errorGeneric"));
       setSubmitting(false);
@@ -185,6 +200,7 @@ export default function OrderForm() {
         <div className="grid grid-cols-2 gap-3">
           {[
             { value: "callback", icon: "📞", label: t("callback"), sub: t("callbackSub") },
+            { value: "card", icon: "💳", label: t("card"), sub: t("cardSub") },
           ].map((opt) => (
             <label
               key={opt.value}

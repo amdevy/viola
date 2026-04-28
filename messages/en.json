@@ -283,6 +283,8 @@
     "paymentSection": "Payment",
     "callback": "Callback",
     "callbackSub": "We will call you back",
+    "card": "Card payment",
+    "cardSub": "Visa / Mastercard via LiqPay",
     "notes": "Order comment (optional)",
     "notesPlaceholder": "Additional notes...",
     "submit": "Submit request",
@@ -298,10 +300,15 @@
     "orderNumber": "Order number:",
     "willContact": "We will contact you to confirm the order.",
     "reviewPrompt": "If you enjoyed our service, we'd appreciate a",
-    "googleReview": "Google review",
+    "googleReview": "review on our site",
     "reviewTime": "— it only takes 30 seconds.",
     "continueShopping": "Continue shopping",
-    "goHome": "Go to Home"
+    "goHome": "Go to Home",
+    "failedTitle": "Payment failed",
+    "failedMessage": "The payment was not completed. This may have happened due to cancellation or a bank error.",
+    "failedRetry": "Try again",
+    "failedSupport": "If the problem persists — message us on Telegram or call.",
+    "retrying": "Redirecting to payment..."
   },
   "blogPost": {
     "blog": "Blog",
