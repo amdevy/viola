@@ -23,8 +23,9 @@ const CATEGORY_ORDER: Record<string, number> = {
   masks: 2,
   conditioners: 3,
   "leave-in": 4,
-  gifts: 5,
-  additions: 6,
+  "styling-brushes": 5,
+  gifts: 6,
+  additions: 7,
 };
 
 export default function ProductFilter({ filters, onChange }: ProductFilterProps) {
