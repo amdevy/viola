@@ -93,7 +93,7 @@ export default async function SuccessPage({
 
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-4">
-      {shouldClearCart && <ClearCartOnSuccess />}
+      {shouldClearCart && <ClearCartOnSuccess orderId={orderId} />}
       <div className="text-center max-w-md">
         <div className="w-16 h-16 bg-[#C6F6D5] rounded-full flex items-center justify-center mx-auto mb-6">
           <svg className="w-8 h-8 text-[#38A169]" fill="none" stroke="currentColor" viewBox="0 0 24 24">

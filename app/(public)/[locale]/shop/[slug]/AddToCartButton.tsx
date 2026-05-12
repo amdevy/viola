@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useCart } from "@/hooks/useCart";
 import toast from "react-hot-toast";
+import { sendGAEvent } from "@next/third-parties/google";
 import StockNotifyModal from "@/components/shop/StockNotifyModal";
 import type { Product } from "@/types";
 
@@ -28,6 +29,16 @@ export default function AddToCartButton({ product }: { product: Product }) {
       image: product.images?.[0] ?? "",
       quantity: qty,
       volume: product.volume ?? undefined,
+    });
+    sendGAEvent("event", "add_to_cart", {
+      currency: "UAH",
+      value: product.price * qty,
+      items: [{
+        item_id: product.id,
+        item_name: product.name,
+        price: product.price,
+        quantity: qty,
+      }],
     });
     toast.success(`${product.name} ${t("addedToCart")}`);
     openCart();
@@ -66,6 +77,13 @@ export default function AddToCartButton({ product }: { product: Product }) {
           href="https://t.me/violagegedosh"
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => {
+            sendGAEvent("event", "telegram_consultation", {
+              source: "product_page",
+              product_id: product.id,
+              product_name: product.name,
+            });
+          }}
           className="flex items-center justify-center gap-2 px-6 py-4 border-2 border-[#1A1A1A] text-[#1A1A1A] text-sm font-medium rounded hover:bg-[#1A1A1A] hover:text-white transition-colors uppercase tracking-wider"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 shrink-0">

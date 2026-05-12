@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import toast from "react-hot-toast";
+import { sendGAEvent } from "@next/third-parties/google";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
@@ -51,6 +52,11 @@ export default function StockNotifyModal({ isOpen, onClose, product }: Props) {
         }),
       });
       if (!res.ok) throw new Error("Request failed");
+      sendGAEvent("event", "notify_stock_request", {
+        product_id: product.id,
+        product_name: product.name,
+        status: product.is_coming_soon ? "coming_soon" : "out_of_stock",
+      });
       toast.success(t("success"));
       reset();
       onClose();

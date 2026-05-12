@@ -7,6 +7,7 @@ import { useRouter } from "@/i18n/routing";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice, formatVolume } from "@/lib/utils";
 import toast from "react-hot-toast";
+import { sendGAEvent } from "@next/third-parties/google";
 import StockNotifyModal from "@/components/shop/StockNotifyModal";
 import type { Product } from "@/types";
 
@@ -42,6 +43,16 @@ export default function ProductCard({ product }: ProductCardProps) {
       image: primaryImage,
       quantity: 1,
       volume: product.volume ?? undefined,
+    });
+    sendGAEvent("event", "add_to_cart", {
+      currency: "UAH",
+      value: product.price,
+      items: [{
+        item_id: product.id,
+        item_name: product.name,
+        price: product.price,
+        quantity: 1,
+      }],
     });
     toast.success(`${product.name} ${t("addedToCart")}`);
     openCart();
@@ -114,7 +125,14 @@ export default function ProductCard({ product }: ProductCardProps) {
             href="https://t.me/violagegedosh"
             target="_blank"
             rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              sendGAEvent("event", "telegram_consultation", {
+                source: "product_card",
+                product_id: product.id,
+                product_name: product.name,
+              });
+            }}
             className="flex-1 bg-[#C4A882] text-white text-xs font-medium py-3 text-center hover:bg-[#b89970] transition-colors uppercase tracking-wider"
           >
             {tc("consultation")}
