@@ -33,7 +33,20 @@
     "currency": "UAH",
     "products": "{count} products",
     "newBadge": "New",
-    "comingSoonBadge": "Coming Soon"
+    "comingSoonBadge": "Coming Soon",
+    "notifyMe": "Notify Me"
+  },
+  "stockNotify": {
+    "title": "Notify me when available",
+    "description": "Leave your name and phone — we will call you when «{product}» is back in stock.",
+    "name": "Name",
+    "namePlaceholder": "How should we address you",
+    "phone": "Phone",
+    "submit": "Submit Request",
+    "cancel": "Cancel",
+    "success": "Request sent! We will contact you.",
+    "error": "Failed to send. Please try again.",
+    "fillFields": "Please fill name and phone"
   },
   "header": {
     "announcement": "Delivery by Nova Poshta across Ukraine.",

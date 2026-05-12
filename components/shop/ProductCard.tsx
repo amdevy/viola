@@ -7,6 +7,7 @@ import { useRouter } from "@/i18n/routing";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice, formatVolume } from "@/lib/utils";
 import toast from "react-hot-toast";
+import StockNotifyModal from "@/components/shop/StockNotifyModal";
 import type { Product } from "@/types";
 
 interface ProductCardProps {
@@ -18,6 +19,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const tc = useTranslations("common");
   const locale = useLocale();
   const [hovered, setHovered] = useState(false);
+  const [notifyOpen, setNotifyOpen] = useState(false);
   const router = useRouter();
   const { addItem, openCart } = useCart();
 
@@ -29,7 +31,10 @@ export default function ProductCard({ product }: ProductCardProps) {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!canBuy) return;
+    if (!canBuy) {
+      setNotifyOpen(true);
+      return;
+    }
     addItem({
       productId: product.id,
       name: product.name,
@@ -101,14 +106,9 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex">
           <button
             onClick={handleAddToCart}
-            disabled={!canBuy}
-            className="flex-1 bg-[#1A1A1A] text-white text-xs font-medium py-3 hover:bg-[#C4A882] transition-colors disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider"
+            className="flex-1 bg-[#1A1A1A] text-white text-xs font-medium py-3 hover:bg-[#C4A882] transition-colors uppercase tracking-wider"
           >
-            {product.is_coming_soon
-              ? tc("comingSoonBadge")
-              : product.in_stock
-              ? t("addToCart")
-              : t("out")}
+            {canBuy ? t("addToCart") : tc("notifyMe")}
           </button>
           <a
             href="https://t.me/violagegedosh"
@@ -140,6 +140,14 @@ export default function ProductCard({ product }: ProductCardProps) {
             </span>
           )}
         </div>
+      </div>
+
+      <div onClick={(e) => e.stopPropagation()}>
+        <StockNotifyModal
+          isOpen={notifyOpen}
+          onClose={() => setNotifyOpen(false)}
+          product={product}
+        />
       </div>
     </div>
   );
