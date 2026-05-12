@@ -41,8 +41,7 @@ export function useProducts(filters?: {
 
       let query = supabase
         .from("products")
-        .select("*, category:categories(id,name,name_en,slug)")
-        .eq("in_stock", true);
+        .select("*, category:categories(id,name,name_en,slug)");
 
       if (categoryId) {
         query = query.eq("category_id", categoryId);

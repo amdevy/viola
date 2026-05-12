@@ -53,7 +53,6 @@ async function getRelated(product: Product): Promise<Product[]> {
     .select("*, category:categories(id,name,name_en,slug)")
     .eq("category_id", product.category_id)
     .neq("id", product.id)
-    .eq("in_stock", true)
     .limit(4);
   return (data as Product[]) ?? [];
 }
