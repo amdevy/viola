@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/routing";
+import { sendGAEvent } from "@next/third-parties/google";
 import { useCart } from "@/hooks/useCart";
 import CartItem from "./CartItem";
 import { formatPrice } from "@/lib/utils";
@@ -21,6 +22,20 @@ export default function CartDrawer() {
     else document.body.style.overflow = "";
     return () => { document.body.style.overflow = ""; };
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen || items.length === 0) return;
+    sendGAEvent("event", "view_cart", {
+      currency: "UAH",
+      value: cartTotal,
+      items: items.map((i) => ({
+        item_id: i.productId,
+        item_name: i.name,
+        price: i.price,
+        quantity: i.quantity,
+      })),
+    });
+  }, [isOpen, items, cartTotal]);
 
   return (
     <>

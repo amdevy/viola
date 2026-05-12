@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect } from "react";
+import { sendGAEvent } from "@next/third-parties/google";
 import ProductCard from "./ProductCard";
 import { ProductGridSkeleton } from "@/components/ui/Skeleton";
 import type { Product } from "@/types";
@@ -5,9 +9,25 @@ import type { Product } from "@/types";
 interface ProductGridProps {
   products: Product[];
   loading?: boolean;
+  listName?: string;
 }
 
-export default function ProductGrid({ products, loading }: ProductGridProps) {
+export default function ProductGrid({ products, loading, listName }: ProductGridProps) {
+  useEffect(() => {
+    if (!products.length) return;
+    sendGAEvent("event", "view_item_list", {
+      item_list_name: listName ?? "shop",
+      items: products.slice(0, 20).map((p, idx) => ({
+        item_id: p.id,
+        item_name: p.name,
+        item_category: p.category?.name ?? undefined,
+        item_list_name: listName ?? "shop",
+        price: p.price,
+        index: idx,
+      })),
+    });
+  }, [products, listName]);
+
   if (loading) return <ProductGridSkeleton count={6} />;
 
   if (!products.length) {

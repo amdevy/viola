@@ -8,8 +8,9 @@ import Input from "@/components/ui/Input";
 import NovaPoshtaSelect from "./NovaPoshtaSelect";
 import { useCart } from "@/hooks/useCart";
 import toast from "react-hot-toast";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "@/i18n/routing";
+import { sendGAEvent } from "@next/third-parties/google";
 import type { NovaPoshtaCity, NovaPoshtaWarehouse } from "@/types";
 
 export default function OrderForm() {
@@ -33,6 +34,22 @@ export default function OrderForm() {
   });
 
   const paymentMethod = watch("paymentMethod");
+
+  useEffect(() => {
+    if (items.length === 0) return;
+    sendGAEvent("event", "begin_checkout", {
+      currency: "UAH",
+      value: cartTotal,
+      items: items.map((i) => ({
+        item_id: i.productId,
+        item_name: i.name,
+        price: i.price,
+        quantity: i.quantity,
+      })),
+    });
+    // Only fire once when checkout form mounts with items
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onSubmit = async (data: CheckoutFormData) => {
     if (items.length === 0) {

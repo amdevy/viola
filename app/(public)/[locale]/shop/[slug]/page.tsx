@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { createPublicClient } from "@/lib/supabase/server";
 import ProductGallery from "@/components/shop/ProductGallery";
 import ProductCard from "@/components/shop/ProductCard";
+import ProductListGA from "@/components/shop/ProductListGA";
 import AddToCartButton from "./AddToCartButton";
 import { formatPrice, formatVolume, HAIR_TYPES } from "@/lib/utils";
 import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
@@ -409,6 +410,7 @@ export default async function ProductPage({ params }: Props) {
             <h2 className="font-serif text-2xl font-bold text-[#1A1A1A] mb-8">
               {t("relatedProducts")}
             </h2>
+            <ProductListGA products={related} listName="related_products" />
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
               {related.map((p) => (
                 <ProductCard key={p.id} product={p} />

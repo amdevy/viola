@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useCart } from "@/hooks/useCart";
 import toast from "react-hot-toast";
@@ -14,6 +14,20 @@ export default function AddToCartButton({ product }: { product: Product }) {
   const [qty, setQty] = useState(1);
   const [notifyOpen, setNotifyOpen] = useState(false);
   const { addItem, openCart } = useCart();
+
+  useEffect(() => {
+    sendGAEvent("event", "view_item", {
+      currency: "UAH",
+      value: product.price,
+      items: [{
+        item_id: product.id,
+        item_name: product.name,
+        item_category: product.category?.name ?? undefined,
+        price: product.price,
+        quantity: 1,
+      }],
+    });
+  }, [product.id, product.name, product.price, product.category?.name]);
 
   const canBuy = product.in_stock && !product.is_coming_soon;
 

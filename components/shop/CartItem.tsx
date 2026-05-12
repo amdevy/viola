@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useLocale } from "next-intl";
+import { sendGAEvent } from "@next/third-parties/google";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice, formatVolume } from "@/lib/utils";
 import type { CartItem as CartItemType } from "@/types";
@@ -9,6 +10,20 @@ import type { CartItem as CartItemType } from "@/types";
 export default function CartItem({ item }: { item: CartItemType }) {
   const { updateQuantity, removeItem } = useCart();
   const locale = useLocale();
+
+  const handleRemove = () => {
+    sendGAEvent("event", "remove_from_cart", {
+      currency: "UAH",
+      value: item.price * item.quantity,
+      items: [{
+        item_id: item.productId,
+        item_name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+      }],
+    });
+    removeItem(item.productId);
+  };
 
   return (
     <div className="flex gap-3 py-3 border-b border-[#E8E4DE] last:border-0">
@@ -53,7 +68,7 @@ export default function CartItem({ item }: { item: CartItemType }) {
 
       {/* Remove */}
       <button
-        onClick={() => removeItem(item.productId)}
+        onClick={handleRemove}
         className="flex-shrink-0 p-1 text-[#A0A0A0] hover:text-[#E53E3E] transition-colors"
         aria-label="Видалити"
       >
