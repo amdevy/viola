@@ -24,9 +24,12 @@ export default function ProductCard({ product }: ProductCardProps) {
   const primaryImage = product.images?.[0]?.trim() || "/placeholder-product.png";
   const secondaryImage = product.images?.[1]?.trim() || primaryImage;
 
+  const canBuy = product.in_stock && !product.is_coming_soon;
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!canBuy) return;
     addItem({
       productId: product.id,
       name: product.name,
@@ -98,10 +101,14 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex">
           <button
             onClick={handleAddToCart}
-            disabled={!product.in_stock}
+            disabled={!canBuy}
             className="flex-1 bg-[#1A1A1A] text-white text-xs font-medium py-3 hover:bg-[#C4A882] transition-colors disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider"
           >
-            {product.in_stock ? t("addToCart") : t("out")}
+            {product.is_coming_soon
+              ? tc("comingSoonBadge")
+              : product.in_stock
+              ? t("addToCart")
+              : t("out")}
           </button>
           <a
             href="https://t.me/violagegedosh"

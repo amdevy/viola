@@ -12,7 +12,10 @@ export default function AddToCartButton({ product }: { product: Product }) {
   const [qty, setQty] = useState(1);
   const { addItem, openCart } = useCart();
 
+  const canBuy = product.in_stock && !product.is_coming_soon;
+
   const handleAdd = () => {
+    if (!canBuy) return;
     addItem({
       productId: product.id,
       name: product.name,
@@ -50,10 +53,14 @@ export default function AddToCartButton({ product }: { product: Product }) {
       <div className="flex gap-3">
         <button
           onClick={handleAdd}
-          disabled={!product.in_stock}
+          disabled={!canBuy}
           className="flex-1 bg-[#1A1A1A] text-white py-4 text-sm font-medium rounded hover:bg-[#C4A882] transition-colors disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider"
         >
-          {product.in_stock ? t("addToCartFull") : t("outOfStock")}
+          {product.is_coming_soon
+            ? tc("comingSoonBadge")
+            : product.in_stock
+            ? t("addToCartFull")
+            : t("outOfStock")}
         </button>
         <a
           href="https://t.me/violagegedosh"

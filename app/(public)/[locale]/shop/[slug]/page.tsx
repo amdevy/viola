@@ -203,7 +203,9 @@ export default async function ProductPage({ params }: Props) {
       "@type": "Offer",
       price: product.price,
       priceCurrency: "UAH",
-      availability: product.in_stock
+      availability: product.is_coming_soon
+        ? "https://schema.org/PreOrder"
+        : product.in_stock
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
       seller: {
