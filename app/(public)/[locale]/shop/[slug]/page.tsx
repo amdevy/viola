@@ -342,6 +342,11 @@ export default async function ProductPage({ params }: Props) {
                   -{discount}%
                 </span>
               )}
+              {product.is_new && (
+                <span className="bg-[#38A169] text-white text-xs font-bold px-2 py-1 rounded uppercase tracking-wider">
+                  {tc("newBadge")}
+                </span>
+              )}
             </div>
 
             {/* Hair types */}

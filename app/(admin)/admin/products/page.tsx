@@ -33,6 +33,7 @@ export default function AdminProductsPage() {
     how_to_use: "",
     category_id: "",
     in_stock: true,
+    is_new: false,
     images: [] as string[],
     hair_type: [] as string[],
     // EN translations
@@ -63,7 +64,7 @@ export default function AdminProductsPage() {
     setForm({
       name: "", slug: "", price: "", compare_price: "", volume: "",
       description: "", ingredients: "", how_to_use: "",
-      category_id: "", in_stock: true, images: [], hair_type: [],
+      category_id: "", in_stock: true, is_new: false, images: [], hair_type: [],
       name_en: "", description_en: "", ingredients_en: "", how_to_use_en: "",
     });
     setShowModal(true);
@@ -82,6 +83,7 @@ export default function AdminProductsPage() {
       how_to_use: p.how_to_use ?? "",
       category_id: p.category_id ?? "",
       in_stock: p.in_stock,
+      is_new: p.is_new ?? false,
       images: p.images ?? [],
       hair_type: p.hair_type ?? [],
       name_en: p.name_en ?? "",
@@ -144,6 +146,7 @@ export default function AdminProductsPage() {
       how_to_use: form.how_to_use || null,
       category_id: form.category_id || null,
       in_stock: form.in_stock,
+      is_new: form.is_new,
       images: form.images,
       hair_type: form.hair_type,
       name_en: form.name_en || null,
@@ -440,15 +443,27 @@ export default function AdminProductsPage() {
             </div>
           </details>
 
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="in_stock"
-              checked={form.in_stock}
-              onChange={(e) => setForm((f) => ({ ...f, in_stock: e.target.checked }))}
-              className="accent-[#C4A882]"
-            />
-            <label htmlFor="in_stock" className="text-sm text-[#1A1A1A]">В наявності</label>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="in_stock"
+                checked={form.in_stock}
+                onChange={(e) => setForm((f) => ({ ...f, in_stock: e.target.checked }))}
+                className="accent-[#C4A882]"
+              />
+              <label htmlFor="in_stock" className="text-sm text-[#1A1A1A]">В наявності</label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="is_new"
+                checked={form.is_new}
+                onChange={(e) => setForm((f) => ({ ...f, is_new: e.target.checked }))}
+                className="accent-[#C4A882]"
+              />
+              <label htmlFor="is_new" className="text-sm text-[#1A1A1A]">Новинка</label>
+            </div>
           </div>
 
           {/* Image upload */}

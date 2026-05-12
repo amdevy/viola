@@ -72,6 +72,11 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Badges */}
         <div className="absolute top-2 left-2 flex flex-col gap-1">
+          {product.is_new && (
+            <span className="bg-[#38A169] text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
+              {tc("newBadge")}
+            </span>
+          )}
           {discount && (
             <span className="bg-[#C4A882] text-white text-[10px] font-bold px-2 py-0.5 rounded">
               -{discount}%

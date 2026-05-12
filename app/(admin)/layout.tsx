@@ -1,6 +1,7 @@
 import "../globals.css";
 import { Inter } from "next/font/google";
 import { Toaster } from "react-hot-toast";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -22,6 +23,7 @@ export default function AdminRootLayout({
     <html lang="uk" className={inter.variable}>
       <body className="bg-[#F5F3EF] text-[#1A1A1A] antialiased">
         {children}
+        <SpeedInsights />
         <Toaster
           position="top-right"
           toastOptions={{
