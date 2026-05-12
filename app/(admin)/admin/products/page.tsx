@@ -34,6 +34,7 @@ export default function AdminProductsPage() {
     category_id: "",
     in_stock: true,
     is_new: false,
+    is_coming_soon: false,
     images: [] as string[],
     hair_type: [] as string[],
     // EN translations
@@ -64,7 +65,7 @@ export default function AdminProductsPage() {
     setForm({
       name: "", slug: "", price: "", compare_price: "", volume: "",
       description: "", ingredients: "", how_to_use: "",
-      category_id: "", in_stock: true, is_new: false, images: [], hair_type: [],
+      category_id: "", in_stock: true, is_new: false, is_coming_soon: false, images: [], hair_type: [],
       name_en: "", description_en: "", ingredients_en: "", how_to_use_en: "",
     });
     setShowModal(true);
@@ -84,6 +85,7 @@ export default function AdminProductsPage() {
       category_id: p.category_id ?? "",
       in_stock: p.in_stock,
       is_new: p.is_new ?? false,
+      is_coming_soon: p.is_coming_soon ?? false,
       images: p.images ?? [],
       hair_type: p.hair_type ?? [],
       name_en: p.name_en ?? "",
@@ -147,6 +149,7 @@ export default function AdminProductsPage() {
       category_id: form.category_id || null,
       in_stock: form.in_stock,
       is_new: form.is_new,
+      is_coming_soon: form.is_coming_soon,
       images: form.images,
       hair_type: form.hair_type,
       name_en: form.name_en || null,
@@ -463,6 +466,16 @@ export default function AdminProductsPage() {
                 className="accent-[#C4A882]"
               />
               <label htmlFor="is_new" className="text-sm text-[#1A1A1A]">Новинка</label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="is_coming_soon"
+                checked={form.is_coming_soon}
+                onChange={(e) => setForm((f) => ({ ...f, is_coming_soon: e.target.checked }))}
+                className="accent-[#C4A882]"
+              />
+              <label htmlFor="is_coming_soon" className="text-sm text-[#1A1A1A]">Очікується</label>
             </div>
           </div>
 

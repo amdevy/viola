@@ -347,6 +347,11 @@ export default async function ProductPage({ params }: Props) {
                   {tc("newBadge")}
                 </span>
               )}
+              {product.is_coming_soon && (
+                <span className="bg-[#D97706] text-white text-xs font-bold px-2 py-1 rounded uppercase tracking-wider">
+                  {tc("comingSoonBadge")}
+                </span>
+              )}
             </div>
 
             {/* Hair types */}

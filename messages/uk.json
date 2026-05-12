@@ -32,7 +32,8 @@
     "noArticles": "Статей поки немає",
     "currency": "грн",
     "products": "{count} товарів",
-    "newBadge": "Новинка"
+    "newBadge": "Новинка",
+    "comingSoonBadge": "Очікується"
   },
   "header": {
     "announcement": "Доставка Новою Поштою по всій Україні.",

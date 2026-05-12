@@ -77,6 +77,11 @@ export default function ProductCard({ product }: ProductCardProps) {
               {tc("newBadge")}
             </span>
           )}
+          {product.is_coming_soon && (
+            <span className="bg-[#D97706] text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
+              {tc("comingSoonBadge")}
+            </span>
+          )}
           {discount && (
             <span className="bg-[#C4A882] text-white text-[10px] font-bold px-2 py-0.5 rounded">
               -{discount}%

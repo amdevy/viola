@@ -32,7 +32,8 @@
     "noArticles": "No articles yet",
     "currency": "UAH",
     "products": "{count} products",
-    "newBadge": "New"
+    "newBadge": "New",
+    "comingSoonBadge": "Coming Soon"
   },
   "header": {
     "announcement": "Delivery by Nova Poshta across Ukraine.",
