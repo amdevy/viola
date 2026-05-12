@@ -71,7 +71,7 @@ export default function ShopContent() {
 
         {/* Product grid */}
         <div className="flex-1 min-w-0">
-          <ProductGrid products={products} loading={loading} />
+          <ProductGrid products={products} loading={loading} listName="shop" />
         </div>
       </div>
     </>

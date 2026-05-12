@@ -5,6 +5,7 @@ import Image from "next/image";
 import { createPublicClient } from "@/lib/supabase/server";
 import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
 import ProductCard from "@/components/shop/ProductCard";
+import ProductListGA from "@/components/shop/ProductListGA";
 import type { Product } from "@/types";
 
 export const revalidate = 3600;
@@ -348,6 +349,7 @@ export default async function NaGolovyPage({ params }: Props) {
             <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-10">
               {content.featuredTitle}
             </h2>
+            <ProductListGA products={products} listName="na_golovy_featured" />
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
               {products.map((p) => (
                 <ProductCard key={p.id} product={p} />

@@ -58,6 +58,18 @@ export default function ProductCard({ product }: ProductCardProps) {
     openCart();
   };
 
+  const handleSelect = () => {
+    sendGAEvent("event", "select_item", {
+      items: [{
+        item_id: product.id,
+        item_name: product.name,
+        item_category: product.category?.name ?? undefined,
+        price: product.price,
+      }],
+    });
+    router.push(`/shop/${product.slug}`);
+  };
+
   const discount = product.compare_price
     ? Math.round(((product.compare_price - product.price) / product.compare_price) * 100)
     : null;
@@ -66,8 +78,8 @@ export default function ProductCard({ product }: ProductCardProps) {
     <div
       role="link"
       tabIndex={0}
-      onClick={() => router.push(`/shop/${product.slug}`)}
-      onKeyDown={(e) => { if (e.key === "Enter") router.push(`/shop/${product.slug}`); }}
+      onClick={handleSelect}
+      onKeyDown={(e) => { if (e.key === "Enter") handleSelect(); }}
       className="group flex flex-col cursor-pointer"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}

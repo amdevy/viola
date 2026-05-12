@@ -3,6 +3,7 @@ import { Link } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import { createPublicClient } from "@/lib/supabase/server";
 import ProductCard from "@/components/shop/ProductCard";
+import ProductListGA from "@/components/shop/ProductListGA";
 import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
 import type { Category, Product } from "@/types";
 import type { Metadata } from "next";
@@ -193,11 +194,14 @@ export default async function CategoryPage({ params }: Props) {
         </header>
 
         {products.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-            {products.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
+          <>
+            <ProductListGA products={products} listName={`category_${category.slug}`} />
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+              {products.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </>
         ) : (
           <p className="text-[#6B6B6B] text-center py-16">
             {locale === "en" ? "No products in this category yet." : "У цій категорії поки немає товарів."}

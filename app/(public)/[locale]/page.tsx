@@ -3,6 +3,7 @@ import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { createPublicClient } from "@/lib/supabase/server";
 import ProductCard from "@/components/shop/ProductCard";
+import ProductListGA from "@/components/shop/ProductListGA";
 import { ProductGridSkeleton } from "@/components/ui/Skeleton";
 import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS, BLOG_I18N_FIELDS } from "@/lib/i18n/localize";
 import type { Product } from "@/types";
@@ -286,11 +287,14 @@ export default async function HomePage({
           </div>
 
           {bestsellers.length > 0 ? (
-            <div className='grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6'>
-              {bestsellers.map((p) => (
-                <ProductCard key={p.id} product={p} />
-              ))}
-            </div>
+            <>
+              <ProductListGA products={bestsellers} listName="homepage_bestsellers" />
+              <div className='grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6'>
+                {bestsellers.map((p) => (
+                  <ProductCard key={p.id} product={p} />
+                ))}
+              </div>
+            </>
           ) : (
             <ProductGridSkeleton count={4} />
           )}
