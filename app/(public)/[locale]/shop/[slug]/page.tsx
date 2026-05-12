@@ -53,7 +53,6 @@ async function getRelated(product: Product): Promise<Product[]> {
     .select("*, category:categories(id,name,name_en,slug)")
     .eq("category_id", product.category_id)
     .neq("id", product.id)
-    .eq("in_stock", true)
     .limit(4);
   return (data as Product[]) ?? [];
 }
@@ -203,7 +202,9 @@ export default async function ProductPage({ params }: Props) {
       "@type": "Offer",
       price: product.price,
       priceCurrency: "UAH",
-      availability: product.in_stock
+      availability: product.is_coming_soon
+        ? "https://schema.org/PreOrder"
+        : product.in_stock
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
       seller: {

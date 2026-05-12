@@ -4,15 +4,23 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useCart } from "@/hooks/useCart";
 import toast from "react-hot-toast";
+import StockNotifyModal from "@/components/shop/StockNotifyModal";
 import type { Product } from "@/types";
 
 export default function AddToCartButton({ product }: { product: Product }) {
   const t = useTranslations("productCard");
   const tc = useTranslations("common");
   const [qty, setQty] = useState(1);
+  const [notifyOpen, setNotifyOpen] = useState(false);
   const { addItem, openCart } = useCart();
 
+  const canBuy = product.in_stock && !product.is_coming_soon;
+
   const handleAdd = () => {
+    if (!canBuy) {
+      setNotifyOpen(true);
+      return;
+    }
     addItem({
       productId: product.id,
       name: product.name,
@@ -50,10 +58,9 @@ export default function AddToCartButton({ product }: { product: Product }) {
       <div className="flex gap-3">
         <button
           onClick={handleAdd}
-          disabled={!product.in_stock}
-          className="flex-1 bg-[#1A1A1A] text-white py-4 text-sm font-medium rounded hover:bg-[#C4A882] transition-colors disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider"
+          className="flex-1 bg-[#1A1A1A] text-white py-4 text-sm font-medium rounded hover:bg-[#C4A882] transition-colors uppercase tracking-wider"
         >
-          {product.in_stock ? t("addToCartFull") : t("outOfStock")}
+          {canBuy ? t("addToCartFull") : tc("notifyMe")}
         </button>
         <a
           href="https://t.me/violagegedosh"
@@ -67,6 +74,12 @@ export default function AddToCartButton({ product }: { product: Product }) {
           {tc("consultation")}
         </a>
       </div>
+
+      <StockNotifyModal
+        isOpen={notifyOpen}
+        onClose={() => setNotifyOpen(false)}
+        product={product}
+      />
     </div>
   );
 }
