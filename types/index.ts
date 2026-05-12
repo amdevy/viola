@@ -23,6 +23,8 @@ export interface Product {
   category_id: string | null;
   category?: Category;
   in_stock: boolean;
+  is_new: boolean;
+  is_coming_soon: boolean;
   volume: string | null;
   hair_type: string[];
   created_at: string;

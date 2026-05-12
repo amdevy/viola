@@ -5,7 +5,7 @@ import { createPublicClient } from "@/lib/supabase/server";
 import ProductGallery from "@/components/shop/ProductGallery";
 import ProductCard from "@/components/shop/ProductCard";
 import AddToCartButton from "./AddToCartButton";
-import { formatPrice, HAIR_TYPES } from "@/lib/utils";
+import { formatPrice, formatVolume, HAIR_TYPES } from "@/lib/utils";
 import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
 import type { Product } from "@/types";
 import type { Metadata } from "next";
@@ -324,7 +324,7 @@ export default async function ProductPage({ params }: Props) {
             </h1>
 
             {product.volume && (
-              <p className="text-sm text-[#6B6B6B] mb-4">{product.volume}</p>
+              <p className="text-sm text-[#6B6B6B] mb-4">{formatVolume(product.volume, locale)}</p>
             )}
 
             {/* Price */}
@@ -340,6 +340,16 @@ export default async function ProductPage({ params }: Props) {
               {discount && (
                 <span className="bg-[#C4A882] text-white text-xs font-bold px-2 py-1 rounded">
                   -{discount}%
+                </span>
+              )}
+              {product.is_new && (
+                <span className="bg-[#38A169] text-white text-xs font-bold px-2 py-1 rounded uppercase tracking-wider">
+                  {tc("newBadge")}
+                </span>
+              )}
+              {product.is_coming_soon && (
+                <span className="bg-[#D97706] text-white text-xs font-bold px-2 py-1 rounded uppercase tracking-wider">
+                  {tc("comingSoonBadge")}
                 </span>
               )}
             </div>

@@ -12,10 +12,11 @@ import CartDrawer from "@/components/shop/CartDrawer";
 
 const CATEGORY_ORDER: Record<string, number> = {
   shampoos: 1,
-  conditioners: 2,
-  masks: 3,
-  'leave-in': 4,
-  'styling-brushes': 5,
+  'peeling-shampoos': 2,
+  conditioners: 3,
+  masks: 4,
+  'leave-in': 5,
+  'styling-brushes': 6,
 };
 
 export default function Header() {
@@ -176,7 +177,7 @@ export default function Header() {
                     href={`/shop?category=${cat.slug}`}
                     className='text-xs uppercase tracking-widest text-[#1A1A1A] hover:text-[#C4A882] transition-colors whitespace-nowrap font-medium py-2'
                   >
-                    {tc(cat.slug as "shampoos" | "conditioners" | "masks" | "leave-in" | "styling-brushes")}
+                    {tc(cat.slug as "shampoos" | "peeling-shampoos" | "conditioners" | "masks" | "leave-in" | "styling-brushes")}
                   </Link>
                 ))}
               </div>

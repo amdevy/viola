@@ -31,7 +31,9 @@
     "minReading": "{min} хв читання",
     "noArticles": "Статей поки немає",
     "currency": "грн",
-    "products": "{count} товарів"
+    "products": "{count} товарів",
+    "newBadge": "Новинка",
+    "comingSoonBadge": "Очікується"
   },
   "header": {
     "announcement": "Доставка Новою Поштою по всій Україні.",
@@ -69,6 +71,7 @@
   },
   "categories": {
     "shampoos": "Шампуні",
+    "peeling-shampoos": "Пілінг-шампуні",
     "conditioners": "Кондиціонери",
     "masks": "Маски",
     "leave-in": "Незмивні засоби",
@@ -283,6 +286,8 @@
     "paymentSection": "Оплата",
     "callback": "Зворотній зв'язок",
     "callbackSub": "Ми зателефонуємо вам",
+    "card": "Оплата карткою",
+    "cardSub": "Visa / Mastercard через LiqPay",
     "notes": "Коментар до замовлення (необов'язково)",
     "notesPlaceholder": "Додаткові побажання...",
     "submit": "Залишити заявку",
@@ -298,10 +303,15 @@
     "orderNumber": "Номер замовлення:",
     "willContact": "Ми зв'яжемося з вами для підтвердження замовлення.",
     "reviewPrompt": "Якщо вам сподобався наш сервіс, будемо вдячні за",
-    "googleReview": "відгук у Google",
+    "googleReview": "відгук на сайті",
     "reviewTime": "— це займе лише 30 секунд.",
     "continueShopping": "Продовжити покупки",
-    "goHome": "На головну"
+    "goHome": "На головну",
+    "failedTitle": "Платіж не пройшов",
+    "failedMessage": "Оплата не була завершена. Це могло статись через скасування або помилку банку.",
+    "failedRetry": "Спробувати ще раз",
+    "failedSupport": "Якщо проблема повторюється — напишіть нам у Telegram або зателефонуйте.",
+    "retrying": "Перенаправлення на оплату..."
   },
   "blogPost": {
     "blog": "Блог",

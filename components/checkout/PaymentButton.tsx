@@ -22,7 +22,7 @@ export default function PaymentButton({
   const handlePay = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/wayforpay/checkout", {
+      const res = await fetch("/api/liqpay/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ orderId, items, customer }),
@@ -30,13 +30,28 @@ export default function PaymentButton({
 
       if (!res.ok) throw new Error("Помилка ініціалізації платежу");
 
-      const html = await res.text();
-      const div = document.createElement("div");
-      div.innerHTML = html;
-      document.body.appendChild(div);
-      const form = div.querySelector("form");
-      if (form) form.submit();
-    } catch (err) {
+      const { data, signature, action } = await res.json();
+
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = action;
+      form.acceptCharset = "utf-8";
+
+      const dataInput = document.createElement("input");
+      dataInput.type = "hidden";
+      dataInput.name = "data";
+      dataInput.value = data;
+      form.appendChild(dataInput);
+
+      const sigInput = document.createElement("input");
+      sigInput.type = "hidden";
+      sigInput.name = "signature";
+      sigInput.value = signature;
+      form.appendChild(sigInput);
+
+      document.body.appendChild(form);
+      form.submit();
+    } catch {
       toast.error("Помилка підключення до платіжної системи");
       setLoading(false);
     }

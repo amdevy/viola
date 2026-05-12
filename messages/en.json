@@ -31,7 +31,9 @@
     "minReading": "{min} min read",
     "noArticles": "No articles yet",
     "currency": "UAH",
-    "products": "{count} products"
+    "products": "{count} products",
+    "newBadge": "New",
+    "comingSoonBadge": "Coming Soon"
   },
   "header": {
     "announcement": "Delivery by Nova Poshta across Ukraine.",
@@ -69,6 +71,7 @@
   },
   "categories": {
     "shampoos": "Shampoos",
+    "peeling-shampoos": "Peeling Shampoos",
     "conditioners": "Conditioners",
     "masks": "Masks",
     "leave-in": "Leave-in Care",
@@ -233,7 +236,7 @@
     "suitableFor": "Suitable for",
     "manufacturer": "Manufacturer:",
     "trustDelivery": "Delivery\nNova Poshta",
-    "trustShipping": "We ship\nwithin 1–3 days",
+    "trustShipping": "Delivery in Ukraine\n1–3 days",
     "trustOriginal": "Original\nproducts",
     "relatedProducts": "Similar Products",
     "tabDescription": "Description",
@@ -283,6 +286,8 @@
     "paymentSection": "Payment",
     "callback": "Callback",
     "callbackSub": "We will call you back",
+    "card": "Card payment",
+    "cardSub": "Visa / Mastercard via LiqPay",
     "notes": "Order comment (optional)",
     "notesPlaceholder": "Additional notes...",
     "submit": "Submit request",
@@ -298,10 +303,15 @@
     "orderNumber": "Order number:",
     "willContact": "We will contact you to confirm the order.",
     "reviewPrompt": "If you enjoyed our service, we'd appreciate a",
-    "googleReview": "Google review",
+    "googleReview": "review on our site",
     "reviewTime": "— it only takes 30 seconds.",
     "continueShopping": "Continue shopping",
-    "goHome": "Go to Home"
+    "goHome": "Go to Home",
+    "failedTitle": "Payment failed",
+    "failedMessage": "The payment was not completed. This may have happened due to cancellation or a bank error.",
+    "failedRetry": "Try again",
+    "failedSupport": "If the problem persists — message us on Telegram or call.",
+    "retrying": "Redirecting to payment..."
   },
   "blogPost": {
     "blog": "Blog",

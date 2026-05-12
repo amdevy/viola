@@ -15,7 +15,7 @@ import type { NovaPoshtaCity, NovaPoshtaWarehouse } from "@/types";
 export default function OrderForm() {
   const t = useTranslations("checkout");
   const router = useRouter();
-  const { items, clearCart } = useCart();
+  const { items } = useCart();
   const cartTotal = useCart((s) => s.total());
   const [submitting, setSubmitting] = useState(false);
   const [, setCity] = useState<NovaPoshtaCity | null>(null);
@@ -60,57 +60,74 @@ export default function OrderForm() {
 
       const { orderId } = await res.json();
 
-      if (data.paymentMethod === "callback") {
-        await fetch("/api/notify-callback", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            orderId,
-            customer: {
-              name: `${data.firstName} ${data.lastName}`,
-              phone: data.phone,
-            },
-            items: items.map((i) => ({
-              name: i.name,
-              price: i.price,
-              qty: i.quantity,
-            })),
-            total: cartTotal,
-            notes: data.notes || null,
-            city: data.city,
-            novaPoshtaAddress: data.novaPoshtaAddress,
-          }),
-        });
-        clearCart();
-        router.push(`/checkout/success?orderId=${orderId}`);
-        return;
-      }
-
-      const pfRes = await fetch("/api/wayforpay/checkout", {
+      await fetch("/api/notify-callback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           orderId,
+          customer: {
+            name: `${data.firstName} ${data.lastName}`,
+            phone: data.phone,
+          },
           items: items.map((i) => ({
             name: i.name,
             price: i.price,
             qty: i.quantity,
           })),
-          customer: {
-            name: `${data.firstName} ${data.lastName}`,
-            phone: data.phone,
-            email: data.email ?? "",
-          },
+          total: cartTotal,
+          notes: data.notes || null,
+          city: data.city,
+          novaPoshtaAddress: data.novaPoshtaAddress,
         }),
       });
+      router.push(`/checkout/success?orderId=${orderId}`);
+      return;
 
-      const html = await pfRes.text();
-      const div = document.createElement("div");
-      div.innerHTML = html;
-      document.body.appendChild(div);
-      const form = div.querySelector("form");
-      if (form) form.submit();
-      clearCart();
+      /* LiqPay card payment — disabled, awaiting MonoPay integration
+      if (data.paymentMethod === "card") {
+        const pfRes = await fetch("/api/liqpay/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            orderId,
+            items: items.map((i) => ({
+              name: i.name,
+              price: i.price,
+              qty: i.quantity,
+            })),
+            customer: {
+              name: `${data.firstName} ${data.lastName}`,
+              phone: data.phone,
+              email: data.email ?? "",
+            },
+          }),
+        });
+
+        if (!pfRes.ok) throw new Error(t("orderCreateError"));
+
+        const { data: lpData, signature, action } = await pfRes.json();
+
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = action;
+        form.acceptCharset = "utf-8";
+
+        const dataInput = document.createElement("input");
+        dataInput.type = "hidden";
+        dataInput.name = "data";
+        dataInput.value = lpData;
+        form.appendChild(dataInput);
+
+        const sigInput = document.createElement("input");
+        sigInput.type = "hidden";
+        sigInput.name = "signature";
+        sigInput.value = signature;
+        form.appendChild(sigInput);
+
+        document.body.appendChild(form);
+        form.submit();
+      }
+      */
     } catch {
       toast.error(t("errorGeneric"));
       setSubmitting(false);
@@ -182,9 +199,11 @@ export default function OrderForm() {
       {/* Payment */}
       <div>
         <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-4">{t("paymentSection")}</h2>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3">
           {[
             { value: "callback", icon: "📞", label: t("callback"), sub: t("callbackSub") },
+            // Card payment temporarily disabled — pending MonoPay integration
+            // { value: "card", icon: "💳", label: t("card"), sub: t("cardSub") },
           ].map((opt) => (
             <label
               key={opt.value}

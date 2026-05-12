@@ -11,7 +11,7 @@ interface MobileMenuProps {
   categories: Category[];
 }
 
-const CATEGORY_ORDER = ["shampoos", "masks", "conditioners", "leave-in", "styling-brushes", "additions", "gifts"];
+const CATEGORY_ORDER = ["shampoos", "peeling-shampoos", "masks", "conditioners", "leave-in", "styling-brushes", "additions", "gifts"];
 
 export default function MobileMenu({
   isOpen,

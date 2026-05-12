@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useTranslations, useLocale } from "next-intl";
 import { useCart } from "@/hooks/useCart";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, formatVolume } from "@/lib/utils";
 
 export default function CheckoutSummary() {
   const t = useTranslations("checkout");
@@ -38,7 +38,7 @@ export default function CheckoutSummary() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs font-medium text-[#1A1A1A] line-clamp-2">{item.name}</p>
-              {item.volume && <p className="text-[10px] text-[#6B6B6B]">{item.volume}</p>}
+              {item.volume && <p className="text-[10px] text-[#6B6B6B]">{formatVolume(item.volume, locale)}</p>}
             </div>
             <div className="text-xs font-medium text-[#1A1A1A] whitespace-nowrap">
               {formatPrice(item.price * item.quantity, locale)}

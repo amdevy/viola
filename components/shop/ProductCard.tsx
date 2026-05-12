@@ -5,7 +5,7 @@ import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
 import { useRouter } from "@/i18n/routing";
 import { useCart } from "@/hooks/useCart";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, formatVolume } from "@/lib/utils";
 import toast from "react-hot-toast";
 import type { Product } from "@/types";
 
@@ -72,6 +72,16 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Badges */}
         <div className="absolute top-2 left-2 flex flex-col gap-1">
+          {product.is_new && (
+            <span className="bg-[#38A169] text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
+              {tc("newBadge")}
+            </span>
+          )}
+          {product.is_coming_soon && (
+            <span className="bg-[#D97706] text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
+              {tc("comingSoonBadge")}
+            </span>
+          )}
           {discount && (
             <span className="bg-[#C4A882] text-white text-[10px] font-bold px-2 py-0.5 rounded">
               -{discount}%
@@ -111,7 +121,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           {product.name}
         </h3>
         {product.volume && (
-          <p className="text-xs text-[#6B6B6B]">{product.volume}</p>
+          <p className="text-xs text-[#6B6B6B]">{formatVolume(product.volume, locale)}</p>
         )}
         <div className="flex items-center gap-2 mt-auto pt-1">
           <span className="text-sm font-semibold text-[#1A1A1A]">

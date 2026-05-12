@@ -20,12 +20,13 @@ interface ProductFilterProps {
 
 const CATEGORY_ORDER: Record<string, number> = {
   shampoos: 1,
-  masks: 2,
-  conditioners: 3,
-  "leave-in": 4,
-  "styling-brushes": 5,
-  gifts: 6,
-  additions: 7,
+  "peeling-shampoos": 2,
+  masks: 3,
+  conditioners: 4,
+  "leave-in": 5,
+  "styling-brushes": 6,
+  gifts: 7,
+  additions: 8,
 };
 
 export default function ProductFilter({ filters, onChange }: ProductFilterProps) {

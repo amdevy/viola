@@ -6,7 +6,7 @@ import DataTable from "@/components/admin/DataTable";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
-import { formatPrice, slugify } from "@/lib/utils";
+import { formatPrice, slugify, HAIR_TYPES } from "@/lib/utils";
 import toast from "react-hot-toast";
 import Image from "next/image";
 import type { Product, Category } from "@/types";
@@ -33,7 +33,10 @@ export default function AdminProductsPage() {
     how_to_use: "",
     category_id: "",
     in_stock: true,
+    is_new: false,
+    is_coming_soon: false,
     images: [] as string[],
+    hair_type: [] as string[],
     // EN translations
     name_en: "",
     description_en: "",
@@ -62,7 +65,7 @@ export default function AdminProductsPage() {
     setForm({
       name: "", slug: "", price: "", compare_price: "", volume: "",
       description: "", ingredients: "", how_to_use: "",
-      category_id: "", in_stock: true, images: [],
+      category_id: "", in_stock: true, is_new: false, is_coming_soon: false, images: [], hair_type: [],
       name_en: "", description_en: "", ingredients_en: "", how_to_use_en: "",
     });
     setShowModal(true);
@@ -81,7 +84,10 @@ export default function AdminProductsPage() {
       how_to_use: p.how_to_use ?? "",
       category_id: p.category_id ?? "",
       in_stock: p.in_stock,
+      is_new: p.is_new ?? false,
+      is_coming_soon: p.is_coming_soon ?? false,
       images: p.images ?? [],
+      hair_type: p.hair_type ?? [],
       name_en: p.name_en ?? "",
       description_en: p.description_en ?? "",
       ingredients_en: p.ingredients_en ?? "",
@@ -142,7 +148,10 @@ export default function AdminProductsPage() {
       how_to_use: form.how_to_use || null,
       category_id: form.category_id || null,
       in_stock: form.in_stock,
+      is_new: form.is_new,
+      is_coming_soon: form.is_coming_soon,
       images: form.images,
+      hair_type: form.hair_type,
       name_en: form.name_en || null,
       description_en: form.description_en || null,
       ingredients_en: form.ingredients_en || null,
@@ -358,6 +367,41 @@ export default function AdminProductsPage() {
             />
           </div>
 
+          {/* Hair type */}
+          <div>
+            <label className="text-sm font-medium text-[#1A1A1A] block mb-2">Тип волосся</label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {HAIR_TYPES.map((ht) => {
+                const checked = form.hair_type.includes(ht.value);
+                return (
+                  <label
+                    key={ht.value}
+                    className={`flex items-center gap-2 px-3 py-2 border rounded cursor-pointer transition-colors ${
+                      checked
+                        ? "border-[#C4A882] bg-[#FDF9F5]"
+                        : "border-[#E8E4DE] hover:border-[#C4A882]"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          hair_type: e.target.checked
+                            ? [...f.hair_type, ht.value]
+                            : f.hair_type.filter((v) => v !== ht.value),
+                        }))
+                      }
+                      className="accent-[#C4A882]"
+                    />
+                    <span className="text-sm text-[#1A1A1A]">{ht.label}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+
           {/* EN Translation */}
           <details className="border border-[#E8E4DE] rounded p-3 bg-[#FAFAF8]">
             <summary className="text-sm font-semibold text-[#1A1A1A] cursor-pointer select-none">
@@ -402,15 +446,37 @@ export default function AdminProductsPage() {
             </div>
           </details>
 
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="in_stock"
-              checked={form.in_stock}
-              onChange={(e) => setForm((f) => ({ ...f, in_stock: e.target.checked }))}
-              className="accent-[#C4A882]"
-            />
-            <label htmlFor="in_stock" className="text-sm text-[#1A1A1A]">В наявності</label>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="in_stock"
+                checked={form.in_stock}
+                onChange={(e) => setForm((f) => ({ ...f, in_stock: e.target.checked }))}
+                className="accent-[#C4A882]"
+              />
+              <label htmlFor="in_stock" className="text-sm text-[#1A1A1A]">В наявності</label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="is_new"
+                checked={form.is_new}
+                onChange={(e) => setForm((f) => ({ ...f, is_new: e.target.checked }))}
+                className="accent-[#C4A882]"
+              />
+              <label htmlFor="is_new" className="text-sm text-[#1A1A1A]">Новинка</label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="is_coming_soon"
+                checked={form.is_coming_soon}
+                onChange={(e) => setForm((f) => ({ ...f, is_coming_soon: e.target.checked }))}
+                className="accent-[#C4A882]"
+              />
+              <label htmlFor="is_coming_soon" className="text-sm text-[#1A1A1A]">Очікується</label>
+            </div>
           </div>
 
           {/* Image upload */}
