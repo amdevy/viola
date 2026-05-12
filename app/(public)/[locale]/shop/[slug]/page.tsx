@@ -5,7 +5,7 @@ import { createPublicClient } from "@/lib/supabase/server";
 import ProductGallery from "@/components/shop/ProductGallery";
 import ProductCard from "@/components/shop/ProductCard";
 import AddToCartButton from "./AddToCartButton";
-import { formatPrice, HAIR_TYPES } from "@/lib/utils";
+import { formatPrice, formatVolume, HAIR_TYPES } from "@/lib/utils";
 import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
 import type { Product } from "@/types";
 import type { Metadata } from "next";
@@ -324,7 +324,7 @@ export default async function ProductPage({ params }: Props) {
             </h1>
 
             {product.volume && (
-              <p className="text-sm text-[#6B6B6B] mb-4">{product.volume}</p>
+              <p className="text-sm text-[#6B6B6B] mb-4">{formatVolume(product.volume, locale)}</p>
             )}
 
             {/* Price */}

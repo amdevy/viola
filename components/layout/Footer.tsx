@@ -64,6 +64,7 @@ export default function Footer() {
                 { href: '/shop' as const, label: t("shop") },
                 { href: '/na-golovy' as const, label: "Na Gólov[y]" },
                 { href: '/shop?category=shampoos' as const, label: tc("shampoos") },
+                { href: '/shop?category=peeling-shampoos' as const, label: tc("peeling-shampoos") },
                 { href: '/shop?category=conditioners' as const, label: tc("conditioners") },
                 { href: '/shop?category=masks' as const, label: tc("masks") },
                 { href: '/shop?category=leave-in' as const, label: tc("leavein-care") },

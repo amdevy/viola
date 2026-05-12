@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useLocale } from "next-intl";
 import { useCart } from "@/hooks/useCart";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, formatVolume } from "@/lib/utils";
 import type { CartItem as CartItemType } from "@/types";
 
 export default function CartItem({ item }: { item: CartItemType }) {
@@ -27,7 +27,7 @@ export default function CartItem({ item }: { item: CartItemType }) {
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-[#1A1A1A] line-clamp-2">{item.name}</p>
         {item.volume && (
-          <p className="text-xs text-[#6B6B6B] mt-0.5">{item.volume}</p>
+          <p className="text-xs text-[#6B6B6B] mt-0.5">{formatVolume(item.volume, locale)}</p>
         )}
         <p className="text-sm font-semibold text-[#C4A882] mt-1">
           {formatPrice(item.price * item.quantity, locale)}

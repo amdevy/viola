@@ -5,7 +5,7 @@ import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
 import { useRouter } from "@/i18n/routing";
 import { useCart } from "@/hooks/useCart";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, formatVolume } from "@/lib/utils";
 import toast from "react-hot-toast";
 import type { Product } from "@/types";
 
@@ -111,7 +111,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           {product.name}
         </h3>
         {product.volume && (
-          <p className="text-xs text-[#6B6B6B]">{product.volume}</p>
+          <p className="text-xs text-[#6B6B6B]">{formatVolume(product.volume, locale)}</p>
         )}
         <div className="flex items-center gap-2 mt-auto pt-1">
           <span className="text-sm font-semibold text-[#1A1A1A]">

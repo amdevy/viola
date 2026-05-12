@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
+import { sendOrderEmail } from "@/lib/email";
 
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID!;
 const TELEGRAM_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`;
 
 export async function POST(req: NextRequest) {
   const { orderId, customer, items, total, notes, city, novaPoshtaAddress } = await req.json();
+
+  // Send customer email in background (non-blocking)
+  sendOrderEmail(orderId, "callback").catch((err) =>
+    console.error("notify-callback: email failed", err)
+  );
 
   const escape = (s: string) =>
     s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");

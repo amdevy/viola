@@ -8,6 +8,21 @@ export function formatPrice(price: number, locale: string = "uk"): string {
   return `${formatted} грн`;
 }
 
+const VOLUME_UNIT_MAP: Array<[RegExp, string]> = [
+  [/мл\.?(?![а-яіїєґ])/gi, "ml"],
+  [/кг\.?(?![а-яіїєґ])/gi, "kg"],
+  [/гр\.?(?![а-яіїєґ])/gi, "g"],
+  [/шт\.?(?![а-яіїєґ])/gi, "pcs"],
+  [/(?<=\d|\d\s)л\.?(?![а-яіїєґ])/gi, "l"],
+  [/(?<=\d|\d\s)г\.?(?![а-яіїєґ])/gi, "g"],
+];
+
+export function formatVolume(volume: string | null | undefined, locale: string = "uk"): string {
+  if (!volume) return "";
+  if (locale !== "en") return volume;
+  return VOLUME_UNIT_MAP.reduce((acc, [pattern, repl]) => acc.replace(pattern, repl), volume);
+}
+
 const CYRILLIC_MAP: Record<string, string> = {
   а:"a",б:"b",в:"v",г:"h",ґ:"g",д:"d",е:"e",є:"ye",ж:"zh",з:"z",
   и:"y",і:"i",ї:"yi",й:"y",к:"k",л:"l",м:"m",н:"n",о:"o",п:"p",

@@ -1,62 +1,68 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import type { Metadata } from "next";
-import { createClient } from "@supabase/supabase-js";
-import { fetchLiqPayStatus } from "@/lib/liqpay";
-import { notifyPaidOrder } from "@/lib/notify";
 import ClearCartOnSuccess from "@/components/checkout/ClearCartOnSuccess";
-import PaymentFailed from "@/components/checkout/PaymentFailed";
 
-const PAID_STATUSES = new Set(["success", "sandbox", "wait_accept"]);
+// LiqPay reconcile temporarily disabled — pending MonoPay integration
+// import { createClient } from "@supabase/supabase-js";
+// import { fetchLiqPayStatus } from "@/lib/liqpay";
+// import { notifyPaidOrder } from "@/lib/notify";
+// import { sendOrderEmail } from "@/lib/email";
+// import PaymentFailed from "@/components/checkout/PaymentFailed";
 
-async function getOrderState(
-  orderId: string
-): Promise<{ paymentType: string | null; isPaid: boolean }> {
-  const publicKey = process.env.LIQPAY_PUBLIC_KEY;
-  const privateKey = process.env.LIQPAY_PRIVATE_KEY;
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!supabaseUrl || !serviceKey) return { paymentType: null, isPaid: false };
+// const PAID_STATUSES = new Set(["success", "sandbox", "wait_accept"]);
 
-  const supabase = createClient(supabaseUrl, serviceKey);
-  const { data: order } = await supabase
-    .from("orders")
-    .select("id, status, payment_type")
-    .eq("id", orderId)
-    .single();
-
-  if (!order) return { paymentType: null, isPaid: false };
-
-  if (order.payment_type !== "card" || order.status === "paid") {
-    return { paymentType: order.payment_type, isPaid: order.status === "paid" };
-  }
-
-  if (!publicKey || !privateKey) {
-    return { paymentType: order.payment_type, isPaid: false };
-  }
-
-  try {
-    const result = await fetchLiqPayStatus(orderId, publicKey, privateKey);
-    const isPaid = PAID_STATUSES.has(result.status);
-    await supabase
-      .from("orders")
-      .update({
-        status: isPaid ? "paid" : order.status,
-        payment_status: result.status,
-        payment_id: result.payment_id ? String(result.payment_id) : orderId,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", orderId);
-
-    if (isPaid) {
-      await notifyPaidOrder(orderId);
-    }
-    return { paymentType: order.payment_type, isPaid };
-  } catch (err) {
-    console.error("LiqPay status reconcile failed:", err);
-    return { paymentType: order.payment_type, isPaid: false };
-  }
-}
+// async function getOrderState(
+//   orderId: string
+// ): Promise<{ paymentType: string | null; isPaid: boolean }> {
+//   const publicKey = process.env.LIQPAY_PUBLIC_KEY;
+//   const privateKey = process.env.LIQPAY_PRIVATE_KEY;
+//   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+//   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+//   if (!supabaseUrl || !serviceKey) return { paymentType: null, isPaid: false };
+//
+//   const supabase = createClient(supabaseUrl, serviceKey);
+//   const { data: order } = await supabase
+//     .from("orders")
+//     .select("id, status, payment_type")
+//     .eq("id", orderId)
+//     .single();
+//
+//   if (!order) return { paymentType: null, isPaid: false };
+//
+//   if (order.payment_type !== "card" || order.status === "paid") {
+//     return { paymentType: order.payment_type, isPaid: order.status === "paid" };
+//   }
+//
+//   if (!publicKey || !privateKey) {
+//     return { paymentType: order.payment_type, isPaid: false };
+//   }
+//
+//   try {
+//     const result = await fetchLiqPayStatus(orderId, publicKey, privateKey);
+//     const isPaid = PAID_STATUSES.has(result.status);
+//     await supabase
+//       .from("orders")
+//       .update({
+//         status: isPaid ? "paid" : order.status,
+//         payment_status: result.status,
+//         payment_id: result.payment_id ? String(result.payment_id) : orderId,
+//         updated_at: new Date().toISOString(),
+//       })
+//       .eq("id", orderId);
+//
+//     if (isPaid) {
+//       await Promise.all([
+//         notifyPaidOrder(orderId),
+//         sendOrderEmail(orderId, "paid"),
+//       ]);
+//     }
+//     return { paymentType: order.payment_type, isPaid };
+//   } catch (err) {
+//     console.error("LiqPay status reconcile failed:", err);
+//     return { paymentType: order.payment_type, isPaid: false };
+//   }
+// }
 
 export async function generateMetadata({
   params,
@@ -82,15 +88,8 @@ export default async function SuccessPage({
   const { orderId } = await searchParams;
   const t = await getTranslations({ locale, namespace: "success" });
 
-  const orderState = orderId
-    ? await getOrderState(orderId)
-    : { paymentType: null, isPaid: false };
-
-  if (orderId && orderState.paymentType === "card" && !orderState.isPaid) {
-    return <PaymentFailed orderId={orderId} />;
-  }
-
-  const shouldClearCart = orderState.isPaid || orderState.paymentType === "callback";
+  // LiqPay reconcile disabled — all current orders are "callback" payment_type
+  const shouldClearCart = Boolean(orderId);
 
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-4">

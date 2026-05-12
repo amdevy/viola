@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { verifyCallback, decodeCallback } from "@/lib/liqpay";
 import { notifyPaidOrder } from "@/lib/notify";
+import { sendOrderEmail } from "@/lib/email";
 
 type LiqPayCallback = {
   status: string;
@@ -59,7 +60,10 @@ export async function POST(req: NextRequest) {
     .eq("id", payload.order_id);
 
   if (isPaid && !wasPaid) {
-    await notifyPaidOrder(payload.order_id);
+    await Promise.all([
+      notifyPaidOrder(payload.order_id),
+      sendOrderEmail(payload.order_id, "paid"),
+    ]);
   }
 
   return NextResponse.json({ status: "ok" });

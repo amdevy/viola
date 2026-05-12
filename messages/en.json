@@ -69,6 +69,7 @@
   },
   "categories": {
     "shampoos": "Shampoos",
+    "peeling-shampoos": "Peeling Shampoos",
     "conditioners": "Conditioners",
     "masks": "Masks",
     "leave-in": "Leave-in Care",
@@ -233,7 +234,7 @@
     "suitableFor": "Suitable for",
     "manufacturer": "Manufacturer:",
     "trustDelivery": "Delivery\nNova Poshta",
-    "trustShipping": "We ship\nwithin 1–3 days",
+    "trustShipping": "Delivery in Ukraine\n1–3 days",
     "trustOriginal": "Original\nproducts",
     "relatedProducts": "Similar Products",
     "tabDescription": "Description",
