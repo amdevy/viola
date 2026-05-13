@@ -8,7 +8,7 @@ import Input from "@/components/ui/Input";
 import NovaPoshtaSelect from "./NovaPoshtaSelect";
 import { useCart } from "@/hooks/useCart";
 import toast from "react-hot-toast";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "@/i18n/routing";
 import { sendGAEvent } from "@next/third-parties/google";
 import type { NovaPoshtaCity, NovaPoshtaWarehouse } from "@/types";
@@ -34,6 +34,9 @@ export default function OrderForm() {
   });
 
   const paymentMethod = watch("paymentMethod");
+  const watchedCity = watch("city");
+  const watchedWarehouse = watch("novaPoshtaRef");
+  const shippingTrackedRef = useRef(false);
 
   useEffect(() => {
     if (items.length === 0) return;
@@ -51,11 +54,49 @@ export default function OrderForm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (!watchedCity || !watchedWarehouse || shippingTrackedRef.current) return;
+    if (items.length === 0) return;
+    shippingTrackedRef.current = true;
+    sendGAEvent("event", "add_shipping_info", {
+      currency: "UAH",
+      value: cartTotal,
+      shipping_tier: "Nova Poshta",
+      items: items.map((i) => ({
+        item_id: i.productId,
+        item_name: i.name,
+        price: i.price,
+        quantity: i.quantity,
+      })),
+    });
+  }, [watchedCity, watchedWarehouse, items, cartTotal]);
+
+  const onValidationError = (formErrors: Record<string, { message?: string } | undefined>) => {
+    const failedFields = Object.keys(formErrors).filter((k) => formErrors[k]);
+    if (failedFields.length === 0) return;
+    sendGAEvent("event", "form_validation_error", {
+      form_name: "checkout",
+      fields: failedFields.join(","),
+      field_count: failedFields.length,
+    });
+  };
+
   const onSubmit = async (data: CheckoutFormData) => {
     if (items.length === 0) {
       toast.error(t("cartEmpty"));
       return;
     }
+    sendGAEvent("event", "add_payment_info", {
+      currency: "UAH",
+      value: cartTotal,
+      payment_type: data.paymentMethod === "callback" ? "Callback" : "Card",
+      items: items.map((i) => ({
+        item_id: i.productId,
+        item_name: i.name,
+        price: i.price,
+        quantity: i.quantity,
+      })),
+    });
     setSubmitting(true);
     try {
       const res = await fetch("/api/orders", {
@@ -145,7 +186,13 @@ export default function OrderForm() {
         form.submit();
       }
       */
-    } catch {
+    } catch (err) {
+      sendGAEvent("event", "order_failed", {
+        currency: "UAH",
+        value: cartTotal,
+        payment_type: data.paymentMethod === "callback" ? "Callback" : "Card",
+        reason: err instanceof Error ? err.message : "unknown",
+      });
       toast.error(t("errorGeneric"));
       setSubmitting(false);
     }
@@ -160,7 +207,7 @@ export default function OrderForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit, onValidationError)} className="space-y-6">
       {/* Contact info */}
       <div>
         <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-4">{t("contactInfo")}</h2>

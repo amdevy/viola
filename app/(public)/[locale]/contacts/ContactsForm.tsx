@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { sendGAEvent } from "@next/third-parties/google";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import toast from "react-hot-toast";
@@ -30,9 +31,17 @@ export default function ContactsForm() {
         body: JSON.stringify(form),
       });
       if (!res.ok) throw new Error();
+      sendGAEvent("event", "generate_lead", {
+        lead_source: "contact_form",
+        has_phone: form.phone.trim() ? "true" : "false",
+        has_message: form.message.trim() ? "true" : "false",
+      });
       toast.success(t("success"));
       setForm({ name: "", phone: "", email: "", message: "" });
     } catch {
+      sendGAEvent("event", "form_submit_failed", {
+        form_name: "contact",
+      });
       toast.error(t("error"));
     } finally {
       setSending(false);

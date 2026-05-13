@@ -57,6 +57,11 @@ export default function StockNotifyModal({ isOpen, onClose, product }: Props) {
         product_name: product.name,
         status: product.is_coming_soon ? "coming_soon" : "out_of_stock",
       });
+      sendGAEvent("event", "generate_lead", {
+        lead_source: "stock_notify",
+        product_id: product.id,
+        product_name: product.name,
+      });
       toast.success(t("success"));
       reset();
       onClose();

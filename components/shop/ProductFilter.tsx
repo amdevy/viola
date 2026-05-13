@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
+import { sendGAEvent } from "@next/third-parties/google";
 import { useCategories } from "@/hooks/useProducts";
 import { HAIR_TYPES } from "@/lib/utils";
 
@@ -54,15 +55,32 @@ export default function ProductFilter({ filters, onChange }: ProductFilterProps)
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
       onChange({ ...filters, [key]: value });
+      if (value) {
+        sendGAEvent("event", "filter_products", {
+          filter_type: key,
+          filter_value: value,
+        });
+      }
     }, 400);
   };
 
   const update = (key: keyof FilterState, value: string) => {
     onChange({ ...filters, [key]: value });
+    if (key === "sort") {
+      sendGAEvent("event", "sort_products", {
+        sort_order: value,
+      });
+    } else if (value) {
+      sendGAEvent("event", "filter_products", {
+        filter_type: key,
+        filter_value: value,
+      });
+    }
   };
 
   const reset = () => {
     onChange({ category: "", minPrice: "", maxPrice: "", hairType: "", sort: "newest" });
+    sendGAEvent("event", "filter_products_reset", {});
   };
 
   const hasActive =
