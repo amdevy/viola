@@ -8,14 +8,16 @@ export async function generateMetadata({
   const { locale } = await params;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
   const ukUrl = `${siteUrl}/terms`;
-  const enUrl = `${siteUrl}/en/terms`;
   return {
     title: "Умови використання сайту — Viola Salon",
     description: "Умови використання сайту та інтернет-магазину Viola — права та обов'язки сторін, політика повернення.",
     alternates: {
-      canonical: locale === "en" ? enUrl : ukUrl,
-      languages: { uk: ukUrl, en: enUrl, "x-default": ukUrl },
+      canonical: ukUrl,
+      languages: { uk: ukUrl, "x-default": ukUrl },
     },
+    robots: locale === "en"
+      ? { index: false, follow: true }
+      : { index: true, follow: true },
   };
 }
 

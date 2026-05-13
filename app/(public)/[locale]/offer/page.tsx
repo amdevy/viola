@@ -8,14 +8,16 @@ export async function generateMetadata({
   const { locale } = await params;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
   const ukUrl = `${siteUrl}/offer`;
-  const enUrl = `${siteUrl}/en/offer`;
   return {
     title: "Публічна оферта — Viola Salon Мукачево",
     description: "Публічна оферта інтернет-магазину Viola — умови купівлі-продажу косметики Na Golov[y].",
     alternates: {
-      canonical: locale === "en" ? enUrl : ukUrl,
-      languages: { uk: ukUrl, en: enUrl, "x-default": ukUrl },
+      canonical: ukUrl,
+      languages: { uk: ukUrl, "x-default": ukUrl },
     },
+    robots: locale === "en"
+      ? { index: false, follow: true }
+      : { index: true, follow: true },
   };
 }
 

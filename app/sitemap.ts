@@ -26,8 +26,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .from("blog_posts")
       .select("slug, created_at, title_en, excerpt_en, content_en")
       .eq("published", true),
-    supabase.from("categories").select("slug, created_at"),
+    supabase.from("categories").select("slug, created_at, id"),
   ]);
+
+  const { data: productCategoryIds } = await supabase
+    .from("products")
+    .select("category_id")
+    .eq("in_stock", true);
+
+  const nonEmptyCategoryIds = new Set(
+    (productCategoryIds ?? []).map((p) => p.category_id).filter(Boolean),
+  );
 
   // Use the most recent product as a proxy for shop/home freshness
   const latestProduct = (products ?? []).reduce((latest, p) => {
@@ -52,9 +61,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/reviews`, lastModified: new Date("2026-04-13"), changeFrequency: "weekly", priority: 0.6, alternates: withAlternates("/reviews") },
     { url: `${BASE}/poslugy`, lastModified: new Date("2026-04-13"), changeFrequency: "monthly", priority: 0.7, alternates: withAlternates("/poslugy") },
     { url: `${BASE}/delivery`, lastModified: new Date("2026-04-13"), changeFrequency: "monthly", priority: 0.5, alternates: withAlternates("/delivery") },
-    { url: `${BASE}/offer`, lastModified: new Date("2026-04-13"), changeFrequency: "yearly", priority: 0.3, alternates: withAlternates("/offer") },
-    { url: `${BASE}/privacy`, lastModified: new Date("2026-04-13"), changeFrequency: "yearly", priority: 0.3, alternates: withAlternates("/privacy") },
-    { url: `${BASE}/terms`, lastModified: new Date("2026-04-13"), changeFrequency: "yearly", priority: 0.3, alternates: withAlternates("/terms") },
+    { url: `${BASE}/offer`, lastModified: new Date("2026-04-13"), changeFrequency: "yearly", priority: 0.3, alternates: withAlternates("/offer", false) },
+    { url: `${BASE}/privacy`, lastModified: new Date("2026-04-13"), changeFrequency: "yearly", priority: 0.3, alternates: withAlternates("/privacy", false) },
+    { url: `${BASE}/terms`, lastModified: new Date("2026-04-13"), changeFrequency: "yearly", priority: 0.3, alternates: withAlternates("/terms", false) },
   ];
 
   const productRoutes: MetadataRoute.Sitemap = (products ?? []).map((p) => {
@@ -85,13 +94,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     };
   });
 
-  const categoryRoutes: MetadataRoute.Sitemap = (categories ?? []).map((c) => ({
-    url: `${BASE}/shop/category/${c.slug}`,
-    lastModified: c.created_at ? new Date(c.created_at) : new Date("2026-04-17"),
-    changeFrequency: "weekly",
-    priority: 0.8,
-    alternates: withAlternates(`/shop/category/${c.slug}`),
-  }));
+  const categoryRoutes: MetadataRoute.Sitemap = (categories ?? [])
+    .filter((c) => nonEmptyCategoryIds.has(c.id))
+    .map((c) => ({
+      url: `${BASE}/shop/category/${c.slug}`,
+      lastModified: c.created_at ? new Date(c.created_at) : new Date("2026-04-17"),
+      changeFrequency: "weekly",
+      priority: 0.8,
+      alternates: withAlternates(`/shop/category/${c.slug}`),
+    }));
 
   return [...staticRoutes, ...productRoutes, ...blogRoutes, ...categoryRoutes];
 }
