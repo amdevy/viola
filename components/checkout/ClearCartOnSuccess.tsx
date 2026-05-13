@@ -9,12 +9,14 @@ export default function ClearCartOnSuccess({ orderId }: { orderId?: string }) {
   const clearCart = useCart((s) => s.clearCart);
 
   useEffect(() => {
-    if (items.length > 0) {
+    if (items.length > 0 && orderId) {
       const value = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
       sendGAEvent("event", "purchase", {
-        transaction_id: orderId ?? "",
+        transaction_id: orderId,
         value,
         currency: "UAH",
+        shipping: 0,
+        tax: 0,
         items: items.map((i) => ({
           item_id: i.productId,
           item_name: i.name,

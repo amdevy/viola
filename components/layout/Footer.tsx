@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { sendGAEvent } from "@next/third-parties/google";
 import { Link } from "@/i18n/routing";
 
 export default function Footer() {
@@ -25,6 +26,7 @@ export default function Footer() {
                 href='https://www.instagram.com/viola.mukachevo'
                 target='_blank'
                 rel='noopener noreferrer'
+                onClick={() => sendGAEvent("event", "click_social", { network: "instagram", location: "footer" })}
                 className='w-8 h-8 bg-white/10 hover:bg-[#C4A882] rounded flex items-center justify-center transition-colors'
                 aria-label='Instagram'
               >
@@ -40,6 +42,7 @@ export default function Footer() {
                 href='https://t.me/violagegedosh'
                 target='_blank'
                 rel='noopener noreferrer'
+                onClick={() => sendGAEvent("event", "click_social", { network: "telegram", location: "footer" })}
                 className='w-8 h-8 bg-white/10 hover:bg-[#C4A882] rounded flex items-center justify-center transition-colors'
                 aria-label='Telegram'
               >
@@ -120,6 +123,7 @@ export default function Footer() {
               <li>
                 <a
                   href='tel:+380500582175'
+                  onClick={() => sendGAEvent("event", "click_phone", { location: "footer" })}
                   className='text-[#A0A0A0] hover:text-[#C4A882] transition-colors'
                 >
                   +380 50 058 21 75

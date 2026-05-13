@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { sendGAEvent } from "@next/third-parties/google";
 import { useOrders } from "@/hooks/useOrders";
 import DataTable from "@/components/admin/DataTable";
 import OrderStatusBadge from "@/components/admin/OrderStatusBadge";
 import { formatPrice } from "@/lib/utils";
 import type { Order, OrderStatus } from "@/types";
 import toast from "react-hot-toast";
+
+const PAID_LIKE_STATUSES: OrderStatus[] = ["paid", "processing", "shipped", "delivered"];
 
 const STATUSES: { value: string; label: string }[] = [
   { value: "", label: "Всі" },
@@ -37,11 +40,34 @@ export default function AdminOrdersPage() {
     ? orders.filter((o) => o.status === statusFilter)
     : orders;
 
-  const handleStatusChange = async (orderId: string, newStatus: string) => {
+  const handleStatusChange = async (
+    orderId: string,
+    newStatus: string,
+    prevStatus: OrderStatus,
+    orderTotal: number
+  ) => {
     setUpdating(orderId);
     const { error } = await updateStatus(orderId, newStatus);
-    if (error) toast.error("Помилка оновлення статусу");
-    else toast.success("Статус оновлено");
+    if (error) {
+      toast.error("Помилка оновлення статусу");
+    } else {
+      toast.success("Статус оновлено");
+      if (
+        newStatus === "cancelled" &&
+        PAID_LIKE_STATUSES.includes(prevStatus)
+      ) {
+        sendGAEvent("event", "refund", {
+          transaction_id: orderId,
+          value: orderTotal,
+          currency: "UAH",
+        });
+      }
+      sendGAEvent("event", "order_status_changed", {
+        order_id: orderId,
+        from_status: prevStatus,
+        to_status: newStatus,
+      });
+    }
     setUpdating(null);
   };
 
@@ -98,7 +124,7 @@ export default function AdminOrdersPage() {
         <select
           value={o.status}
           disabled={updating === o.id}
-          onChange={(e) => handleStatusChange(o.id, e.target.value)}
+          onChange={(e) => handleStatusChange(o.id, e.target.value, o.status, o.total)}
           className="text-xs border border-[#E8E4DE] rounded px-2 py-1 bg-white focus:outline-none focus:ring-1 focus:ring-[#C4A882] disabled:opacity-50"
         >
           {ALL_STATUSES.map((s) => (
