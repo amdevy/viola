@@ -8,14 +8,16 @@ export async function generateMetadata({
   const { locale } = await params;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
   const ukUrl = `${siteUrl}/privacy`;
-  const enUrl = `${siteUrl}/en/privacy`;
   return {
     title: "Політика конфіденційності — Viola Salon",
     description: "Політика конфіденційності інтернет-магазину Viola — захист та обробка персональних даних клієнтів.",
     alternates: {
-      canonical: locale === "en" ? enUrl : ukUrl,
-      languages: { uk: ukUrl, en: enUrl, "x-default": ukUrl },
+      canonical: ukUrl,
+      languages: { uk: ukUrl, "x-default": ukUrl },
     },
+    robots: locale === "en"
+      ? { index: false, follow: true }
+      : { index: true, follow: true },
   };
 }
 

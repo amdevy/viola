@@ -45,6 +45,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     CATEGORY_I18N_FIELDS,
   ) as unknown as { row: Category };
 
+  const products = await getProductsByCategory(category.id);
+  const isEmpty = products.length === 0;
+
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
   const ukUrl = `${siteUrl}/shop/category/${slug}`;
   const enUrl = `${siteUrl}/en/shop/category/${slug}`;
@@ -99,7 +102,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       locale: locale === "en" ? "en_US" : "uk_UA",
       images: [{ url: "/preview.jpg", width: 1200, height: 630 }],
     },
-    robots: { index: true, follow: true },
+    robots: isEmpty
+      ? { index: false, follow: true }
+      : { index: true, follow: true },
   };
 }
 
