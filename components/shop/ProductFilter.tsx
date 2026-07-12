@@ -79,7 +79,7 @@ export default function ProductFilter({ filters, onChange }: ProductFilterProps)
   };
 
   const reset = () => {
-    onChange({ category: "", minPrice: "", maxPrice: "", hairType: "", sort: "newest" });
+    onChange({ category: "", minPrice: "", maxPrice: "", hairType: "", sort: "popular" });
     sendGAEvent("event", "filter_products_reset", {});
   };
 
@@ -98,6 +98,7 @@ export default function ProductFilter({ filters, onChange }: ProductFilterProps)
           onChange={(e) => update("sort", e.target.value)}
           className="w-full border border-[#E8E4DE] rounded px-3 py-2 text-sm text-[#1A1A1A] bg-white focus:outline-none focus:ring-2 focus:ring-[#C4A882]"
         >
+          <option value="popular">{t("popular")}</option>
           <option value="newest">{t("newest")}</option>
           <option value="price_asc">{t("priceAsc")}</option>
           <option value="price_desc">{t("priceDesc")}</option>

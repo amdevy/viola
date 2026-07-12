@@ -5,6 +5,12 @@ import { createPublicClient } from "@/lib/supabase/server";
 import ProductGallery from "@/components/shop/ProductGallery";
 import ProductCard from "@/components/shop/ProductCard";
 import ProductListGA from "@/components/shop/ProductListGA";
+import ProductReviews from "@/components/shop/ProductReviews";
+import ProductBenefits from "@/components/shop/ProductBenefits";
+import ProductBundle from "@/components/shop/ProductBundle";
+import ProductFAQ from "@/components/shop/ProductFAQ";
+import ProductTrustBadges from "@/components/shop/ProductTrustBadges";
+import MobileStickyBar from "@/components/shop/MobileStickyBar";
 import AddToCartButton from "./AddToCartButton";
 import { formatPrice, formatVolume, HAIR_TYPES } from "@/lib/utils";
 import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
@@ -312,7 +318,12 @@ export default async function ProductPage({ params }: Props) {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Gallery */}
-          <ProductGallery images={product.images ?? []} name={product.name} />
+          <ProductGallery
+            images={product.images ?? []}
+            name={product.name}
+            productId={product.id}
+            likesCount={product.likes_count ?? 0}
+          />
 
           {/* Details */}
           <div>
@@ -383,19 +394,11 @@ export default async function ProductPage({ params }: Props) {
             {/* Add to cart */}
             <AddToCartButton product={product} />
 
+            {/* Benefits */}
+            <ProductBenefits benefits={product.benefits ?? []} locale={locale} />
+
             {/* Trust badges */}
-            <div className="mt-6 pt-6 border-t border-[#E8E4DE] grid grid-cols-3 gap-4 text-center">
-              {[
-                { icon: "🚚", text: t("trustDelivery") },
-                { icon: "📦", text: t("trustShipping") },
-                { icon: "✓", text: t("trustOriginal") },
-              ].map((b) => (
-                <div key={b.text}>
-                  <div className="text-lg mb-1">{b.icon}</div>
-                  <p className="text-xs text-[#6B6B6B] whitespace-pre-line">{b.text}</p>
-                </div>
-              ))}
-            </div>
+            <ProductTrustBadges locale={locale} />
           </div>
         </div>
 
@@ -404,9 +407,20 @@ export default async function ProductPage({ params }: Props) {
           <ProductTabs product={product} t={t} />
         </div>
 
+        {/* Bundle / cross-sell */}
+        {related.length > 0 && (
+          <ProductBundle mainProduct={product} candidates={related} />
+        )}
+
+        {/* Reviews */}
+        <ProductReviews productId={product.id} reviews={reviews} />
+
+        {/* FAQ */}
+        <ProductFAQ product={product} locale={locale} />
+
         {/* Related */}
         {related.length > 0 && (
-          <section className="mt-16">
+          <section className="mt-16 pt-12 border-t border-[#E8E4DE]">
             <h2 className="font-serif text-2xl font-bold text-[#1A1A1A] mb-8">
               {t("relatedProducts")}
             </h2>
@@ -419,6 +433,8 @@ export default async function ProductPage({ params }: Props) {
           </section>
         )}
       </div>
+
+      <MobileStickyBar product={product} />
     </>
   );
 }

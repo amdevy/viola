@@ -9,6 +9,7 @@ import { formatPrice, formatVolume } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { sendGAEvent } from "@next/third-parties/google";
 import StockNotifyModal from "@/components/shop/StockNotifyModal";
+import ProductLikeButton from "@/components/shop/ProductLikeButton";
 import type { Product } from "@/types";
 
 interface ProductCardProps {
@@ -103,6 +104,11 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Badges */}
         <div className="absolute top-2 left-2 flex flex-col gap-1">
+          {product.is_bestseller && !product.is_coming_soon && (
+            <span className="bg-[#1A1A1A] text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
+              {tc("bestsellerBadge")}
+            </span>
+          )}
           {product.is_new && (
             <span className="bg-[#38A169] text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
               {tc("newBadge")}
@@ -125,8 +131,16 @@ export default function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
 
+        {/* Like button */}
+        <ProductLikeButton
+          productId={product.id}
+          initialCount={product.likes_count ?? 0}
+          size="sm"
+          variant="card"
+        />
+
         {/* Quick add buttons */}
-        <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex">
+        <div className="absolute bottom-0 left-0 right-0 translate-y-0 sm:translate-y-full sm:group-hover:translate-y-0 transition-transform duration-300 flex">
           <button
             onClick={handleAddToCart}
             className="flex-1 bg-[#1A1A1A] text-white text-xs font-medium py-3 hover:bg-[#C4A882] transition-colors uppercase tracking-wider"

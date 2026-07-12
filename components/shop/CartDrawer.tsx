@@ -6,6 +6,7 @@ import { Link } from "@/i18n/routing";
 import { sendGAEvent } from "@next/third-parties/google";
 import { useCart } from "@/hooks/useCart";
 import CartItem from "./CartItem";
+import CartRecommendations from "./CartRecommendations";
 import { formatPrice } from "@/lib/utils";
 
 export default function CartDrawer() {
@@ -98,6 +99,9 @@ export default function CartDrawer() {
             </div>
           )}
         </div>
+
+        {/* Recommendations */}
+        {mounted && items.length > 0 && <CartRecommendations variant="drawer" />}
 
         {/* Footer */}
         {mounted && items.length > 0 && (

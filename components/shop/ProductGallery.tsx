@@ -3,13 +3,16 @@
 import { useState } from "react";
 import { useLocale } from "next-intl";
 import Image from "next/image";
+import ProductLikeButton from "./ProductLikeButton";
 
 interface ProductGalleryProps {
   images: string[];
   name: string;
+  productId?: string;
+  likesCount?: number;
 }
 
-export default function ProductGallery({ images, name }: ProductGalleryProps) {
+export default function ProductGallery({ images, name, productId, likesCount }: ProductGalleryProps) {
   const locale = useLocale();
   const [activeIdx, setActiveIdx] = useState(0);
   const [zoomed, setZoomed] = useState(false);
@@ -41,6 +44,13 @@ export default function ProductGallery({ images, name }: ProductGalleryProps) {
           sizes="(max-width: 768px) 100vw, 50vw"
           priority
         />
+        {productId && (
+          <ProductLikeButton
+            productId={productId}
+            initialCount={likesCount ?? 0}
+            variant="page"
+          />
+        )}
       </div>
 
       {/* Thumbnails */}

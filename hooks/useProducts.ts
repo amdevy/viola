@@ -62,8 +62,13 @@ export function useProducts(filters?: {
         case "price_desc":
           query = query.order("price", { ascending: false });
           break;
-        default:
+        case "newest":
           query = query.order("created_at", { ascending: false });
+          break;
+        default:
+          query = query
+            .order("is_bestseller", { ascending: false })
+            .order("created_at", { ascending: false });
       }
 
       const { data, error } = await query;

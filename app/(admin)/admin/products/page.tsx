@@ -11,9 +11,18 @@ import toast from "react-hot-toast";
 import Image from "next/image";
 import type { Product, Category } from "@/types";
 
+type StatusFilter =
+  | "all"
+  | "bestseller"
+  | "new"
+  | "coming_soon"
+  | "out_of_stock";
+
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [categoryFilter, setCategoryFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
@@ -35,6 +44,9 @@ export default function AdminProductsPage() {
     in_stock: true,
     is_new: false,
     is_coming_soon: false,
+    is_bestseller: false,
+    benefits: "",
+    benefits_en: "",
     images: [] as string[],
     hair_type: [] as string[],
     // EN translations
@@ -65,7 +77,9 @@ export default function AdminProductsPage() {
     setForm({
       name: "", slug: "", price: "", compare_price: "", volume: "",
       description: "", ingredients: "", how_to_use: "",
-      category_id: "", in_stock: true, is_new: false, is_coming_soon: false, images: [], hair_type: [],
+      category_id: "", in_stock: true, is_new: false, is_coming_soon: false,
+      is_bestseller: false, benefits: "", benefits_en: "",
+      images: [], hair_type: [],
       name_en: "", description_en: "", ingredients_en: "", how_to_use_en: "",
     });
     setShowModal(true);
@@ -86,6 +100,9 @@ export default function AdminProductsPage() {
       in_stock: p.in_stock,
       is_new: p.is_new ?? false,
       is_coming_soon: p.is_coming_soon ?? false,
+      is_bestseller: p.is_bestseller ?? false,
+      benefits: (p.benefits ?? []).join("\n"),
+      benefits_en: (p.benefits_en ?? []).join("\n"),
       images: p.images ?? [],
       hair_type: p.hair_type ?? [],
       name_en: p.name_en ?? "",
@@ -150,6 +167,15 @@ export default function AdminProductsPage() {
       in_stock: form.in_stock,
       is_new: form.is_new,
       is_coming_soon: form.is_coming_soon,
+      is_bestseller: form.is_bestseller,
+      benefits: form.benefits
+        .split("\n")
+        .map((s) => s.trim())
+        .filter(Boolean),
+      benefits_en: form.benefits_en
+        .split("\n")
+        .map((s) => s.trim())
+        .filter(Boolean),
       images: form.images,
       hair_type: form.hair_type,
       name_en: form.name_en || null,
@@ -268,6 +294,59 @@ export default function AdminProductsPage() {
     },
   ];
 
+  const byCategory = (p: Product) =>
+    categoryFilter === ""
+      ? true
+      : categoryFilter === "__uncategorized__"
+        ? !p.category_id
+        : p.category_id === categoryFilter;
+
+  const byStatus = (p: Product) => {
+    switch (statusFilter) {
+      case "bestseller":
+        return !!p.is_bestseller;
+      case "new":
+        return !!p.is_new;
+      case "coming_soon":
+        return !!p.is_coming_soon;
+      case "out_of_stock":
+        return !p.in_stock;
+      default:
+        return true;
+    }
+  };
+
+  const filteredProducts = products.filter((p) => byCategory(p) && byStatus(p));
+
+  const categoryCounts = new Map<string, number>();
+  let uncategorizedCount = 0;
+  for (const p of products) {
+    if (!p.category_id) {
+      uncategorizedCount++;
+      continue;
+    }
+    categoryCounts.set(p.category_id, (categoryCounts.get(p.category_id) ?? 0) + 1);
+  }
+
+  // Status chip counts respect the current CATEGORY filter (but not each
+  // other) so the numbers reflect what you'd actually see if you clicked.
+  const inCategory = products.filter(byCategory);
+  const statusCounts = {
+    all: inCategory.length,
+    bestseller: inCategory.filter((p) => p.is_bestseller).length,
+    new: inCategory.filter((p) => p.is_new).length,
+    coming_soon: inCategory.filter((p) => p.is_coming_soon).length,
+    out_of_stock: inCategory.filter((p) => !p.in_stock).length,
+  } as const;
+
+  const statusChips: { key: StatusFilter; label: string }[] = [
+    { key: "all", label: "Усі" },
+    { key: "bestseller", label: "Хіти" },
+    { key: "new", label: "Новинки" },
+    { key: "coming_soon", label: "Очікується" },
+    { key: "out_of_stock", label: "Немає в наявності" },
+  ];
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -275,12 +354,83 @@ export default function AdminProductsPage() {
         <Button onClick={openCreate} size="sm">+ Додати товар</Button>
       </div>
 
+      <div className="flex items-center gap-3 mb-3 flex-wrap">
+        <label className="text-sm font-medium text-[#1A1A1A]">Категорія:</label>
+        <select
+          value={categoryFilter}
+          onChange={(e) => setCategoryFilter(e.target.value)}
+          className="min-w-[220px] px-3 py-2 text-sm border border-[#E8E4DE] rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#C4A882]"
+        >
+          <option value="">Усі категорії ({products.length})</option>
+          {categories.map((c) => {
+            const count = categoryCounts.get(c.id) ?? 0;
+            return (
+              <option key={c.id} value={c.id}>
+                {c.name} ({count})
+              </option>
+            );
+          })}
+          {uncategorizedCount > 0 && (
+            <option value="__uncategorized__">
+              Без категорії ({uncategorizedCount})
+            </option>
+          )}
+        </select>
+        {(categoryFilter !== "" || statusFilter !== "all") && (
+          <button
+            type="button"
+            onClick={() => {
+              setCategoryFilter("");
+              setStatusFilter("all");
+            }}
+            className="text-xs text-[#C4A882] hover:underline"
+          >
+            Скинути фільтри
+          </button>
+        )}
+        <span className="text-xs text-[#6B6B6B] ml-auto">
+          Показано: {filteredProducts.length}
+        </span>
+      </div>
+
+      <div className="flex items-center gap-2 mb-4 flex-wrap">
+        {statusChips.map((chip) => {
+          const active = statusFilter === chip.key;
+          const count = statusCounts[chip.key];
+          return (
+            <button
+              key={chip.key}
+              type="button"
+              onClick={() => setStatusFilter(chip.key)}
+              className={`px-3 py-1.5 text-xs rounded-full border transition-colors ${
+                active
+                  ? "bg-[#1A1A1A] text-white border-[#1A1A1A]"
+                  : "bg-white text-[#1A1A1A] border-[#E8E4DE] hover:border-[#C4A882]"
+              }`}
+            >
+              {chip.label}
+              <span
+                className={`ml-1.5 tabular-nums ${
+                  active ? "text-white/70" : "text-[#6B6B6B]"
+                }`}
+              >
+                ({count})
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
       <DataTable
         columns={columns}
-        data={products}
+        data={filteredProducts}
         loading={loading}
         keyExtractor={(p) => p.id}
-        emptyMessage="Товарів поки немає"
+        emptyMessage={
+          categoryFilter === ""
+            ? "Товарів поки немає"
+            : "У цій категорії немає товарів"
+        }
       />
 
       <Modal
@@ -440,8 +590,17 @@ export default function AdminProductsPage() {
                   className="w-full px-4 py-3 text-sm border border-[#E8E4DE] rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#C4A882] resize-none"
                 />
               </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-medium text-[#1A1A1A]">Benefits — one bullet per line (EN)</label>
+                <textarea
+                  value={form.benefits_en}
+                  onChange={(e) => setForm((f) => ({ ...f, benefits_en: e.target.value }))}
+                  rows={4}
+                  className="w-full px-4 py-3 text-sm border border-[#E8E4DE] rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#C4A882] resize-none"
+                />
+              </div>
               <p className="text-xs text-[#6B6B6B]">
-                All 4 EN fields must be filled for the English product page to be indexed by Google.
+                All EN fields must be filled for the English product page to be indexed by Google.
               </p>
             </div>
           </details>
@@ -477,6 +636,33 @@ export default function AdminProductsPage() {
               />
               <label htmlFor="is_coming_soon" className="text-sm text-[#1A1A1A]">Очікується</label>
             </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="is_bestseller"
+                checked={form.is_bestseller}
+                onChange={(e) => setForm((f) => ({ ...f, is_bestseller: e.target.checked }))}
+                className="accent-[#C4A882]"
+              />
+              <label htmlFor="is_bestseller" className="text-sm text-[#1A1A1A]">Хіт продажів</label>
+            </div>
+          </div>
+
+          {/* Benefits bullets */}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-[#1A1A1A]">
+              Переваги (по одному пункту на рядок)
+            </label>
+            <textarea
+              value={form.benefits}
+              onChange={(e) => setForm((f) => ({ ...f, benefits: e.target.value }))}
+              rows={4}
+              placeholder={"М'яко очищає без сульфатів\nЗволожує шкіру голови\nПідходить для фарбованого волосся"}
+              className="w-full px-4 py-3 text-sm border border-[#E8E4DE] rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#C4A882] resize-none"
+            />
+            <p className="text-xs text-[#6B6B6B]">
+              Покажеться під кнопкою «Додати до кошика» на сторінці товару. 3–5 коротких пунктів — оптимально.
+            </p>
           </div>
 
           {/* Image upload */}

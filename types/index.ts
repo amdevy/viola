@@ -25,6 +25,10 @@ export interface Product {
   in_stock: boolean;
   is_new: boolean;
   is_coming_soon: boolean;
+  is_bestseller: boolean;
+  benefits: string[];
+  benefits_en?: string[] | null;
+  likes_count: number;
   volume: string | null;
   hair_type: string[];
   created_at: string;
