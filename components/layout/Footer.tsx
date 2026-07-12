@@ -140,14 +140,7 @@ export default function Footer() {
           <p className='text-xs text-[#6B6B6B]'>
             {t("allRights", { year: new Date().getFullYear() })}
           </p>
-          <a
-            href='https://t.me/AndriiMatt'
-            target='_blank'
-            rel='noopener noreferrer'
-            className='text-xs text-[#6B6B6B] hover:text-[#C4A882] transition-colors'
-          >
-            {t("developedBy")}
-          </a>
+          <p className='text-xs text-[#6B6B6B]'>{t("developedBy")}</p>
           <div className='flex gap-4'>
             <Link
               href='/privacy'
