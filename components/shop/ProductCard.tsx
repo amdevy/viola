@@ -143,7 +143,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="absolute bottom-0 left-0 right-0 translate-y-0 sm:translate-y-full sm:group-hover:translate-y-0 transition-transform duration-300 flex">
           <button
             onClick={handleAddToCart}
-            className="flex-1 bg-[#1A1A1A] text-white text-xs font-medium py-3 hover:bg-[#C4A882] transition-colors uppercase tracking-wider"
+            className="flex-1 bg-[#1A1A1A] text-white text-[10px] sm:text-xs font-medium py-2.5 sm:py-3 px-1 hover:bg-[#C4A882] transition-colors uppercase tracking-normal sm:tracking-wider leading-tight text-center"
           >
             {canBuy ? t("addToCart") : tc("notifyMe")}
           </button>
@@ -159,7 +159,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 product_name: product.name,
               });
             }}
-            className="flex-1 bg-[#C4A882] text-white text-xs font-medium py-3 text-center hover:bg-[#b89970] transition-colors uppercase tracking-wider"
+            className="flex-1 bg-[#C4A882] text-white text-[10px] sm:text-xs font-medium py-2.5 sm:py-3 px-1 text-center hover:bg-[#b89970] transition-colors uppercase tracking-normal sm:tracking-wider leading-tight"
           >
             {tc("consultation")}
           </a>
