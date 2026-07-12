@@ -34,6 +34,7 @@
     "products": "{count} products",
     "newBadge": "New",
     "comingSoonBadge": "Coming Soon",
+    "bestsellerBadge": "Bestseller",
     "notifyMe": "Notify Me"
   },
   "stockNotify": {
@@ -104,6 +105,7 @@
   },
   "filter": {
     "sorting": "Sort By",
+    "popular": "Most Popular",
     "newest": "Newest",
     "priceAsc": "Price: Low to High",
     "priceDesc": "Price: High to Low",
@@ -251,10 +253,39 @@
     "trustDelivery": "Delivery\nNova Poshta",
     "trustShipping": "Delivery in Ukraine\n1–3 days",
     "trustOriginal": "Original\nproducts",
+    "trustDeliveryTitle": "Nova Poshta",
+    "trustDeliveryDesc": "Delivery across Ukraine",
+    "trustShippingTitle": "Ship in 1–3 days",
+    "trustShippingDesc": "Order before 3 PM — ships today",
+    "trustReturnTitle": "14-day returns",
+    "trustReturnDesc": "No questions asked",
+    "trustOriginalTitle": "Authentic",
+    "trustOriginalDesc": "Directly from brand technologist",
+    "benefitsTitle": "What you'll get",
     "relatedProducts": "Similar Products",
     "tabDescription": "Description",
     "tabIngredients": "Ingredients",
     "tabHowToUse": "How to Use"
+  },
+  "productReviews": {
+    "title": "Reviews",
+    "emptyHint": "Be the first to review this product — help others choose.",
+    "showMore": "Show {count} more",
+    "showLess": "Show less"
+  },
+  "productFaq": {
+    "title": "Frequently asked questions",
+    "subtitle": "Everything worth knowing before buying {product}",
+    "q1": "How fast will I get my {product} order?",
+    "a1": "Orders placed before 3 PM Monday–Saturday ship the same day via Nova Poshta. Delivery typically takes 1–3 business days depending on your city.",
+    "q2": "Is this authentic Na Gólov[y] product?",
+    "a2": "Yes, {product} is original certified Na Gólov[y] cosmetics. Viola store is an official seller through brand technologist Viola Hehedosh.",
+    "q3": "Can I return the product if it doesn't suit me?",
+    "a3": "Yes, you can return the product within 14 days without explaining the reason, provided the packaging is undamaged. See the «Delivery & Payment» page for details.",
+    "q4": "How do I choose the right care for my hair type?",
+    "a4": "The most accurate way is a personal consultation with the brand technologist. Message Viola on Telegram or Instagram describing your hair type and goals — you'll get a personalized recommendation for free.",
+    "q5": "How do I pay for my order?",
+    "a5": "You can pay online with Visa/Mastercard via LiqPay, or choose a callback option — we'll contact you to confirm. 100% prepayment."
   },
   "cart": {
     "title": "Cart",
@@ -268,13 +299,24 @@
     "deliveryRate": "Per Nova Poshta rates",
     "total": "Total",
     "placeOrder": "Place Order",
-    "continueShopping": "Continue shopping"
+    "continueShopping": "Continue shopping",
+    "remove": "Remove",
+    "increase": "Increase quantity",
+    "decrease": "Decrease quantity"
+  },
+  "cartRecommendations": {
+    "title": "Complete your routine",
+    "addButton": "Add",
+    "added": "Product added to cart"
   },
   "productCard": {
     "addToCart": "Add to Cart",
     "outOfStock": "Out of Stock",
     "out": "Out",
     "addedToCart": "added to cart",
+    "bestseller": "Bestseller",
+    "like": "Like",
+    "unlike": "Unlike",
     "quantity": "Quantity:",
     "addToCartFull": "Add to Cart"
   },
@@ -287,7 +329,7 @@
     "lastName": "Last name",
     "lastNamePlaceholder": "Ivanenko",
     "phone": "Phone",
-    "phonePlaceholder": "+380500582175",
+    "phonePlaceholder": "050 123 45 67",
     "email": "Email (optional)",
     "emailPlaceholder": "email@example.com",
     "deliverySection": "Delivery",
@@ -380,5 +422,13 @@
     "a5": "Yes, all Na Golovy products are designed for full cross-line compatibility. You can combine shampoo from one line, conditioner from another, and mask from a third — they complement each other without formula conflict.",
     "q6": "Is Na Golovy suitable for color-treated hair?",
     "a6": "Yes, Na Golovy was created by a colorist specifically to preserve color after dyeing. Formulas protect pigment, support hair structure, and extend color durability. I recommend the amino-ceramide line and sulfate-free shampoos."
+  },
+  "productBundle": {
+    "title": "Build your full hair care ritual",
+    "subtitle": "Combine Na Gólov[y] products from the same line — cleansing, hydration and protection work together for a consistent result.",
+    "totalLabel": "Bundle total",
+    "itemsCount": "{count} item(s) in bundle",
+    "buyBundle": "Add bundle to cart",
+    "addedToast": "Bundle added to cart"
   }
 }

@@ -98,6 +98,7 @@ async function getBestsellers(locale: string): Promise<Product[]> {
   const { data } = await supabase
     .from("products")
     .select("*, category:categories(id,name,name_en,slug)")
+    .order("is_bestseller", { ascending: false })
     .order("created_at", { ascending: false })
     .limit(8);
 

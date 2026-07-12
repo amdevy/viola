@@ -19,7 +19,7 @@ export default function ShopContent() {
     minPrice: "",
     maxPrice: "",
     hairType: "",
-    sort: "newest",
+    sort: "popular",
   });
 
   useEffect(() => {

@@ -69,6 +69,6 @@ export function hasEnTranslation<T extends Record<string, unknown>>(
  * Field groups for each content type — single source of truth.
  * Add new translatable fields here when they appear in the DB.
  */
-export const PRODUCT_I18N_FIELDS = ["name", "description", "ingredients", "how_to_use"] as const;
+export const PRODUCT_I18N_FIELDS = ["name", "description", "ingredients", "how_to_use", "benefits"] as const;
 export const BLOG_I18N_FIELDS = ["title", "excerpt", "content"] as const;
 export const CATEGORY_I18N_FIELDS = ["name"] as const;

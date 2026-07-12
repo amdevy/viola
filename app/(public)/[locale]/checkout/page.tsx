@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import OrderForm from "@/components/checkout/OrderForm";
 import CheckoutSummary from "./CheckoutSummary";
+import CartRecommendations from "@/components/shop/CartRecommendations";
 import type { Metadata } from "next";
 
 export async function generateMetadata({
@@ -30,8 +31,9 @@ export default async function CheckoutPage({
         {t("title")}
       </h1>
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
-        <div className="lg:col-span-3">
+        <div className="lg:col-span-3 space-y-6">
           <OrderForm />
+          <CartRecommendations variant="checkout" limit={6} />
         </div>
         <div className="lg:col-span-2">
           <CheckoutSummary />
