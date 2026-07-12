@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { checkoutSchema, type CheckoutFormData } from "@/lib/validations";
+import { checkoutSchema, normalizeUkrainianPhone, type CheckoutFormData } from "@/lib/validations";
 import Input from "@/components/ui/Input";
 import NovaPoshtaSelect from "./NovaPoshtaSelect";
 import { useCart } from "@/hooks/useCart";
@@ -37,6 +37,43 @@ export default function OrderForm() {
   const watchedCity = watch("city");
   const watchedWarehouse = watch("novaPoshtaRef");
   const shippingTrackedRef = useRef(false);
+
+  // Capture an in-progress checkout once the phone is valid, so we can measure
+  // how many shoppers start the form but never submit. Debounced; keeps the
+  // latest state per phone. Marked 'ordered' on successful submit (see below).
+  const watchedPhone = watch("phone");
+  const watchedFirstName = watch("firstName");
+  const watchedLastName = watch("lastName");
+  const watchedEmail = watch("email");
+  const watchedAddress = watch("novaPoshtaAddress");
+
+  useEffect(() => {
+    if (items.length === 0) return;
+    const phone = normalizeUkrainianPhone(watchedPhone || "");
+    if (!/^\+380\d{9}$/.test(phone)) return;
+    const timer = setTimeout(() => {
+      fetch("/api/abandoned-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "capture",
+          phone,
+          name: [watchedFirstName, watchedLastName].filter(Boolean).join(" ").trim() || null,
+          email: watchedEmail || null,
+          city: watchedCity || null,
+          npAddress: watchedAddress || null,
+          items: items.map((i) => ({
+            productId: i.productId,
+            name: i.name,
+            price: i.price,
+            quantity: i.quantity,
+          })),
+          total: cartTotal,
+        }),
+      }).catch(() => {});
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, [watchedPhone, watchedFirstName, watchedLastName, watchedEmail, watchedCity, watchedAddress, items, cartTotal]);
 
   useEffect(() => {
     if (items.length === 0) return;
@@ -117,6 +154,13 @@ export default function OrderForm() {
       if (!res.ok) throw new Error(t("orderCreateError"));
 
       const { orderId } = await res.json();
+
+      // This phone completed an order — exclude it from abandonment tracking.
+      fetch("/api/abandoned-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "ordered", phone: data.phone }),
+      }).catch(() => {});
 
       await fetch("/api/notify-callback", {
         method: "POST",
