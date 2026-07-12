@@ -5,6 +5,7 @@ import { createPublicClient } from "@/lib/supabase/server";
 import ProductCard from "@/components/shop/ProductCard";
 import ProductListGA from "@/components/shop/ProductListGA";
 import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
+import { getCategorySeo } from "@/lib/category-seo";
 import type { Category, Product } from "@/types";
 import type { Metadata } from "next";
 
@@ -167,6 +168,20 @@ export default async function CategoryPage({ params }: Props) {
     })),
   };
 
+  const seo = getCategorySeo(slug, locale);
+
+  const faqLd = seo
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: seo.faq.map((f) => ({
+          "@type": "Question",
+          name: f.q,
+          acceptedAnswer: { "@type": "Answer", text: f.a },
+        })),
+      }
+    : null;
+
   const introText =
     locale === "en"
       ? `Professional Na Gólov[y] ${category.name.toLowerCase()} — niche aromatic hair cosmetics from Ukrainian brand. High concentration of active ingredients, color protection, and full range combinability. Sold exclusively through accredited brand technologists.`
@@ -177,6 +192,9 @@ export default async function CategoryPage({ params }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       {products.length > 0 && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }} />
+      )}
+      {faqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -211,6 +229,53 @@ export default async function CategoryPage({ params }: Props) {
           <p className="text-[#6B6B6B] text-center py-16">
             {locale === "en" ? "No products in this category yet." : "У цій категорії поки немає товарів."}
           </p>
+        )}
+
+        {/* Long-form SEO content: technologist guidance + FAQ */}
+        {seo && (
+          <section className="mt-16 pt-12 border-t border-[#E8E4DE] max-w-3xl">
+            <div className="space-y-10">
+              {seo.sections.map((s) => (
+                <div key={s.heading}>
+                  <h2 className="font-serif text-2xl font-semibold text-[#1A1A1A] mb-4">
+                    {s.heading}
+                  </h2>
+                  <div className="space-y-3">
+                    {s.body.map((p, i) => (
+                      <p key={i} className="text-[#6B6B6B] leading-relaxed">
+                        {p}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-12">
+              <h2 className="font-serif text-2xl font-semibold text-[#1A1A1A] mb-6">
+                {locale === "en" ? "Frequently asked questions" : "Часті запитання"}
+              </h2>
+              <div className="space-y-6">
+                {seo.faq.map((f) => (
+                  <div key={f.q} className="border-b border-[#E8E4DE] pb-6">
+                    <h3 className="font-medium text-[#1A1A1A] mb-2">{f.q}</h3>
+                    <p className="text-[#6B6B6B] leading-relaxed">{f.a}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-10">
+              <Link
+                href="/na-golovy"
+                className="text-sm text-[#C4A882] hover:text-[#1A1A1A] transition-colors"
+              >
+                {locale === "en"
+                  ? "Learn more about the Na Gólov[y] brand →"
+                  : "Дізнатися більше про бренд Na Gólov[y] →"}
+              </Link>
+            </div>
+          </section>
         )}
 
         {/* Internal linking: other categories */}
