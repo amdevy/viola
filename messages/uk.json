@@ -430,5 +430,10 @@
     "itemsCount": "{count} товар(и) у комплекті",
     "buyBundle": "Купити комплект",
     "addedToast": "Комплект додано до кошика"
+  },
+  "googleReviews": {
+    "basedOn": "На основі {count} відгуків",
+    "topReviewsTitle": "Що пишуть про салон",
+    "viewAllOnGoogle": "Дивитися всі {count} відгуків на Google"
   }
 }

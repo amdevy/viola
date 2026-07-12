@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import Modal from "@/components/ui/Modal";
@@ -9,6 +9,45 @@ import Input from "@/components/ui/Input";
 import { createClient } from "@/lib/supabase/client";
 import toast from "react-hot-toast";
 import type { Review } from "./page";
+
+function GoogleBadge({ url }: { url?: string | null }) {
+  const Content = (
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#F5F6F7] border border-[#E8E4DE] text-[10px] font-medium text-[#5F6368]">
+      <svg viewBox="0 0 24 24" className="w-3 h-3" aria-hidden>
+        <path
+          fill="#4285F4"
+          d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.56c2.08-1.92 3.28-4.75 3.28-8.1z"
+        />
+        <path
+          fill="#34A853"
+          d="M12 23c2.97 0 5.46-.98 7.28-2.65l-3.56-2.77c-.99.66-2.25 1.06-3.72 1.06-2.86 0-5.28-1.93-6.15-4.53H2.18v2.84A11 11 0 0 0 12 23z"
+        />
+        <path
+          fill="#FBBC05"
+          d="M5.85 14.11a6.6 6.6 0 0 1 0-4.22V7.05H2.18a11 11 0 0 0 0 9.9l3.67-2.84z"
+        />
+        <path
+          fill="#EA4335"
+          d="M12 5.38c1.62 0 3.06.56 4.21 1.65l3.15-3.15C17.45 2.09 14.97 1 12 1a11 11 0 0 0-9.82 6.05l3.67 2.84C6.72 7.31 9.14 5.38 12 5.38z"
+        />
+      </svg>
+      Google
+    </span>
+  );
+  if (!url) return Content;
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={(e) => e.stopPropagation()}
+      className="hover:opacity-80 transition-opacity"
+      aria-label="View original review on Google"
+    >
+      {Content}
+    </a>
+  );
+}
 
 function StarRating({
   rating,
@@ -44,8 +83,12 @@ function StarRating({
 
 export default function ReviewsList({
   initialReviews,
+  slot,
+  slotAfter,
 }: {
   initialReviews: Review[];
+  slot?: React.ReactNode;
+  slotAfter?: number;
 }) {
   const t = useTranslations("reviewForm");
   const reviews = initialReviews;
@@ -107,11 +150,12 @@ export default function ReviewsList({
 
       {/* Reviews list */}
       <div className="space-y-6">
-        {reviews.map((review) => (
-          <div
-            key={review.id}
-            className="bg-white rounded border border-[#E8E4DE] p-6"
-          >
+        {reviews.map((review, i) => (
+          <Fragment key={review.id}>
+            {slot && slotAfter !== undefined && i === slotAfter && (
+              <div>{slot}</div>
+            )}
+            <div className="bg-white rounded border border-[#E8E4DE] p-6">
             <div className="flex items-start justify-between mb-3">
               <div>
                 <div className="flex items-center gap-3 mb-1">
@@ -119,9 +163,12 @@ export default function ReviewsList({
                     {review.author_name.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <p className="font-medium text-[#1A1A1A] text-sm">
-                      {review.author_name}
-                    </p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="font-medium text-[#1A1A1A] text-sm">
+                        {review.author_name}
+                      </p>
+                      {review.source === "google" && <GoogleBadge url={review.source_url} />}
+                    </div>
                     <p className="text-xs text-[#6B6B6B]">
                       {new Date(review.created_at).toLocaleDateString("uk-UA", {
                         day: "numeric",
@@ -147,7 +194,8 @@ export default function ReviewsList({
                 </Link>
               </div>
             )}
-          </div>
+            </div>
+          </Fragment>
         ))}
       </div>
 
