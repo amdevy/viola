@@ -158,6 +158,10 @@ export default async function NaGolovyPage({ params }: Props) {
           {
             q: "Where can I buy Na Golovy in Ukraine?",
             a: "Na Golovy is sold only through accredited masters and salons. Viola is an official online store with nationwide Nova Poshta delivery. Avoid marketplaces — there is a high risk of counterfeits.",
+            link: {
+              href: "/blog/de-kupyty-na-glovy-v-ukrayini-ofitsiynyy-prodazh",
+              label: "Read more: where to buy Na Golovy in Ukraine →",
+            },
           },
           {
             q: "How is Na Golovy different from mass-market cosmetics?",
@@ -216,6 +220,10 @@ export default async function NaGolovyPage({ params }: Props) {
           {
             q: "Де купити Na Golovy в Україні?",
             a: "Na Golovy продається тільки через акредитованих майстрів та салони. Viola — офіційний інтернет-магазин з доставкою Новою Поштою по всій Україні. Уникайте маркетплейсів — там високий ризик підробок.",
+            link: {
+              href: "/blog/de-kupyty-na-glovy-v-ukrayini-ofitsiynyy-prodazh",
+              label: "Докладніше: де купити Na Golovy в Україні →",
+            },
           },
           {
             q: "Чим Na Golovy відрізняється від мас-маркету?",
@@ -415,6 +423,14 @@ export default async function NaGolovyPage({ params }: Props) {
                   {f.q}
                 </h3>
                 <p className="text-[#6B6B6B] leading-relaxed">{f.a}</p>
+                {"link" in f && f.link && (
+                  <Link
+                    href={f.link.href}
+                    className="inline-block mt-3 text-sm text-[#C4A882] hover:text-[#1A1A1A] transition-colors"
+                  >
+                    {f.link.label}
+                  </Link>
+                )}
               </div>
             ))}
           </div>
