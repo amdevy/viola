@@ -101,6 +101,7 @@ export default function Header() {
               <div className='flex items-center flex-1'>
                 <nav className='hidden md:flex items-center gap-5 mr-3'>
                   {[
+                    { href: '/na-golovy' as const, label: t("about") },
                     { href: '/reviews' as const, label: t("reviews") },
                     { href: '/blog' as const, label: t("blog") },
                     { href: '/contacts' as const, label: t("whereToConsult") },
