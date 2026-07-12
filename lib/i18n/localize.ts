@@ -5,7 +5,9 @@
  * - On `uk` locale → return row as-is, `hasTranslation = true`
  * - On `en` locale → replace each field with its `_en` counterpart if present,
  *   fall back to UK value if `_en` is empty/null.
- * - `hasTranslation` is true only if **every requested field** has a non-empty EN value.
+ * - `hasTranslation` is true if every field **that has UK content** also has EN content.
+ *   Empty UK fields have nothing to translate, so they never block indexing.
+ *   Supports both string and string[] columns (e.g. `benefits text[]`).
  *   Use this flag in `generateMetadata` to decide whether to `noindex` the EN page
  *   (partially-translated pages hurt SEO, better to hide them from Google until ready).
  *
@@ -21,6 +23,12 @@
  * };
  * ```
  */
+function hasContent(value: unknown): boolean {
+  if (typeof value === "string") return value.trim().length > 0;
+  if (Array.isArray(value)) return value.length > 0;
+  return false;
+}
+
 export function localize<T extends Record<string, unknown>>(
   row: T,
   locale: string,
@@ -34,12 +42,11 @@ export function localize<T extends Record<string, unknown>>(
   const result = { ...row };
 
   for (const field of fields) {
-    const enKey = `${field}_en`;
-    const enValue = row[enKey];
+    const enValue = row[`${field}_en`];
 
-    if (typeof enValue === "string" && enValue.trim().length > 0) {
+    if (hasContent(enValue)) {
       (result as Record<string, unknown>)[field] = enValue;
-    } else {
+    } else if (hasContent(row[field])) {
       hasTranslation = false;
     }
   }
@@ -57,8 +64,7 @@ export function hasEnTranslation<T extends Record<string, unknown>>(
   fields: readonly string[],
 ): boolean {
   for (const field of fields) {
-    const enValue = row[`${field}_en`];
-    if (typeof enValue !== "string" || enValue.trim().length === 0) {
+    if (hasContent(row[field]) && !hasContent(row[`${field}_en`])) {
       return false;
     }
   }

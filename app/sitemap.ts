@@ -20,11 +20,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [{ data: products }, { data: posts }, { data: categories }] = await Promise.all([
     supabase
       .from("products")
-      .select("slug, created_at, name_en, description_en, ingredients_en, how_to_use_en")
+      .select(
+        "slug, created_at, name, name_en, description, description_en, ingredients, ingredients_en, how_to_use, how_to_use_en, benefits, benefits_en",
+      )
       .eq("in_stock", true),
     supabase
       .from("blog_posts")
-      .select("slug, created_at, title_en, excerpt_en, content_en")
+      .select("slug, created_at, title, title_en, excerpt, excerpt_en, content, content_en")
       .eq("published", true),
     supabase.from("categories").select("slug, created_at, id"),
   ]);
