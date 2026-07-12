@@ -2,6 +2,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import { createPublicClient } from "@/lib/supabase/server";
 import ReviewsList from "./ReviewsList";
+import GoogleReviewsBlock from "./GoogleReviewsBlock";
 import type { Metadata } from "next";
 
 export const revalidate = 3600;
@@ -37,6 +38,8 @@ export interface Review {
   product?: { name: string; slug: string } | null;
   created_at: string;
   approved: boolean;
+  source?: "internal" | "google" | string;
+  source_url?: string | null;
 }
 
 async function getReviews(): Promise<Review[]> {
@@ -63,7 +66,9 @@ export default async function ReviewsPage({
   const t = await getTranslations({ locale, namespace: "reviews" });
   const tc = await getTranslations({ locale, namespace: "common" });
   const ts = await getTranslations({ locale, namespace: "schema" });
-  const reviews = await getReviews();
+  const allReviews = await getReviews();
+  const googleReviews = allReviews.filter((r) => r.source === "google");
+  const reviews = allReviews.filter((r) => r.source !== "google");
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
   const avgRating = reviews.length
@@ -120,7 +125,11 @@ export default async function ReviewsPage({
         </p>
       </div>
 
-      <ReviewsList initialReviews={reviews} />
+      <ReviewsList
+        initialReviews={reviews}
+        slot={<GoogleReviewsBlock reviews={googleReviews} locale={locale} />}
+        slotAfter={5}
+      />
     </div>
   );
 }

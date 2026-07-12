@@ -430,5 +430,10 @@
     "itemsCount": "{count} item(s) in bundle",
     "buyBundle": "Add bundle to cart",
     "addedToast": "Bundle added to cart"
+  },
+  "googleReviews": {
+    "basedOn": "Based on {count} reviews",
+    "topReviewsTitle": "What clients say about the salon",
+    "viewAllOnGoogle": "View all {count} reviews on Google"
   }
 }
