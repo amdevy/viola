@@ -330,6 +330,7 @@
     "lastNamePlaceholder": "Ivanenko",
     "phone": "Phone",
     "phonePlaceholder": "050 123 45 67",
+    "phoneHint": "Ukrainian number — we currently deliver within Ukraine only",
     "email": "Email (optional)",
     "emailPlaceholder": "email@example.com",
     "deliverySection": "Delivery",
@@ -338,6 +339,7 @@
     "warehouse": "Nova Poshta branch / Parcel locker",
     "warehousePlaceholder": "Search branch or parcel locker (in Ukrainian)...",
     "warehouseLoading": "Loading...",
+    "warehouseSelectCityFirst": "Select a city first",
     "paymentSection": "Payment",
     "callback": "Callback",
     "callbackSub": "We will call you back",
@@ -350,7 +352,14 @@
     "submitting": "Submitting...",
     "cartEmpty": "Your cart is empty",
     "errorGeneric": "An error occurred. Please try again.",
-    "orderCreateError": "Failed to create order"
+    "orderCreateError": "Failed to create order",
+    "formHasErrors": "Please check the highlighted fields above",
+    "errFirstName": "Enter your first name (min. 2 characters)",
+    "errLastName": "Enter your last name (min. 2 characters)",
+    "errPhone": "Enter a phone number, e.g. 050 123 45 67",
+    "errEmail": "Invalid email",
+    "errCity": "Select a city from the list",
+    "errWarehouse": "Select a branch from the list"
   },
   "success": {
     "title": "Thank you for your order!",
