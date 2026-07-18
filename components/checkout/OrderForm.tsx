@@ -3,12 +3,12 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { checkoutSchema, normalizeUkrainianPhone, type CheckoutFormData } from "@/lib/validations";
+import { createCheckoutSchema, normalizeUkrainianPhone, type CheckoutFormData } from "@/lib/validations";
 import Input from "@/components/ui/Input";
 import NovaPoshtaSelect from "./NovaPoshtaSelect";
 import { useCart } from "@/hooks/useCart";
 import toast from "react-hot-toast";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "@/i18n/routing";
 import { sendGAEvent } from "@next/third-parties/google";
 import type { NovaPoshtaCity, NovaPoshtaWarehouse } from "@/types";
@@ -22,15 +22,42 @@ export default function OrderForm() {
   const [, setCity] = useState<NovaPoshtaCity | null>(null);
   const [, setWarehouse] = useState<NovaPoshtaWarehouse | null>(null);
 
+  const schema = useMemo(
+    () =>
+      createCheckoutSchema({
+        firstName: t("errFirstName"),
+        lastName: t("errLastName"),
+        phone: t("errPhone"),
+        email: t("errEmail"),
+        city: t("errCity"),
+        warehouse: t("errWarehouse"),
+      }),
+    [t]
+  );
+
   const {
     register,
     handleSubmit,
     setValue,
+    setFocus,
     watch,
     formState: { errors },
   } = useForm<CheckoutFormData>({
-    resolver: zodResolver(checkoutSchema),
-    defaultValues: { paymentMethod: "callback" },
+    resolver: zodResolver(schema),
+    mode: "onTouched",
+    // Порожні рядки замість undefined, щоб zod давав локалізовані min(1)-помилки
+    defaultValues: {
+      paymentMethod: "callback",
+      firstName: "",
+      lastName: "",
+      phone: "",
+      email: "",
+      city: "",
+      cityRef: "",
+      novaPoshtaRef: "",
+      novaPoshtaAddress: "",
+      notes: "",
+    },
   });
 
   const paymentMethod = watch("paymentMethod");
@@ -108,6 +135,21 @@ export default function OrderForm() {
     });
   }, [watchedCity, watchedWarehouse, items, cartTotal]);
 
+  const deliverySectionRef = useRef<HTMLDivElement>(null);
+
+  const FIELD_ORDER: (keyof CheckoutFormData)[] = [
+    "firstName",
+    "lastName",
+    "phone",
+    "email",
+    "city",
+    "cityRef",
+    "novaPoshtaRef",
+    "novaPoshtaAddress",
+  ];
+  // Поля НП не зареєстровані як інпути — до них скролимо секцією
+  const NP_FIELDS: (keyof CheckoutFormData)[] = ["city", "cityRef", "novaPoshtaRef", "novaPoshtaAddress"];
+
   const onValidationError = (formErrors: Record<string, { message?: string } | undefined>) => {
     const failedFields = Object.keys(formErrors).filter((k) => formErrors[k]);
     if (failedFields.length === 0) return;
@@ -116,6 +158,13 @@ export default function OrderForm() {
       fields: failedFields.join(","),
       field_count: failedFields.length,
     });
+    const first = FIELD_ORDER.find((f) => failedFields.includes(f));
+    if (!first) return;
+    if (NP_FIELDS.includes(first)) {
+      deliverySectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    } else {
+      setFocus(first);
+    }
   };
 
   const onSubmit = async (data: CheckoutFormData) => {
@@ -273,6 +322,7 @@ export default function OrderForm() {
             placeholder={t("phonePlaceholder")}
             type="tel"
             error={errors.phone?.message}
+            hint={t("phoneHint")}
             {...register("phone")}
           />
           <Input
@@ -286,7 +336,7 @@ export default function OrderForm() {
       </div>
 
       {/* Delivery */}
-      <div>
+      <div ref={deliverySectionRef}>
         <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-4">{t("deliverySection")}</h2>
         <NovaPoshtaSelect
           onCityChange={(c) => {
@@ -342,6 +392,12 @@ export default function OrderForm() {
           {...register("notes")}
         />
       </div>
+
+      {Object.keys(errors).length > 0 && (
+        <p className="text-sm text-[#E53E3E] text-center" role="alert">
+          {t("formHasErrors")}
+        </p>
+      )}
 
       <button
         type="submit"

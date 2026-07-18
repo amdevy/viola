@@ -30,6 +30,7 @@ export default function NovaPoshtaSelect({
   const [showWarehouseDropdown, setShowWarehouseDropdown] = useState(false);
   const cityRef = useRef<HTMLDivElement>(null);
   const warehouseRef = useRef<HTMLDivElement>(null);
+  const commitCityRef = useRef<() => void>(() => {});
 
   // Search cities
   useEffect(() => {
@@ -69,6 +70,7 @@ export default function NovaPoshtaSelect({
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (cityRef.current && !cityRef.current.contains(e.target as Node)) {
+        commitCityRef.current();
         setShowCityDropdown(false);
       }
       if (warehouseRef.current && !warehouseRef.current.contains(e.target as Node)) {
@@ -93,6 +95,17 @@ export default function NovaPoshtaSelect({
     onWarehouseChange(wh);
   };
 
+  // Якщо юзер надрукував місто, але не клікнув у списку — вибираємо збіг за нього
+  useEffect(() => {
+    commitCityRef.current = () => {
+      if (selectedCity || cities.length === 0) return;
+      const q = cityQuery.trim().toLowerCase();
+      const exact = cities.find((c) => c.Description.toLowerCase() === q);
+      const pick = exact ?? (cities.length === 1 ? cities[0] : null);
+      if (pick) selectCity(pick);
+    };
+  });
+
   return (
     <div className="space-y-4">
       {/* City */}
@@ -111,6 +124,7 @@ export default function NovaPoshtaSelect({
               }
             }}
             onFocus={() => cities.length > 0 && setShowCityDropdown(true)}
+            onBlur={() => commitCityRef.current()}
             className={`w-full px-4 py-3 text-sm border rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#C4A882] transition-colors ${
               cityError ? "border-[#E53E3E]" : "border-[#E8E4DE]"
             }`}
@@ -142,15 +156,21 @@ export default function NovaPoshtaSelect({
         {cityError && <p className="text-xs text-[#E53E3E]">{cityError}</p>}
       </div>
 
-      {/* Warehouse */}
-      {selectedCity && (
-        <div className="flex flex-col gap-1" ref={warehouseRef}>
-          <label className="text-sm font-medium text-[#1A1A1A]">{t("warehouse")}</label>
-          <div className="relative">
-            <input
-              type="text"
-              placeholder={warehouseLoading ? t("warehouseLoading") : t("warehousePlaceholder")}
-              value={selectedWarehouse ? selectedWarehouse.Description : warehouseQuery}
+      {/* Warehouse — видиме завжди, щоб юзер бачив другий крок доставки */}
+      <div className="flex flex-col gap-1" ref={warehouseRef}>
+        <label className="text-sm font-medium text-[#1A1A1A]">{t("warehouse")}</label>
+        <div className="relative">
+          <input
+            type="text"
+            disabled={!selectedCity}
+            placeholder={
+              !selectedCity
+                ? t("warehouseSelectCityFirst")
+                : warehouseLoading
+                ? t("warehouseLoading")
+                : t("warehousePlaceholder")
+            }
+            value={selectedWarehouse ? selectedWarehouse.Description : warehouseQuery}
               onChange={(e) => {
                 setWarehouseQuery(e.target.value);
                 if (selectedWarehouse) {
@@ -161,7 +181,7 @@ export default function NovaPoshtaSelect({
               }}
               onFocus={() => !selectedWarehouse && setShowWarehouseDropdown(true)}
               readOnly={warehouseLoading}
-              className={`w-full px-4 py-3 text-sm border rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#C4A882] transition-colors ${
+              className={`w-full px-4 py-3 text-sm border rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#C4A882] transition-colors disabled:bg-[#F7F5F2] disabled:cursor-not-allowed ${
                 warehouseError ? "border-[#E53E3E]" : "border-[#E8E4DE]"
               }`}
             />
@@ -210,7 +230,6 @@ export default function NovaPoshtaSelect({
           </div>
           {warehouseError && <p className="text-xs text-[#E53E3E]">{warehouseError}</p>}
         </div>
-      )}
     </div>
   );
 }
