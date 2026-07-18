@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { createCheckoutSchema, checkoutSchema, normalizeUkrainianPhone } from "@/lib/validations";
+import { createCheckoutSchema, checkoutSchema, normalizeUkrainianPhone, normalizePhone, isValidPhone } from "@/lib/validations";
 
 const validData = {
   firstName: "Олена",
@@ -30,6 +30,23 @@ describe("normalizeUkrainianPhone", () => {
   });
 });
 
+describe("normalizePhone / isValidPhone", () => {
+  it("український номер лишається у форматі +380", () => {
+    expect(normalizePhone("050 123 45 67")).toBe("+380501234567");
+  });
+
+  it("закордонний номер стискається до +цифри", () => {
+    expect(normalizePhone("+49 (151) 234-567-89")).toBe("+4915123456789");
+  });
+
+  it("приймає валідні номери і відкидає сміття", () => {
+    expect(isValidPhone("050 123 45 67")).toBe(true);
+    expect(isValidPhone("+49 151 23456789")).toBe(true);
+    expect(isValidPhone("123")).toBe(false);
+    expect(isValidPhone("не номер")).toBe(false);
+  });
+});
+
 describe("checkoutSchema", () => {
   it("пропускає коректні дані і нормалізує телефон", () => {
     const result = checkoutSchema.safeParse(validData);
@@ -39,7 +56,7 @@ describe("checkoutSchema", () => {
 
   it("пропускає порожній email і відсутній email", () => {
     expect(checkoutSchema.safeParse({ ...validData, email: "" }).success).toBe(true);
-    const { email: _email, ...withoutEmail } = validData;
+    const withoutEmail = Object.fromEntries(Object.entries(validData).filter(([k]) => k !== "email"));
     expect(checkoutSchema.safeParse(withoutEmail).success).toBe(true);
   });
 
@@ -47,9 +64,14 @@ describe("checkoutSchema", () => {
     expect(checkoutSchema.safeParse({ ...validData, email: "not-an-email" }).success).toBe(false);
   });
 
-  it("відхиляє закордонний телефон", () => {
+  it("приймає закордонний телефон і нормалізує його", () => {
     const result = checkoutSchema.safeParse({ ...validData, phone: "+49 151 23456789" });
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.phone).toBe("+4915123456789");
+  });
+
+  it("відхиляє надто короткий телефон", () => {
+    expect(checkoutSchema.safeParse({ ...validData, phone: "123" }).success).toBe(false);
   });
 
   it("місто без вибору зі списку валить усі 4 поля НП", () => {
@@ -71,16 +93,16 @@ describe("checkoutSchema", () => {
     const en = createCheckoutSchema({
       firstName: "First name required",
       lastName: "Last name required",
-      phone: "Phone must be Ukrainian",
+      phone: "Phone is invalid",
       email: "Bad email",
       city: "Pick a city",
       warehouse: "Pick a branch",
     });
-    const result = en.safeParse({ ...validData, phone: "+49 151 23456789", city: "" });
+    const result = en.safeParse({ ...validData, phone: "123", city: "" });
     expect(result.success).toBe(false);
     if (!result.success) {
       const messages = result.error.issues.map((i) => i.message);
-      expect(messages).toContain("Phone must be Ukrainian");
+      expect(messages).toContain("Phone is invalid");
       expect(messages).toContain("Pick a city");
     }
   });

@@ -330,7 +330,7 @@
     "lastNamePlaceholder": "Іваненко",
     "phone": "Телефон",
     "phonePlaceholder": "050 123 45 67",
-    "phoneHint": "Український номер — доставляємо тільки по Україні",
+    "phoneHint": "Доставляємо поки що тільки по Україні",
     "email": "Email (необов'язково)",
     "emailPlaceholder": "email@example.com",
     "deliverySection": "Доставка",
@@ -356,7 +356,7 @@
     "formHasErrors": "Перевірте виділені поля вище",
     "errFirstName": "Введіть ім'я (мін. 2 символи)",
     "errLastName": "Введіть прізвище (мін. 2 символи)",
-    "errPhone": "Введіть номер, напр. 050 123 45 67",
+    "errPhone": "Введіть коректний номер, напр. 050 123 45 67",
     "errEmail": "Невірний email",
     "errCity": "Оберіть місто зі списку",
     "errWarehouse": "Оберіть відділення зі списку"

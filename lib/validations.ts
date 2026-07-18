@@ -28,6 +28,18 @@ const defaultCheckoutErrors: CheckoutErrorMessages = {
   warehouse: "Оберіть відділення зі списку",
 };
 
+// Українські номери → +380XXXXXXXXX, закордонні → лише цифри з опційним +
+export function normalizePhone(value: string): string {
+  const ua = normalizeUkrainianPhone(value);
+  if (/^\+380\d{9}$/.test(ua)) return ua;
+  const digits = value.replace(/\D/g, "");
+  return value.trim().startsWith("+") ? `+${digits}` : digits;
+}
+
+export function isValidPhone(value: string): boolean {
+  return /^\+?\d{8,15}$/.test(normalizePhone(value));
+}
+
 // Фабрика, щоб тексти помилок можна було локалізувати (en-чекаут показував українські)
 export function createCheckoutSchema(m: CheckoutErrorMessages = defaultCheckoutErrors) {
   return z.object({
@@ -35,8 +47,8 @@ export function createCheckoutSchema(m: CheckoutErrorMessages = defaultCheckoutE
     lastName: z.string().min(2, m.lastName),
     phone: z
       .string()
-      .transform(normalizeUkrainianPhone)
-      .pipe(z.string().regex(/^\+380\d{9}$/, m.phone)),
+      .transform(normalizePhone)
+      .pipe(z.string().regex(/^\+?\d{8,15}$/, m.phone)),
     email: z.string().email(m.email).optional().or(z.literal("")),
     city: z.string().min(1, m.city),
     cityRef: z.string().min(1, m.city),
