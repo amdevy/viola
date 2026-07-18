@@ -83,7 +83,18 @@ describe("OrderForm", () => {
     expect(calledUrls().some((u) => u.includes("/api/notify-callback"))).toBe(false);
   });
 
-  it("закордонний телефон: помилка з'являється одразу після виходу з поля, без сабміту", async () => {
+  it("невалідний телефон: помилка з'являється одразу після виходу з поля, без сабміту", async () => {
+    const user = userEvent.setup();
+    render(<OrderForm />);
+
+    const phoneInput = screen.getByLabelText(uk.checkout.phone);
+    await user.type(phoneInput, "123");
+    await user.tab();
+
+    expect(await screen.findByText(uk.checkout.errPhone)).toBeInTheDocument();
+  });
+
+  it("закордонний телефон приймається без помилки", async () => {
     const user = userEvent.setup();
     render(<OrderForm />);
 
@@ -91,7 +102,8 @@ describe("OrderForm", () => {
     await user.type(phoneInput, "+49 151 23456789");
     await user.tab();
 
-    expect(await screen.findByText(uk.checkout.errPhone)).toBeInTheDocument();
+    await new Promise((r) => setTimeout(r, 50));
+    expect(screen.queryByText(uk.checkout.errPhone)).not.toBeInTheDocument();
   });
 
   it("надруковане, але не клікнуте місто більше не блокує замовлення (повний флоу)", async () => {

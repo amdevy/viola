@@ -330,7 +330,7 @@
     "lastNamePlaceholder": "Ivanenko",
     "phone": "Phone",
     "phonePlaceholder": "050 123 45 67",
-    "phoneHint": "Ukrainian number — we currently deliver within Ukraine only",
+    "phoneHint": "Please note: we currently deliver within Ukraine only",
     "email": "Email (optional)",
     "emailPlaceholder": "email@example.com",
     "deliverySection": "Delivery",
@@ -356,7 +356,7 @@
     "formHasErrors": "Please check the highlighted fields above",
     "errFirstName": "Enter your first name (min. 2 characters)",
     "errLastName": "Enter your last name (min. 2 characters)",
-    "errPhone": "Enter a phone number, e.g. 050 123 45 67",
+    "errPhone": "Enter a valid phone number",
     "errEmail": "Invalid email",
     "errCity": "Select a city from the list",
     "errWarehouse": "Select a branch from the list"

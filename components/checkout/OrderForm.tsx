@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { createCheckoutSchema, normalizeUkrainianPhone, type CheckoutFormData } from "@/lib/validations";
+import { createCheckoutSchema, isValidPhone, normalizePhone, type CheckoutFormData } from "@/lib/validations";
 import Input from "@/components/ui/Input";
 import NovaPoshtaSelect from "./NovaPoshtaSelect";
 import { useCart } from "@/hooks/useCart";
@@ -76,8 +76,8 @@ export default function OrderForm() {
 
   useEffect(() => {
     if (items.length === 0) return;
-    const phone = normalizeUkrainianPhone(watchedPhone || "");
-    if (!/^\+380\d{9}$/.test(phone)) return;
+    const phone = normalizePhone(watchedPhone || "");
+    if (!isValidPhone(phone)) return;
     const timer = setTimeout(() => {
       fetch("/api/abandoned-checkout", {
         method: "POST",
