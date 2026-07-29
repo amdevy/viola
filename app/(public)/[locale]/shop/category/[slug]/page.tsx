@@ -6,6 +6,7 @@ import ProductCard from "@/components/shop/ProductCard";
 import ProductListGA from "@/components/shop/ProductListGA";
 import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
 import { getCategorySeo } from "@/lib/category-seo";
+import { NON_EMPTY_CATEGORY_SELECT, stripJoinedProducts } from "@/lib/categories";
 import type { Category, Product } from "@/types";
 import type { Metadata } from "next";
 
@@ -125,6 +126,9 @@ export default async function CategoryPage({ params }: Props) {
   ) as unknown as { row: Category };
 
   const productsRaw = await getProductsByCategory(category.id);
+
+  // Порожню категорію не показуємо — див. lib/categories.ts
+  if (productsRaw.length === 0) notFound();
 
   const products = productsRaw.map((p) => {
     const { row } = localize(
@@ -300,10 +304,10 @@ async function OtherCategoriesList({
   const supabase = createPublicClient();
   const { data } = await supabase
     .from("categories")
-    .select("*")
+    .select(NON_EMPTY_CATEGORY_SELECT)
     .neq("slug", currentSlug);
 
-  const categories = ((data ?? []) as Category[]).map((c) => {
+  const categories = stripJoinedProducts(data).map((c) => {
     const { row } = localize(
       c as unknown as Record<string, unknown>,
       locale,

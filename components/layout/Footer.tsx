@@ -3,11 +3,13 @@
 import { useTranslations } from "next-intl";
 import { sendGAEvent } from "@next/third-parties/google";
 import { Link } from "@/i18n/routing";
+import { useCategories } from "@/hooks/useProducts";
+import { sortCategories } from "@/lib/categories";
 
 export default function Footer() {
   const t = useTranslations("footer");
-  const tc = useTranslations("categories");
   const th = useTranslations("header");
+  const { categories } = useCategories();
 
   return (
     <footer className='bg-[#1A1A1A] text-white'>
@@ -66,14 +68,6 @@ export default function Footer() {
               {[
                 { href: '/shop' as const, label: t("shop") },
                 { href: '/na-golovy' as const, label: "Na Gólov[y]" },
-                { href: '/shop?category=shampoos' as const, label: tc("shampoos") },
-                { href: '/shop?category=peeling-shampoos' as const, label: tc("peeling-shampoos") },
-                { href: '/shop?category=conditioners' as const, label: tc("conditioners") },
-                { href: '/shop?category=masks' as const, label: tc("masks") },
-                { href: '/shop?category=leave-in' as const, label: tc("leavein-care") },
-                { href: '/shop?category=styling-brushes' as const, label: tc("styling-brushes") },
-                { href: '/shop?category=additions' as const, label: tc("additions") },
-                { href: '/shop?category=gift-sets' as const, label: tc("gift-sets") },
               ].map((l) => (
                 <li key={l.href}>
                   <Link
@@ -81,6 +75,17 @@ export default function Footer() {
                     className='text-sm text-[#A0A0A0] hover:text-[#C4A882] transition-colors'
                   >
                     {l.label}
+                  </Link>
+                </li>
+              ))}
+              {/* Категорії — тільки непорожні, див. lib/categories.ts */}
+              {sortCategories(categories).map((cat) => (
+                <li key={cat.id}>
+                  <Link
+                    href={`/shop?category=${cat.slug}`}
+                    className='text-sm text-[#A0A0A0] hover:text-[#C4A882] transition-colors'
+                  >
+                    {cat.name}
                   </Link>
                 </li>
               ))}
