@@ -329,7 +329,7 @@
     "lastName": "Last name",
     "lastNamePlaceholder": "Ivanenko",
     "phone": "Phone",
-    "phonePlaceholder": "050 123 45 67",
+    "phonePlaceholder": "+380 50 123 45 67",
     "phoneHint": "Please note: we currently deliver within Ukraine only",
     "email": "Email (optional)",
     "emailPlaceholder": "email@example.com",
