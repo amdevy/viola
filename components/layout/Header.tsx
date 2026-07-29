@@ -6,18 +6,10 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { useCart } from "@/hooks/useCart";
 import { useCategories } from "@/hooks/useProducts";
+import { sortCategories } from "@/lib/categories";
 import MobileMenu from "./MobileMenu";
 import LanguageSwitcher from "./LanguageSwitcher";
 import CartDrawer from "@/components/shop/CartDrawer";
-
-const CATEGORY_ORDER: Record<string, number> = {
-  shampoos: 1,
-  'peeling-shampoos': 2,
-  conditioners: 3,
-  masks: 4,
-  'leave-in': 5,
-  'styling-brushes': 6,
-};
 
 export default function Header() {
   const { openCart } = useCart();
@@ -27,7 +19,6 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
   const t = useTranslations("header");
-  const tc = useTranslations("categories");
 
   useEffect(() => setMounted(true), []);
   useEffect(() => {
@@ -36,9 +27,7 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const sortedCategories = [...categories]
-    .filter((cat) => cat.slug in CATEGORY_ORDER)
-    .sort((a, b) => (CATEGORY_ORDER[a.slug] ?? 99) - (CATEGORY_ORDER[b.slug] ?? 99));
+  const sortedCategories = sortCategories(categories);
 
   return (
     <>
@@ -178,7 +167,7 @@ export default function Header() {
                     href={`/shop?category=${cat.slug}`}
                     className='text-xs uppercase tracking-widest text-[#1A1A1A] hover:text-[#C4A882] transition-colors whitespace-nowrap font-medium py-2'
                   >
-                    {tc(cat.slug as "shampoos" | "peeling-shampoos" | "conditioners" | "masks" | "leave-in" | "styling-brushes")}
+                    {cat.name}
                   </Link>
                 ))}
               </div>

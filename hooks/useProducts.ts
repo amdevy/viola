@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
+import { NON_EMPTY_CATEGORY_SELECT, stripJoinedProducts } from "@/lib/categories";
 import type { Product, Category } from "@/types";
 
 export function useProducts(filters?: {
@@ -118,11 +119,12 @@ export function useCategories() {
   useEffect(() => {
     const fetch = async () => {
       const supabase = createClient();
+      // Тільки непорожні категорії — див. lib/categories.ts
       const { data } = await supabase
         .from("categories")
-        .select("*")
+        .select(NON_EMPTY_CATEGORY_SELECT)
         .order("name");
-      const localized = (data ?? []).map((c) => {
+      const localized = stripJoinedProducts(data).map((c) => {
         const { row } = localize(
           c as unknown as Record<string, unknown>,
           locale,

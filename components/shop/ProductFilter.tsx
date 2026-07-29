@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { sendGAEvent } from "@next/third-parties/google";
 import { useCategories } from "@/hooks/useProducts";
 import { HAIR_TYPES } from "@/lib/utils";
+import { sortCategories } from "@/lib/categories";
 
 interface FilterState {
   category: string;
@@ -19,25 +20,12 @@ interface ProductFilterProps {
   onChange: (filters: FilterState) => void;
 }
 
-const CATEGORY_ORDER: Record<string, number> = {
-  shampoos: 1,
-  "peeling-shampoos": 2,
-  masks: 3,
-  conditioners: 4,
-  "leave-in": 5,
-  "styling-brushes": 6,
-  gifts: 7,
-  additions: 8,
-};
-
 export default function ProductFilter({ filters, onChange }: ProductFilterProps) {
   const t = useTranslations("filter");
   const tc = useTranslations("categories");
   const th = useTranslations("hairTypes");
   const { categories } = useCategories();
-  const sortedCategories = [...categories].sort(
-    (a, b) => (CATEGORY_ORDER[a.slug] ?? 99) - (CATEGORY_ORDER[b.slug] ?? 99)
-  );
+  const sortedCategories = sortCategories(categories);
 
   // Debounced price inputs
   const [localMin, setLocalMin] = useState(filters.minPrice);

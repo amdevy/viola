@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
+import { sortCategories } from "@/lib/categories";
 import type { Category } from "@/types";
 
 interface MobileMenuProps {
@@ -10,8 +11,6 @@ interface MobileMenuProps {
   onClose: () => void;
   categories: Category[];
 }
-
-const CATEGORY_ORDER = ["shampoos", "peeling-shampoos", "masks", "conditioners", "leave-in", "styling-brushes", "additions", "gifts"];
 
 export default function MobileMenu({
   isOpen,
@@ -81,13 +80,7 @@ export default function MobileMenu({
           {categories.length > 0 && (
             <div>
               <p className="text-xs uppercase tracking-widest text-[#6B6B6B] mb-3">{t("categories")}</p>
-              {[...categories]
-                .sort((a, b) => {
-                  const ai = CATEGORY_ORDER.indexOf(a.slug);
-                  const bi = CATEGORY_ORDER.indexOf(b.slug);
-                  return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
-                })
-                .map((cat) => (
+              {sortCategories(categories).map((cat) => (
                 <Link
                   key={cat.id}
                   href={`/shop?category=${cat.slug}`}
@@ -96,7 +89,7 @@ export default function MobileMenu({
                 >
                   {cat.name}
                 </Link>
-                ))}
+              ))}
             </div>
           )}
         </nav>
