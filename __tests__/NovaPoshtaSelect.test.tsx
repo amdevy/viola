@@ -72,7 +72,8 @@ describe("NovaPoshtaSelect", () => {
     render(<NovaPoshtaSelect onCityChange={onCityChange} onWarehouseChange={onWarehouseChange} />);
 
     const cityInput = screen.getByPlaceholderText(uk.checkout.cityPlaceholder);
-    await user.type(cityInput, "Ки");
+    // 3+ characters: below that the API returns nothing, so the picker does not query.
+    await user.type(cityInput, "Кип");
     await screen.findByRole("button", { name: /Київська/ }, { timeout: 3000 });
 
     fireEvent.blur(cityInput);

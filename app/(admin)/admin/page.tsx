@@ -15,10 +15,12 @@ async function getDashboardStats() {
       .from("orders")
       .select("id", { count: "exact" })
       .gte("created_at", today.toISOString()),
+    // Revenue must not disappear the moment the operator moves a paid order to
+    // "processing" — money collected stays collected through fulfilment.
     supabase
       .from("orders")
       .select("total")
-      .eq("status", "paid")
+      .in("status", ["paid", "processing", "shipped", "delivered"])
       .gte("created_at", today.toISOString()),
     supabase
       .from("customers")

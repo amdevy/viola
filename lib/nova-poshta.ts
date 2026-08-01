@@ -8,7 +8,10 @@ async function npRequest(body: Record<string, unknown>) {
       apiKey: process.env.NOVA_POSHTA_API_KEY,
       ...body,
     }),
-    next: { revalidate: 3600 },
+    // Caching lives in the route handler: `next: { revalidate }` does nothing
+    // on a POST, so every call here reaches Nova Poshta and spends real quota.
+    cache: "no-store",
+    signal: AbortSignal.timeout(8000),
   });
   return res.json();
 }

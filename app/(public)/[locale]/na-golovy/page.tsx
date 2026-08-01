@@ -7,6 +7,7 @@ import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/
 import ProductCard from "@/components/shop/ProductCard";
 import ProductListGA from "@/components/shop/ProductListGA";
 import type { Product } from "@/types";
+import { safeJsonLd } from "@/lib/utils";
 
 export const revalidate = 3600;
 
@@ -132,7 +133,7 @@ export default async function NaGolovyPage({ params }: Props) {
           },
           {
             title: "Nova Poshta delivery across Ukraine",
-            text: "We ship within 1-3 business days to any city. Payment by card, cash on delivery, or online via WayForPay.",
+            text: "We ship within 1-3 business days to any city. Pay online by card via LiqPay, or request a call back and we will confirm the order with you.",
           },
           {
             title: "Color protection & concentration",
@@ -194,7 +195,7 @@ export default async function NaGolovyPage({ params }: Props) {
           },
           {
             title: "Доставка Новою Поштою по Україні",
-            text: "Відправляємо за 1-3 робочих дні в будь-яке місто. Оплата карткою, післяплата або онлайн через WayForPay.",
+            text: "Відправляємо за 1-3 робочих дні в будь-яке місто. Оплата карткою онлайн через LiqPay або зворотний дзвінок — ми підтвердимо замовлення з вами.",
           },
           {
             title: "Захист кольору і висока концентрація",
@@ -268,11 +269,11 @@ export default async function NaGolovyPage({ params }: Props) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(faqLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbLd) }}
       />
 
       {/* Hero */}

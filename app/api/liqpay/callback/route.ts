@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { verifyCallback, decodeCallback } from "@/lib/liqpay";
-import { notifyPaidOrder } from "@/lib/notify";
-import { sendOrderEmail } from "@/lib/email";
+import { settleOrderPayment } from "@/lib/payments";
 
 type LiqPayCallback = {
   status: string;
@@ -15,55 +13,56 @@ type LiqPayCallback = {
   err_description?: string;
 };
 
-const SUCCESS_STATUSES = new Set(["success", "sandbox", "wait_accept"]);
-
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
   const data = String(formData.get("data") ?? "");
   const signature = String(formData.get("signature") ?? "");
 
   if (!data || !signature) {
+    console.error("liqpay callback: missing data or signature");
     return NextResponse.json({ status: "error", reason: "missing data" }, { status: 400 });
   }
 
-  const privateKey = process.env.LIQPAY_PRIVATE_KEY!;
+  const privateKey = process.env.LIQPAY_PRIVATE_KEY;
+  if (!privateKey) {
+    console.error("liqpay callback: LIQPAY_PRIVATE_KEY is not configured");
+    return NextResponse.json({ status: "error" }, { status: 500 });
+  }
 
+  // Logged loudly: if the key is ever rotated, every callback fails here and the
+  // only other symptom is "nobody is paying any more" while cards are charged.
   if (!verifyCallback(data, signature, privateKey)) {
+    console.error("liqpay callback: INVALID SIGNATURE — rejecting");
     return NextResponse.json({ status: "error", reason: "invalid signature" }, { status: 400 });
   }
 
-  const payload = decodeCallback<LiqPayCallback>(data);
+  let payload: LiqPayCallback;
+  try {
+    payload = decodeCallback<LiqPayCallback>(data);
+  } catch (err) {
+    console.error("liqpay callback: undecodable payload", err);
+    return NextResponse.json({ status: "error", reason: "bad payload" }, { status: 400 });
+  }
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  if (!payload.order_id) {
+    console.error("liqpay callback: payload without order_id", payload.status);
+    return NextResponse.json({ status: "error", reason: "missing order_id" }, { status: 400 });
+  }
 
-  const isPaid = SUCCESS_STATUSES.has(payload.status);
-
-  const { data: existing } = await supabase
-    .from("orders")
-    .select("status")
-    .eq("id", payload.order_id)
-    .single();
-
-  const wasPaid = existing?.status === "paid";
-
-  await supabase
-    .from("orders")
-    .update({
-      status: isPaid ? "paid" : "pending",
-      payment_status: payload.status,
-      payment_id: payload.payment_id ? String(payload.payment_id) : payload.order_id,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", payload.order_id);
-
-  if (isPaid && !wasPaid) {
-    await Promise.all([
-      notifyPaidOrder(payload.order_id),
-      sendOrderEmail(payload.order_id, "paid"),
-    ]);
+  try {
+    await settleOrderPayment({
+      orderId: payload.order_id,
+      status: payload.status,
+      amount: payload.amount,
+      currency: payload.currency,
+      paymentId: payload.payment_id ? String(payload.payment_id) : null,
+      source: "callback",
+      payload,
+    });
+  } catch (err) {
+    // 5xx so LiqPay retries — a 200 here would permanently strand a paid order.
+    console.error("liqpay callback: settle failed", payload.order_id, err);
+    return NextResponse.json({ status: "error" }, { status: 500 });
   }
 
   return NextResponse.json({ status: "ok" });

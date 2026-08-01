@@ -3,6 +3,7 @@ import { Link } from "@/i18n/routing";
 import ContactsForm from "./ContactsForm";
 import TrackedLink from "@/components/ui/TrackedLink";
 import type { Metadata } from "next";
+import { safeJsonLd } from "@/lib/utils";
 
 export async function generateMetadata({
   params,
@@ -58,7 +59,7 @@ export default async function ContactsPage({
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          dangerouslySetInnerHTML={{ __html: safeJsonLd({
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             itemListElement: [

@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Viola — інтернет-магазин косметики Na Gólov[y]
 
-## Getting Started
+Сайт салону краси Viola (Мукачево) та магазин професійної аромакосметики для волосся
+Na Gólov[y]. Next.js 16 (App Router), TypeScript, Supabase, LiqPay, Нова Пошта.
 
-First, run the development server:
+Повний опис структури — в [architecture.md](architecture.md).
+Перелік відкритих задач і знайдених проблем — у [IMPROVEMENT-PLAN.md](IMPROVEMENT-PLAN.md).
+
+## Запуск
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm test         # vitest
+npm run build    # продакшн-збірка
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Змінні оточення (`.env.local`)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Змінна | Призначення |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | URL проекту Supabase |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Публічний ключ (потрапляє в браузер) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Сервісний ключ, лише в API-роутах — обходить RLS |
+| `LIQPAY_PUBLIC_KEY` | Ключ LiqPay. Префікс `sandbox_` вмикає тестовий режим |
+| `LIQPAY_PRIVATE_KEY` | Приватний ключ LiqPay (підпис платежів) |
+| `NEXT_PUBLIC_SITE_URL` | Публічний origin. **У проді — https і без слеша в кінці** |
+| `NOVA_POSHTA_API_KEY` | Ключ API Нової Пошти |
+| `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | Сповіщення про замовлення |
+| `RESEND_API_KEY` | Листи-підтвердження клієнтам |
+| `INDEXNOW_KEY` | Подача URL у IndexNow з адмінки |
+| `NEXT_PUBLIC_GA_ID` | Google Analytics 4 |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Оплата
 
-## Learn More
+Карткова оплата йде через LiqPay: сервер підписує суму, взяту **з бази**
+(`orders.total`), клієнт лише відправляє готову форму. Ціни та суми, що приходять
+із браузера, ігноруються — див. [lib/payments.ts](lib/payments.ts) і
+[app/api/orders/route.ts](app/api/orders/route.ts).
 
-To learn more about Next.js, take a look at the following resources:
+`assertLiqPayEnv()` не дасть застосунку приймати картки в продакшні з
+sandbox-ключами або з `localhost` у `NEXT_PUBLIC_SITE_URL` — обидві помилки
+призводили б до «оплачених» замовлень без грошей.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Локально серверний callback від LiqPay не доходить (він не бачить localhost) —
+статус звіряється на success-сторінці через status API. Для повного тесту
+callback потрібен тунель (ngrok / cloudflared) і публічний URL у `NEXT_PUBLIC_SITE_URL`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Міграції БД
 
-## Deploy on Vercel
+SQL у [supabase/migrations/](supabase/migrations/) — застосовувати по порядку.
+Міграція `012` вводить таблицю `public.admins`: доступ до даних магазину й до
+адмінки мають **лише** користувачі, чий `auth.uid()` є в цій таблиці. Після
+застосування перевірте, що там саме власниця:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```sql
+select a.email, u.created_at from public.admins a join auth.users u on u.id = a.user_id;
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Також вимкніть самостійну реєстрацію: Supabase → Authentication → Providers →
+Email → «Allow new users to sign up» = off.

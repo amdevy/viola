@@ -1,8 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
+import { rateLimitRequest } from "@/lib/rate-limit";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
+    // A like is one tap; anything beyond a handful a minute from one address is
+    // a script inflating social proof.
+    if (!rateLimitRequest(req, "product-like", 20, 60_000)) {
+      return NextResponse.json({ error: "too_many_requests" }, { status: 429 });
+    }
+
     const body = await req.json();
     const productId = (body?.productId ?? "").toString().trim();
     const action = (body?.action ?? "").toString();

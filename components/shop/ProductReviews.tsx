@@ -86,7 +86,8 @@ export default function ProductReviews({
         rating: form.rating,
         text: form.text,
         product_id: productId,
-        approved: false,
+        // approved is deliberately absent: anon has no INSERT privilege on that
+        // column, and the DB default (false) is what we want anyway.
       });
       if (error) throw error;
       toast.success(tf("thankYou"));
@@ -177,9 +178,12 @@ export default function ProductReviews({
         title={tf("writeReview")}
       >
         <div className="space-y-4">
+          {/* Limits mirror the RLS check on reviews — enforced here so an
+              over-long review is prevented rather than rejected opaquely. */}
           <Input
             label={tf("yourName")}
             placeholder={tf("namePlaceholder")}
+            maxLength={100}
             value={form.name}
             onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
           />
@@ -200,6 +204,7 @@ export default function ProductReviews({
             </label>
             <textarea
               rows={4}
+              maxLength={2000}
               placeholder={tf("reviewPlaceholder")}
               value={form.text}
               onChange={(e) => setForm((f) => ({ ...f, text: e.target.value }))}

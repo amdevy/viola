@@ -9,6 +9,7 @@ import { getCategorySeo } from "@/lib/category-seo";
 import { NON_EMPTY_CATEGORY_SELECT, stripJoinedProducts } from "@/lib/categories";
 import type { Category, Product } from "@/types";
 import type { Metadata } from "next";
+import { safeJsonLd } from "@/lib/utils";
 
 export const revalidate = 3600;
 
@@ -193,12 +194,12 @@ export default async function CategoryPage({ params }: Props) {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbLd) }} />
       {products.length > 0 && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(itemListLd) }} />
       )}
       {faqLd && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(faqLd) }} />
       )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

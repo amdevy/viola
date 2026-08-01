@@ -28,10 +28,17 @@ export function useOrders() {
 
   const updateStatus = async (id: string, status: string) => {
     const supabase = createClient();
-    const { error } = await supabase
+    // .select() so a row count can be asserted: an update blocked by RLS
+    // affects zero rows and returns NO error, which would otherwise be reported
+    // to the operator as a successful status change.
+    const { data, error: updateError } = await supabase
       .from("orders")
       .update({ status, updated_at: new Date().toISOString() })
-      .eq("id", id);
+      .eq("id", id)
+      .select("id");
+
+    const error =
+      updateError ?? (data?.length === 1 ? null : { message: "not_permitted_or_missing" });
 
     if (!error) {
       setOrders((prev) =>

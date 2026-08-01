@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import type { Product } from "@/types";
+import { safeJsonLd } from "@/lib/utils";
 
 export default async function ProductFAQ({
   product,
@@ -35,7 +36,7 @@ export default async function ProductFAQ({
     <section className="mt-16 pt-12 border-t border-[#E8E4DE]">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(ld) }}
       />
       <h2 className="font-serif text-2xl font-bold text-[#1A1A1A] mb-2">
         {t("title")}
