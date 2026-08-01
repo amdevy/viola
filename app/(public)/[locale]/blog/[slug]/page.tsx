@@ -6,6 +6,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { createPublicClient } from "@/lib/supabase/server";
 import { localize, BLOG_I18N_FIELDS } from "@/lib/i18n/localize";
+import { safeJsonLd } from "@/lib/utils";
 
 export const revalidate = 3600;
 
@@ -176,11 +177,11 @@ export default async function BlogPostPage({ params }: Props) {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(articleLd) }}
       />
       <nav className="text-xs text-[#6B6B6B] mb-8 flex items-center gap-2">
         <Link href="/" className="hover:text-[#C4A882]">{tc("home")}</Link>

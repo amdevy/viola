@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import type { Metadata } from "next";
+import { safeJsonLd } from "@/lib/utils";
 
 export async function generateMetadata({
   params,
@@ -57,7 +58,7 @@ export default async function DeliveryPage({
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify([
+        dangerouslySetInnerHTML={{ __html: safeJsonLd([
           {
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
@@ -75,7 +76,7 @@ export default async function DeliveryPage({
                 name: "How is payment made?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Payment is made by 100% prepayment via WayForPay payment system or bank transfer to FOP Hehedosh Violeta Valeriivna.",
+                  text: "Payment is made by 100% prepayment via LiqPay payment system or bank transfer to FOP Hehedosh Violeta Valeriivna.",
                 },
               },
               {
@@ -108,7 +109,7 @@ export default async function DeliveryPage({
                 name: "Як здійснюється оплата?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Оплата здійснюється 100% передоплатою через платіжну систему WayForPay або банківський переказ на рахунок ФОП Гегедош Віолета Валеріївна.",
+                  text: "Оплата здійснюється 100% передоплатою через платіжну систему LiqPay або банківський переказ на рахунок ФОП Гегедош Віолета Валеріївна.",
                 },
               },
               {

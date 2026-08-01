@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { normalizeUkrainianPhone } from "@/lib/validations";
+import { z } from "zod";
+import { normalizeUkrainianPhone, UUID_RE } from "@/lib/validations";
+import { rateLimitRequest } from "@/lib/rate-limit";
 
 // Capture-only for now: records a checkout-in-progress once a valid phone is
 // entered, and flips it to 'ordered' when that phone completes an order.
@@ -8,21 +10,45 @@ import { normalizeUkrainianPhone } from "@/lib/validations";
 
 const PHONE_RE = /^\+380\d{9}$/;
 
-type CaptureItem = { productId: string; name: string; price: number; quantity: number };
+const captureSchema = z.object({
+  phone: z.string().max(30),
+  name: z.string().trim().max(200).optional().nullable(),
+  email: z.string().trim().max(200).optional().nullable(),
+  city: z.string().trim().max(200).optional().nullable(),
+  npAddress: z.string().trim().max(500).optional().nullable(),
+  total: z.number().min(0).max(10_000_000).optional(),
+  items: z
+    .array(
+      z.object({
+        productId: z.string().max(100),
+        name: z.string().max(300),
+        price: z.number().min(0).max(1_000_000),
+        quantity: z.number().int().min(1).max(1000),
+      })
+    )
+    .max(50)
+    .optional(),
+});
+
+const orderedSchema = z.object({
+  action: z.literal("ordered"),
+  phone: z.string().max(30),
+  // Proof the caller actually placed this order. Without it, knowing a phone
+  // number was enough to mark someone else's abandoned cart as converted and
+  // permanently exclude them from recovery.
+  orderId: z.string().regex(UUID_RE),
+});
 
 export async function POST(req: NextRequest) {
-  let body: Record<string, unknown>;
+  if (!rateLimitRequest(req, "abandoned-checkout", 30, 60_000)) {
+    return NextResponse.json({ error: "too_many_requests" }, { status: 429 });
+  }
+
+  let body: unknown;
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "bad_json" }, { status: 400 });
-  }
-
-  const phone = normalizeUkrainianPhone(String(body.phone ?? ""));
-  if (!PHONE_RE.test(phone)) {
-    // Silently ignore — the form calls this on every keystroke; an incomplete
-    // phone is expected, not an error.
-    return NextResponse.json({ ok: true, skipped: "invalid_phone" });
+    return NextResponse.json({ error: "bad_request" }, { status: 400 });
   }
 
   const supabase = createClient(
@@ -31,7 +57,29 @@ export async function POST(req: NextRequest) {
   );
 
   // Mark a previously-captured checkout as completed.
-  if (body.action === "ordered") {
+  if ((body as { action?: unknown })?.action === "ordered") {
+    const parsed = orderedSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "bad_request" }, { status: 400 });
+    }
+
+    const phone = normalizeUkrainianPhone(parsed.data.phone);
+    if (!PHONE_RE.test(phone)) {
+      return NextResponse.json({ ok: true, skipped: "invalid_phone" });
+    }
+
+    // The order must exist and belong to this phone.
+    const { data: order } = await supabase
+      .from("orders")
+      .select("id")
+      .eq("id", parsed.data.orderId)
+      .eq("customer_phone", phone)
+      .maybeSingle();
+
+    if (!order) {
+      return NextResponse.json({ error: "order_not_found" }, { status: 404 });
+    }
+
     await supabase
       .from("abandoned_checkouts")
       .update({ status: "ordered", updated_at: new Date().toISOString() })
@@ -39,20 +87,31 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
-  // Default: capture / update the in-progress checkout.
-  const items = Array.isArray(body.items) ? (body.items as CaptureItem[]) : [];
-  const itemCount = items.reduce((n, i) => n + (Number(i.quantity) || 0), 0);
+  const parsed = captureSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "bad_request" }, { status: 400 });
+  }
+
+  const phone = normalizeUkrainianPhone(parsed.data.phone);
+  if (!PHONE_RE.test(phone)) {
+    // Silently ignore — the form calls this on every keystroke; an incomplete
+    // phone is expected, not an error.
+    return NextResponse.json({ ok: true, skipped: "invalid_phone" });
+  }
+
+  const items = parsed.data.items ?? [];
+  const itemCount = items.reduce((n, i) => n + i.quantity, 0);
 
   const { error } = await supabase.from("abandoned_checkouts").upsert(
     {
       phone,
-      name: (body.name as string) || null,
-      email: (body.email as string) || null,
+      name: parsed.data.name || null,
+      email: parsed.data.email || null,
       items,
       item_count: itemCount,
-      total: Number(body.total) || 0,
-      city: (body.city as string) || null,
-      np_address: (body.npAddress as string) || null,
+      total: parsed.data.total ?? 0,
+      city: parsed.data.city || null,
+      np_address: parsed.data.npAddress || null,
       status: "pending",
       updated_at: new Date().toISOString(),
     },
@@ -60,7 +119,8 @@ export async function POST(req: NextRequest) {
   );
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    console.error("abandoned-checkout: upsert failed", error);
+    return NextResponse.json({ error: "server_error" }, { status: 500 });
   }
   return NextResponse.json({ ok: true });
 }

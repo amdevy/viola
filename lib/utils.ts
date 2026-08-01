@@ -46,6 +46,13 @@ export function cn(...classes: (string | undefined | null | false)[]): string {
   return classes.filter(Boolean).join(" ");
 }
 
+// JSON.stringify does not escape "<", so any DB-sourced string rendered into a
+// <script type="application/ld+json"> can close the tag and execute. Review
+// text and blog content reach these blocks, so every JSON-LD sink must use this.
+export function safeJsonLd(data: unknown): string {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
 export function truncate(str: string, length: number): string {
   if (str.length <= length) return str;
   return str.slice(0, length) + "…";

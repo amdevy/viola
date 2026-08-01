@@ -34,7 +34,9 @@ export default function NovaPoshtaSelect({
 
   // Search cities
   useEffect(() => {
-    if (cityQuery.length < 2) {
+    // Matches the minimum the API enforces — below it the route returns an
+    // empty list, so a shorter query would only render an empty dropdown.
+    if (cityQuery.length < 3) {
       setCities([]);
       return;
     }

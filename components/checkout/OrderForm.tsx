@@ -9,12 +9,14 @@ import NovaPoshtaSelect from "./NovaPoshtaSelect";
 import { useCart } from "@/hooks/useCart";
 import toast from "react-hot-toast";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "@/i18n/routing";
+import { useRouter, Link } from "@/i18n/routing";
+import { useLocale } from "next-intl";
 import { sendGAEvent } from "@next/third-parties/google";
 import type { NovaPoshtaCity, NovaPoshtaWarehouse } from "@/types";
 
 export default function OrderForm() {
   const t = useTranslations("checkout");
+  const locale = useLocale();
   const router = useRouter();
   const { items } = useCart();
   const cartTotal = useCart((s) => s.total());
@@ -31,6 +33,7 @@ export default function OrderForm() {
         email: t("errEmail"),
         city: t("errCity"),
         warehouse: t("errWarehouse"),
+        offer: t("errOffer"),
       }),
     [t]
   );
@@ -57,6 +60,7 @@ export default function OrderForm() {
       novaPoshtaRef: "",
       novaPoshtaAddress: "",
       notes: "",
+      acceptOffer: false as unknown as true,
     },
   });
 
@@ -185,100 +189,90 @@ export default function OrderForm() {
     });
     setSubmitting(true);
     try {
+      // Prices are deliberately not sent: the server looks each product up and
+      // computes the total itself, so a tampered cart cannot change what is
+      // charged.
       const res = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...data,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          phone: data.phone,
+          email: data.email,
+          city: data.city,
+          cityRef: data.cityRef,
+          novaPoshtaRef: data.novaPoshtaRef,
+          novaPoshtaAddress: data.novaPoshtaAddress,
+          paymentMethod: data.paymentMethod,
+          notes: data.notes,
+          locale,
+          acceptOffer: data.acceptOffer,
           items: items.map((i) => ({
             productId: i.productId,
             quantity: i.quantity,
-            price: i.price,
-            name: i.name,
           })),
-          total: cartTotal,
         }),
       });
 
-      if (!res.ok) throw new Error(t("orderCreateError"));
+      if (!res.ok) {
+        const { error } = await res.json().catch(() => ({ error: "" }));
+        if (error === "product_unavailable") throw new Error(t("productUnavailable"));
+        throw new Error(t("orderCreateError"));
+      }
 
       const { orderId } = await res.json();
 
-      // This phone completed an order — exclude it from abandonment tracking.
-      fetch("/api/abandoned-checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "ordered", phone: data.phone }),
-      }).catch(() => {});
-
-      await fetch("/api/notify-callback", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          orderId,
-          customer: {
-            name: `${data.firstName} ${data.lastName}`,
-            phone: data.phone,
-          },
-          items: items.map((i) => ({
-            name: i.name,
-            price: i.price,
-            qty: i.quantity,
-          })),
-          total: cartTotal,
-          notes: data.notes || null,
-          city: data.city,
-          novaPoshtaAddress: data.novaPoshtaAddress,
-        }),
-      });
-      router.push(`/checkout/success?orderId=${orderId}`);
-      return;
-
-      /* LiqPay card payment — disabled, awaiting MonoPay integration
-      if (data.paymentMethod === "card") {
-        const pfRes = await fetch("/api/liqpay/checkout", {
+      if (data.paymentMethod === "callback") {
+        // Only a completed order excludes the phone from recovery outreach. For
+        // card orders this happens once payment settles — otherwise every
+        // abandoned card payment would be counted as a conversion.
+        fetch("/api/abandoned-checkout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            orderId,
-            items: items.map((i) => ({
-              name: i.name,
-              price: i.price,
-              qty: i.quantity,
-            })),
-            customer: {
-              name: `${data.firstName} ${data.lastName}`,
-              phone: data.phone,
-              email: data.email ?? "",
-            },
-          }),
+          body: JSON.stringify({ action: "ordered", phone: data.phone, orderId }),
+        }).catch(() => {});
+
+        await fetch("/api/notify-callback", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ orderId }),
         });
-
-        if (!pfRes.ok) throw new Error(t("orderCreateError"));
-
-        const { data: lpData, signature, action } = await pfRes.json();
-
-        const form = document.createElement("form");
-        form.method = "POST";
-        form.action = action;
-        form.acceptCharset = "utf-8";
-
-        const dataInput = document.createElement("input");
-        dataInput.type = "hidden";
-        dataInput.name = "data";
-        dataInput.value = lpData;
-        form.appendChild(dataInput);
-
-        const sigInput = document.createElement("input");
-        sigInput.type = "hidden";
-        sigInput.name = "signature";
-        sigInput.value = signature;
-        form.appendChild(sigInput);
-
-        document.body.appendChild(form);
-        form.submit();
+        router.push(`/checkout/success?orderId=${orderId}`);
+        return;
       }
-      */
+
+      // Карткова оплата: сервер підписує суму із замовлення, клієнт лише
+      // відправляє готову форму на LiqPay.
+      const pfRes = await fetch("/api/liqpay/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId }),
+      });
+
+      if (!pfRes.ok) throw new Error(t("orderCreateError"));
+
+      const { data: lpData, signature, action } = await pfRes.json();
+
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = action;
+      form.acceptCharset = "utf-8";
+
+      const dataInput = document.createElement("input");
+      dataInput.type = "hidden";
+      dataInput.name = "data";
+      dataInput.value = lpData;
+      form.appendChild(dataInput);
+
+      const sigInput = document.createElement("input");
+      sigInput.type = "hidden";
+      sigInput.name = "signature";
+      sigInput.value = signature;
+      form.appendChild(sigInput);
+
+      document.body.appendChild(form);
+      form.submit();
     } catch (err) {
       sendGAEvent("event", "order_failed", {
         currency: "UAH",
@@ -286,7 +280,10 @@ export default function OrderForm() {
         payment_type: data.paymentMethod === "callback" ? "Callback" : "Card",
         reason: err instanceof Error ? err.message : "unknown",
       });
-      toast.error(t("errorGeneric"));
+      // Show the specific reason when we have one (e.g. an item went out of
+      // stock while it sat in the cart) — a generic toast leaves the shopper
+      // with no idea what to change.
+      toast.error(err instanceof Error && err.message ? err.message : t("errorGeneric"));
       setSubmitting(false);
     }
   };
@@ -357,11 +354,10 @@ export default function OrderForm() {
       {/* Payment */}
       <div>
         <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-4">{t("paymentSection")}</h2>
-        <div className="grid grid-cols-1 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           {[
             { value: "callback", icon: "📞", label: t("callback"), sub: t("callbackSub") },
-            // Card payment temporarily disabled — pending MonoPay integration
-            // { value: "card", icon: "💳", label: t("card"), sub: t("cardSub") },
+            { value: "card", icon: "💳", label: t("card"), sub: t("cardSub") },
           ].map((opt) => (
             <label
               key={opt.value}
@@ -391,6 +387,37 @@ export default function OrderForm() {
           className="w-full px-4 py-3 text-sm border border-[#E8E4DE] rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#C4A882] resize-none"
           {...register("notes")}
         />
+      </div>
+
+      {/* Public offer acceptance — required before any payment is taken */}
+      <div>
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            className="mt-0.5 w-4 h-4 shrink-0 accent-[#C4A882]"
+            {...register("acceptOffer")}
+          />
+          <span className="text-xs text-[#6B6B6B] leading-relaxed">
+            {t.rich("offerAccept", {
+              // Localized Link, so an /en shopper is not sent to the Ukrainian page.
+              offer: (chunks) => (
+                <Link href="/offer" target="_blank" className="text-[#C4A882] hover:underline">
+                  {chunks}
+                </Link>
+              ),
+              delivery: (chunks) => (
+                <Link href="/delivery" target="_blank" className="text-[#C4A882] hover:underline">
+                  {chunks}
+                </Link>
+              ),
+            })}
+          </span>
+        </label>
+        {errors.acceptOffer && (
+          <p className="text-xs text-[#E53E3E] mt-1.5" role="alert">
+            {errors.acceptOffer.message}
+          </p>
+        )}
       </div>
 
       {Object.keys(errors).length > 0 && (

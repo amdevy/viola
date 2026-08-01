@@ -4,6 +4,7 @@ import { createPublicClient } from "@/lib/supabase/server";
 import ReviewsList from "./ReviewsList";
 import GoogleReviewsBlock from "./GoogleReviewsBlock";
 import type { Metadata } from "next";
+import { safeJsonLd } from "@/lib/utils";
 
 export const revalidate = 3600;
 
@@ -102,12 +103,12 @@ export default async function ReviewsPage({
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbLd) }}
       />
       {aggregateRd && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(aggregateRd) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(aggregateRd) }}
         />
       )}
 

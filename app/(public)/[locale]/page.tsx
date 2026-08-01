@@ -8,6 +8,7 @@ import { ProductGridSkeleton } from "@/components/ui/Skeleton";
 import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS, BLOG_I18N_FIELDS } from "@/lib/i18n/localize";
 import type { Product } from "@/types";
 import type { Metadata } from "next";
+import { safeJsonLd } from "@/lib/utils";
 
 interface HomeBlogPost {
   id: string;
@@ -173,7 +174,7 @@ export default async function HomePage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(faqLd) }}
       />
 
       {/* Hero */}

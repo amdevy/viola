@@ -116,7 +116,8 @@ export default function ReviewsList({
         author_name: formData.name,
         rating: formData.rating,
         text: formData.text,
-        approved: false,
+        // approved is deliberately absent: anon has no INSERT privilege on that
+        // column, and the DB default (false) is what we want anyway.
       });
 
       if (error) throw error;
@@ -206,9 +207,12 @@ export default function ReviewsList({
         title={t("writeReview")}
       >
         <div className="space-y-4">
+          {/* Limits mirror the RLS check on reviews — enforced here so an
+              over-long review is prevented rather than rejected opaquely. */}
           <Input
             label={t("yourName")}
             placeholder={t("namePlaceholder")}
+            maxLength={100}
             value={formData.name}
             onChange={(e) =>
               setFormData((f) => ({ ...f, name: e.target.value }))
@@ -232,6 +236,7 @@ export default function ReviewsList({
             </label>
             <textarea
               rows={4}
+              maxLength={2000}
               placeholder={t("reviewPlaceholder")}
               value={formData.text}
               onChange={(e) =>

@@ -2,6 +2,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import type { Metadata } from "next";
+import { safeJsonLd } from "@/lib/utils";
 
 export async function generateMetadata({
   params,
@@ -240,7 +241,7 @@ export default async function AboutPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+          __html: safeJsonLd({
             "@context": "https://schema.org",
             "@type": "Person",
             "@id": "https://violamukachevo.com/#viola",

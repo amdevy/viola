@@ -12,7 +12,7 @@ import ProductFAQ from "@/components/shop/ProductFAQ";
 import ProductTrustBadges from "@/components/shop/ProductTrustBadges";
 import MobileStickyBar from "@/components/shop/MobileStickyBar";
 import AddToCartButton from "./AddToCartButton";
-import { formatPrice, formatVolume, HAIR_TYPES } from "@/lib/utils";
+import { formatPrice, formatVolume, HAIR_TYPES, safeJsonLd } from "@/lib/utils";
 import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
 import type { Product } from "@/types";
 import type { Metadata } from "next";
@@ -291,11 +291,11 @@ export default async function ProductPage({ params }: Props) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbLd) }}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

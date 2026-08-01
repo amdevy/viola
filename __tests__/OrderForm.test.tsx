@@ -8,12 +8,20 @@ import uk from "@/messages/uk.json";
 
 const pushMock = vi.hoisted(() => vi.fn());
 
-vi.mock("next-intl", () => ({
-  useTranslations: (ns: string) => {
+vi.mock("next-intl", () => {
+  const makeT = (ns: string) => {
     const dict = (uk as Record<string, Record<string, string>>)[ns] ?? {};
-    return (key: string) => dict[key] ?? `${ns}.${key}`;
-  },
-}));
+    const t = (key: string) => dict[key] ?? `${ns}.${key}`;
+    // t.rich renders tags as React elements in the app; for assertions the
+    // plain text is enough.
+    t.rich = (key: string) => (dict[key] ?? `${ns}.${key}`).replace(/<\/?[a-z]+>/gi, "");
+    return t;
+  };
+  return {
+    useTranslations: (ns: string) => makeT(ns),
+    useLocale: () => "uk",
+  };
+});
 
 vi.mock("@/i18n/routing", () => ({
   useRouter: () => ({ push: pushMock }),
@@ -42,15 +50,44 @@ function installFetchMock() {
       fetchCalls.push({ url: u, body: init?.body ? JSON.parse(String(init.body)) : undefined });
       if (u.includes("type=cities")) return jsonResponse({ data: [KYIV] });
       if (u.includes("type=warehouses")) return jsonResponse({ data: [WAREHOUSE] });
-      if (u.includes("/api/orders")) return jsonResponse({ orderId: "test-order-1" });
+      if (u.includes("/api/orders")) return jsonResponse({ orderId: "test-order-1", total: 450 });
       if (u.includes("/api/abandoned-checkout")) return jsonResponse({ ok: true });
       if (u.includes("/api/notify-callback")) return jsonResponse({ ok: true });
+      if (u.includes("/api/liqpay/checkout"))
+        return jsonResponse({
+          data: "ZGF0YQ==",
+          signature: "sig",
+          action: "https://www.liqpay.ua/api/3/checkout",
+        });
       return jsonResponse({});
     })
   );
 }
 
 const calledUrls = () => fetchCalls.map((c) => c.url);
+
+/** Fills every required field and ticks the offer checkbox. */
+async function fillValidCheckout(user: ReturnType<typeof userEvent.setup>) {
+  await user.type(screen.getByLabelText(uk.checkout.firstName), "Олена");
+  await user.type(screen.getByLabelText(uk.checkout.lastName), "Іваненко");
+  await user.type(screen.getByLabelText(uk.checkout.phone), "050 123 45 67");
+
+  const cityInput = screen.getByPlaceholderText(uk.checkout.cityPlaceholder);
+  await user.type(cityInput, "Київ");
+  await screen.findByRole("button", { name: /Київська/ }, { timeout: 3000 });
+  fireEvent.blur(cityInput);
+
+  const warehouseInput = await screen.findByPlaceholderText(
+    uk.checkout.warehousePlaceholder,
+    {},
+    { timeout: 3000 }
+  );
+  await user.click(warehouseInput);
+  const whOption = await screen.findByRole("button", { name: /Хрещатик/ }, { timeout: 3000 });
+  await user.click(whOption);
+
+  await user.click(screen.getByRole("checkbox"));
+}
 
 describe("OrderForm", () => {
   beforeEach(() => {
@@ -106,24 +143,21 @@ describe("OrderForm", () => {
     expect(screen.queryByText(uk.checkout.errPhone)).not.toBeInTheDocument();
   });
 
+  it("без згоди з офертою замовлення не відправляється", async () => {
+    const user = userEvent.setup();
+    render(<OrderForm />);
+
+    await user.click(screen.getByRole("button", { name: uk.checkout.submit }));
+
+    expect(await screen.findByText(uk.checkout.errOffer)).toBeInTheDocument();
+    expect(calledUrls().some((u) => u.includes("/api/orders"))).toBe(false);
+  }, 15000);
+
   it("надруковане, але не клікнуте місто більше не блокує замовлення (повний флоу)", async () => {
     const user = userEvent.setup();
     render(<OrderForm />);
 
-    await user.type(screen.getByLabelText(uk.checkout.firstName), "Олена");
-    await user.type(screen.getByLabelText(uk.checkout.lastName), "Іваненко");
-    await user.type(screen.getByLabelText(uk.checkout.phone), "050 123 45 67");
-
-    const cityInput = screen.getByPlaceholderText(uk.checkout.cityPlaceholder);
-    await user.type(cityInput, "Київ");
-    await screen.findByRole("button", { name: /Київська/ }, { timeout: 3000 });
-    fireEvent.blur(cityInput);
-
-    const warehouseInput = await screen.findByPlaceholderText(uk.checkout.warehousePlaceholder, {}, { timeout: 3000 });
-    await user.click(warehouseInput);
-    const whOption = await screen.findByRole("button", { name: /Хрещатик/ }, { timeout: 3000 });
-    await user.click(whOption);
-
+    await fillValidCheckout(user);
     await user.click(screen.getByRole("button", { name: uk.checkout.submit }));
 
     await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/checkout/success?orderId=test-order-1"), {
@@ -137,9 +171,75 @@ describe("OrderForm", () => {
       phone: "+380501234567",
       city: "Київ",
       novaPoshtaRef: "wh-1",
+      acceptOffer: true,
     });
 
     expect(calledUrls().some((u) => u.includes("/api/notify-callback"))).toBe(true);
     expect(screen.queryByText(uk.checkout.formHasErrors)).not.toBeInTheDocument();
+  }, 15000);
+
+  it("замовлення не несе жодної ціни — сервер рахує суму сам", async () => {
+    const user = userEvent.setup();
+    render(<OrderForm />);
+
+    await fillValidCheckout(user);
+    await user.click(screen.getByRole("button", { name: uk.checkout.submit }));
+
+    await waitFor(() => expect(pushMock).toHaveBeenCalled(), { timeout: 3000 });
+
+    const body = fetchCalls.find((c) => c.url.includes("/api/orders"))?.body as {
+      total?: unknown;
+      items: { productId: string; quantity: number; price?: unknown }[];
+    };
+
+    // The whole point of the server-side pricing fix: a tampered cart must not
+    // be able to influence what gets charged.
+    expect(body.total).toBeUndefined();
+    expect(body.items).toEqual([{ productId: "p1", quantity: 1 }]);
+    for (const item of body.items) expect(item.price).toBeUndefined();
+  }, 15000);
+
+  it("карткова оплата: у LiqPay-ініціалізацію йде лише orderId", async () => {
+    const submitSpy = vi
+      .spyOn(HTMLFormElement.prototype, "submit")
+      .mockImplementation(() => {});
+    const user = userEvent.setup();
+    render(<OrderForm />);
+
+    await fillValidCheckout(user);
+
+    const cardRadio = document.querySelector('input[value="card"]') as HTMLInputElement;
+    fireEvent.click(cardRadio);
+
+    await user.click(screen.getByRole("button", { name: uk.checkout.submitPay }));
+
+    await waitFor(
+      () => expect(calledUrls().some((u) => u.includes("/api/liqpay/checkout"))).toBe(true),
+      { timeout: 3000 }
+    );
+
+    const lpCall = fetchCalls.find((c) => c.url.includes("/api/liqpay/checkout"));
+    expect(lpCall?.body).toEqual({ orderId: "test-order-1" });
+
+    // A card order must not be announced as a completed order before payment,
+    // and must not be excluded from abandoned-cart recovery yet.
+    expect(calledUrls().some((u) => u.includes("/api/notify-callback"))).toBe(false);
+    expect(calledUrls().some((u) => u.includes("/api/abandoned-checkout") )).toBe(
+      fetchCalls.some(
+        (c) =>
+          c.url.includes("/api/abandoned-checkout") &&
+          (c.body as { action?: string } | undefined)?.action === "capture"
+      )
+    );
+    expect(
+      fetchCalls.some(
+        (c) =>
+          c.url.includes("/api/abandoned-checkout") &&
+          (c.body as { action?: string } | undefined)?.action === "ordered"
+      )
+    ).toBe(false);
+
+    await waitFor(() => expect(submitSpy).toHaveBeenCalled(), { timeout: 3000 });
+    submitSpy.mockRestore();
   }, 15000);
 });

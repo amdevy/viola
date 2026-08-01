@@ -17,6 +17,7 @@ export type CheckoutErrorMessages = {
   email: string;
   city: string;
   warehouse: string;
+  offer: string;
 };
 
 const defaultCheckoutErrors: CheckoutErrorMessages = {
@@ -26,6 +27,7 @@ const defaultCheckoutErrors: CheckoutErrorMessages = {
   email: "Невірний email",
   city: "Оберіть місто зі списку",
   warehouse: "Оберіть відділення зі списку",
+  offer: "Підтвердіть згоду з умовами публічної оферти",
 };
 
 // Українські номери → +380XXXXXXXXX, закордонні → лише цифри з опційним +
@@ -56,12 +58,50 @@ export function createCheckoutSchema(m: CheckoutErrorMessages = defaultCheckoutE
     novaPoshtaAddress: z.string().min(1, m.warehouse),
     paymentMethod: z.enum(["card", "callback"]),
     notes: z.string().optional(),
+    // Distance selling requires the buyer to accept the offer before paying,
+    // and the acceptance is stamped on the order so it can be evidenced later.
+    acceptOffer: z.literal(true, { message: m.offer }),
   });
 }
 
 export const checkoutSchema = createCheckoutSchema();
 
 export type CheckoutFormData = z.infer<typeof checkoutSchema>;
+
+export const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+// Server-side contract for POST /api/orders. The browser schema above only
+// guards the form; this one guards the database. Note what is absent: price and
+// total. Those are looked up from the products table, never taken from the
+// request — a client that sends them is ignored.
+export const orderRequestSchema = z.object({
+  firstName: z.string().trim().min(2).max(100),
+  lastName: z.string().trim().min(2).max(100),
+  phone: z.string().transform(normalizePhone).pipe(z.string().regex(/^\+?\d{8,15}$/)),
+  email: z.string().email().max(200).optional().or(z.literal("")).nullable(),
+  city: z.string().trim().min(1).max(200),
+  cityRef: z.string().trim().max(100).optional().or(z.literal("")),
+  novaPoshtaRef: z.string().trim().min(1).max(100),
+  novaPoshtaAddress: z.string().trim().min(1).max(500),
+  paymentMethod: z.enum(["card", "callback"]),
+  notes: z.string().max(2000).optional().or(z.literal("")).nullable(),
+  locale: z.enum(["uk", "en"]).optional(),
+  acceptOffer: z.literal(true),
+  items: z
+    .array(
+      z.object({
+        // Shape check, not an RFC check: this exists to keep anything that is
+        // not an id out of the product lookup. Zod's .uuid() also enforces
+        // version/variant bits, which would reject perfectly valid ids.
+        productId: z.string().regex(UUID_RE),
+        quantity: z.number().int().min(1).max(100),
+      })
+    )
+    .min(1)
+    .max(50),
+});
+
+export type OrderRequest = z.infer<typeof orderRequestSchema>;
 
 export const productSchema = z.object({
   name: z.string().min(1, "Назва обов'язкова"),

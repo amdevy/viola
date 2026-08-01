@@ -65,6 +65,12 @@ export interface Order {
   total: number;
   payment_id: string | null;
   payment_status: string | null;
+  payment_type: string | null;
+  paid_amount: number | null;
+  paid_currency: string | null;
+  paid_at: string | null;
+  locale: string | null;
+  offer_accepted_at: string | null;
   notes: string | null;
   created_at: string;
   updated_at: string;

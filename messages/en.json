@@ -208,7 +208,7 @@
     "paymentP2": "No waiting or delays — we work precisely and on time",
     "paymentP3": "Secure payment — 100% safe payment without commission",
     "paymentP4": "Always in touch",
-    "paymentNote": "Payment is made by <strong>100% prepayment</strong> via WayForPay payment system or bank transfer to FOP Hehedosh Violeta Valeriivna.",
+    "paymentNote": "Payment is made by <strong>100% prepayment</strong> via LiqPay payment system or bank transfer to FOP Hehedosh Violeta Valeriivna.",
     "deliveryTitle": "Delivery",
     "deliveryIntro": "So you know exactly <strong>when to expect your Na Golov[y] order</strong>, here's our current shipping schedule:",
     "scheduleTitle": "Order Shipping Schedule:",
@@ -359,7 +359,10 @@
     "errPhone": "Enter a valid phone number",
     "errEmail": "Invalid email",
     "errCity": "Select a city from the list",
-    "errWarehouse": "Select a branch from the list"
+    "errWarehouse": "Select a branch from the list",
+    "errOffer": "Please accept the public offer terms",
+    "offerAccept": "I have read and accept the <offer>public offer</offer> (including the return policy) and the <delivery>delivery terms</delivery>. Shipping is paid separately at Nova Poshta rates.",
+    "productUnavailable": "An item in your cart is no longer available. Please refresh the cart and try again."
   },
   "success": {
     "title": "Thank you for your order!",
@@ -375,7 +378,13 @@
     "failedMessage": "The payment was not completed. This may have happened due to cancellation or a bank error.",
     "failedRetry": "Try again",
     "failedSupport": "If the problem persists — message us on Telegram or call.",
-    "retrying": "Redirecting to payment..."
+    "retrying": "Redirecting to payment...",
+    "processingTitle": "Payment is being processed",
+    "processingMessage": "Your bank is still confirming the payment. Please keep this page open — the status will update automatically.",
+    "processingWait": "This usually takes less than a minute.",
+    "processingSlow": "Confirmation is taking longer than usual. If the funds were charged, the order will be placed and we will contact you.",
+    "retryFailed": "We could not restart the payment. Please contact us.",
+    "processingContactUs": "You can close this page — we will verify the payment and contact you. Please keep the order number in case you need to reach us."
   },
   "blogPost": {
     "blog": "Blog",

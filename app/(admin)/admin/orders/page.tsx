@@ -11,8 +11,13 @@ import toast from "react-hot-toast";
 
 const PAID_LIKE_STATUSES: OrderStatus[] = ["paid", "processing", "shipped", "delivered"];
 
+// Not an order status: an unpaid card order looks identical to a call-me-back
+// request in the status column, but needs the opposite action from the owner.
+const CARD_UNPAID = "card_unpaid";
+
 const STATUSES: { value: string; label: string }[] = [
   { value: "", label: "Всі" },
+  { value: CARD_UNPAID, label: "Картка не оплачена" },
   { value: "pending", label: "Очікують" },
   { value: "paid", label: "Оплачені" },
   { value: "processing", label: "Обробляються" },
@@ -36,9 +41,11 @@ export default function AdminOrdersPage() {
   const [updating, setUpdating] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
 
-  const filtered = statusFilter
-    ? orders.filter((o) => o.status === statusFilter)
-    : orders;
+  const filtered = !statusFilter
+    ? orders
+    : statusFilter === CARD_UNPAID
+    ? orders.filter((o) => o.payment_type === "card" && o.status === "pending")
+    : orders.filter((o) => o.status === statusFilter);
 
   const handleStatusChange = async (
     orderId: string,
@@ -109,7 +116,39 @@ export default function AdminOrdersPage() {
       key: "total",
       header: "Сума",
       render: (o: Order) => (
-        <span className="font-semibold">{formatPrice(o.total)}</span>
+        <div>
+          <span className="font-semibold">{formatPrice(o.total)}</span>
+          {/* A captured amount that differs from the order total means the
+              payment was signed for something else — never ship on it. */}
+          {o.paid_amount !== null && Math.abs(Number(o.paid_amount) - Number(o.total)) >= 0.01 && (
+            <p className="text-[11px] text-[#E53E3E] font-medium">
+              сплачено {formatPrice(Number(o.paid_amount))}
+            </p>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: "payment",
+      header: "Оплата",
+      render: (o: Order) => (
+        <div className="space-y-0.5">
+          <span
+            className={`inline-block px-1.5 py-0.5 text-[10px] rounded border ${
+              o.payment_type === "card"
+                ? "border-[#C4A882] text-[#A8875E] bg-[#FDF9F5]"
+                : "border-[#E8E4DE] text-[#6B6B6B] bg-white"
+            }`}
+          >
+            {o.payment_type === "card" ? "💳 Картка" : "📞 Дзвінок"}
+          </span>
+          {o.payment_type === "card" && o.status === "pending" && (
+            <p className="text-[11px] text-[#E53E3E]">не оплачено</p>
+          )}
+          {o.payment_status && (
+            <p className="text-[10px] text-[#A0A0A0] font-mono">{o.payment_status}</p>
+          )}
+        </div>
       ),
     },
     {

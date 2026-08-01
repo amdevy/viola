@@ -18,10 +18,8 @@ export default function PaymentFailed({ orderId }: { orderId: string }) {
         body: JSON.stringify({ orderId }),
       });
 
-      if (!res.ok) {
-        const { error } = await res.json().catch(() => ({ error: "Unknown error" }));
-        throw new Error(error);
-      }
+      // The API answers with machine-readable codes, not display text.
+      if (!res.ok) throw new Error(t("retryFailed"));
 
       const { data, signature, action } = await res.json();
 
@@ -45,8 +43,7 @@ export default function PaymentFailed({ orderId }: { orderId: string }) {
       document.body.appendChild(form);
       form.submit();
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Помилка";
-      toast.error(message);
+      toast.error(err instanceof Error ? err.message : t("retryFailed"));
       setLoading(false);
     }
   };
