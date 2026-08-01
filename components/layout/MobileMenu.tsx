@@ -3,13 +3,12 @@
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
-import { sortCategories } from "@/lib/categories";
-import type { Category } from "@/types";
+import type { CategoryNode } from "@/lib/categories";
 
 interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
-  categories: Category[];
+  categories: CategoryNode[];
 }
 
 export default function MobileMenu({
@@ -80,15 +79,26 @@ export default function MobileMenu({
           {categories.length > 0 && (
             <div>
               <p className="text-xs uppercase tracking-widest text-[#6B6B6B] mb-3">{t("categories")}</p>
-              {sortCategories(categories).map((cat) => (
-                <Link
-                  key={cat.id}
-                  href={`/shop?category=${cat.slug}`}
-                  onClick={onClose}
-                  className="block py-2.5 text-[#1A1A1A] hover:text-[#C4A882] transition-colors"
-                >
-                  {cat.name}
-                </Link>
+              {categories.map((cat) => (
+                <div key={cat.id}>
+                  <Link
+                    href={`/shop/category/${cat.slug}`}
+                    onClick={onClose}
+                    className="block py-2.5 text-[#1A1A1A] hover:text-[#C4A882] transition-colors"
+                  >
+                    {cat.name}
+                  </Link>
+                  {cat.children.map((child) => (
+                    <Link
+                      key={child.id}
+                      href={`/shop/category/${child.slug}`}
+                      onClick={onClose}
+                      className="block py-2 pl-4 text-sm text-[#6B6B6B] hover:text-[#C4A882] transition-colors"
+                    >
+                      {child.name}
+                    </Link>
+                  ))}
+                </div>
               ))}
             </div>
           )}

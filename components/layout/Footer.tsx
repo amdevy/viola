@@ -4,7 +4,6 @@ import { useTranslations } from "next-intl";
 import { sendGAEvent } from "@next/third-parties/google";
 import { Link } from "@/i18n/routing";
 import { useCategories } from "@/hooks/useProducts";
-import { sortCategories } from "@/lib/categories";
 
 export default function Footer() {
   const t = useTranslations("footer");
@@ -78,11 +77,13 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
-              {/* Категорії — тільки непорожні, див. lib/categories.ts */}
-              {sortCategories(categories).map((cat) => (
+              {/* Категорії — тільки непорожні, див. lib/categories.ts.
+                  Плаский список: у футері вкладеність нічого не дає читачеві,
+                  а посилання на кожну сторінку категорії дає. */}
+              {categories.map((cat) => (
                 <li key={cat.id}>
                   <Link
-                    href={`/shop?category=${cat.slug}`}
+                    href={`/shop/category/${cat.slug}`}
                     className='text-sm text-[#A0A0A0] hover:text-[#C4A882] transition-colors'
                   >
                     {cat.name}

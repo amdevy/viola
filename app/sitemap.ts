@@ -28,7 +28,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .from("blog_posts")
       .select("slug, created_at, title, title_en, excerpt, excerpt_en, content, content_en")
       .eq("published", true),
-    supabase.from("categories").select("slug, created_at, id"),
+    // `*` rather than an explicit list: parent_id only exists after migration
+    // 013, and naming a missing column makes PostgREST fail the whole request —
+    // which would empty the sitemap instead of just skipping one field.
+    supabase.from("categories").select("*"),
   ]);
 
   const { data: productCategoryIds } = await supabase
@@ -36,9 +39,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .select("category_id")
     .eq("in_stock", true);
 
-  const nonEmptyCategoryIds = new Set(
+  const directlyStocked = new Set(
     (productCategoryIds ?? []).map((p) => p.category_id).filter(Boolean),
   );
+
+  // A parent category holds no products of its own — its page lists the
+  // children's. Judging it by direct stock alone would drop "Догляд за шкірою"
+  // from the sitemap while every subcategory under it is indexed.
+  const nonEmptyCategoryIds = new Set(directlyStocked);
+  for (const c of categories ?? []) {
+    if (c.parent_id && directlyStocked.has(c.id)) nonEmptyCategoryIds.add(c.parent_id);
+  }
 
   // Use the most recent product as a proxy for shop/home freshness
   const latestProduct = (products ?? []).reduce((latest, p) => {
