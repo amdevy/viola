@@ -353,6 +353,7 @@
     "cartEmpty": "Your cart is empty",
     "errorGeneric": "An error occurred. Please try again.",
     "orderCreateError": "Failed to create order",
+    "cardUnavailableFallback": "Card payment is temporarily unavailable. Your order has been received — we will call you to arrange payment.",
     "formHasErrors": "Please check the highlighted fields above",
     "errFirstName": "Enter your first name (min. 2 characters)",
     "errLastName": "Enter your last name (min. 2 characters)",

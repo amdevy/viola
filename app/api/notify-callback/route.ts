@@ -48,6 +48,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "bad_request" }, { status: 400 });
   }
 
+  // Set when the shopper picked card payment but LiqPay could not be reached at
+  // all. The order is real and already in the database; without this it would
+  // sit forever as a pending card order nobody is going to pay.
+  const cardUnavailable =
+    (body as { reason?: unknown })?.reason === "card_unavailable";
+
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -69,6 +75,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "order_not_found" }, { status: 404 });
   }
 
+  // Scoped to a still-pending card order: if LiqPay in fact took the money in
+  // the meantime, the status is no longer 'pending' and this quietly does
+  // nothing rather than rewriting a paid order as a phone order.
+  if (cardUnavailable && order.payment_type === "card") {
+    const { error: convertError } = await supabase
+      .from("orders")
+      .update({ payment_type: "callback", updated_at: new Date().toISOString() })
+      .eq("id", orderId)
+      .eq("status", "pending")
+      .eq("payment_type", "card");
+    if (convertError) {
+      console.error("notify-callback: card→callback conversion failed", orderId, convertError);
+    }
+  }
+
   // Awaited, not fire-and-forget: on a serverless platform the instance is
   // frozen the moment the response is returned, so a detached promise routinely
   // never reaches Resend and the customer gets no confirmation at all.
@@ -87,7 +108,9 @@ export async function POST(req: NextRequest) {
     .join("\n");
 
   const text = [
-    `📦 <b>Нове замовлення — зворотній зв'язок</b>`,
+    cardUnavailable
+      ? `📦 <b>Нове замовлення — оплата карткою не запустилась</b>`
+      : `📦 <b>Нове замовлення — зворотній зв'язок</b>`,
     ``,
     `👤 <b>Клієнт:</b> ${escapeHtml(order.customer_name)}`,
     `📞 <b>Телефон:</b> ${escapeHtml(order.customer_phone)}`,
@@ -103,7 +126,9 @@ export async function POST(req: NextRequest) {
     ``,
     `📌 <b>ID замовлення:</b> <code>${escapeHtml(order.id.slice(0, 8).toUpperCase())}</code>`,
     ``,
-    `<i>Клієнт бажає, щоб з ним зв'язалися.</i>`,
+    cardUnavailable
+      ? `<i>Клієнт обрав оплату карткою, але LiqPay був недоступний. Замовлення переведено у зворотній зв'язок — зателефонуйте й узгодьте оплату.</i>`
+      : `<i>Клієнт бажає, щоб з ним зв'язалися.</i>`,
     emailed ? null : `⚠️ <i>Лист клієнту не надіслано.</i>`,
   ]
     .filter((line) => line !== null)

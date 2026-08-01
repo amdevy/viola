@@ -53,8 +53,16 @@ export async function notifyPaidOrder(orderId: string): Promise<boolean> {
     })
     .join("\n");
 
+  // LiqPay only ever returns "sandbox" in test mode. Such an order is settled
+  // as paid in the database, so the one place it must not look like revenue is
+  // the message the owner actually reads.
+  const isSandboxPayment = data.payment_status === "sandbox";
+
   const text = [
-    `✅ <b>Замовлення оплачено карткою (LiqPay)</b>`,
+    isSandboxPayment
+      ? `🧪 <b>ТЕСТОВА ОПЛАТА — грошей НЕ отримано</b>`
+      : `✅ <b>Замовлення оплачено карткою (LiqPay)</b>`,
+    isSandboxPayment ? `<i>Замовлення створене в пісочниці LiqPay. Не відправляйте товар.</i>` : null,
     ``,
     `👤 <b>Клієнт:</b> ${escape(data.customer_name)}`,
     `📞 <b>Телефон:</b> ${escape(data.customer_phone)}`,
