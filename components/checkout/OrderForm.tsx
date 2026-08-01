@@ -7,6 +7,7 @@ import { createCheckoutSchema, isValidPhone, normalizePhone, type CheckoutFormDa
 import Input from "@/components/ui/Input";
 import NovaPoshtaSelect from "./NovaPoshtaSelect";
 import { useCart } from "@/hooks/useCart";
+import { useCardPaymentUnlock } from "@/hooks/useCardPaymentUnlock";
 import toast from "react-hot-toast";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, Link } from "@/i18n/routing";
@@ -20,6 +21,11 @@ export default function OrderForm() {
   const router = useRouter();
   const { items } = useCart();
   const cartTotal = useCart((s) => s.total());
+  // Read after mount only: the unlock flag lives in sessionStorage, so trusting
+  // it during the server render would mismatch on hydration.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const cardUnlocked = useCardPaymentUnlock((s) => s.unlocked) && mounted;
   const [submitting, setSubmitting] = useState(false);
   const [, setCity] = useState<NovaPoshtaCity | null>(null);
   const [, setWarehouse] = useState<NovaPoshtaWarehouse | null>(null);
@@ -354,10 +360,14 @@ export default function OrderForm() {
       {/* Payment */}
       <div>
         <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-4">{t("paymentSection")}</h2>
-        <div className="grid grid-cols-2 gap-3">
+        <div className={`grid gap-3 ${cardUnlocked ? "grid-cols-2" : "grid-cols-1"}`}>
           {[
             { value: "callback", icon: "📞", label: t("callback"), sub: t("callbackSub") },
-            { value: "card", icon: "💳", label: t("card"), sub: t("cardSub") },
+            // Hidden until production LiqPay keys are configured — unlocked for
+            // testing by tapping the order total ten times (useCardPaymentUnlock).
+            ...(cardUnlocked
+              ? [{ value: "card", icon: "💳", label: t("card"), sub: t("cardSub") }]
+              : []),
           ].map((opt) => (
             <label
               key={opt.value}

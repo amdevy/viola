@@ -3,6 +3,7 @@ import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import OrderForm from "@/components/checkout/OrderForm";
 import { useCart } from "@/hooks/useCart";
+import { useCardPaymentUnlock } from "@/hooks/useCardPaymentUnlock";
 import { sendGAEvent } from "@next/third-parties/google";
 import uk from "@/messages/uk.json";
 
@@ -93,9 +94,19 @@ describe("OrderForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     installFetchMock();
+    useCardPaymentUnlock.setState({ unlocked: false, taps: 0, lastTapAt: 0 });
     useCart.setState({
       items: [{ productId: "p1", name: "Шампунь Harmony", price: 450, image: "/img.jpg", quantity: 1 }],
     });
+  });
+
+  it("оплата карткою прихована, поки її не розблоковано", async () => {
+    render(<OrderForm />);
+    await waitFor(() =>
+      expect(screen.getByText(uk.checkout.callback)).toBeInTheDocument()
+    );
+    expect(screen.queryByText(uk.checkout.card)).not.toBeInTheDocument();
+    expect(document.querySelector('input[value="card"]')).toBeNull();
   });
 
   it("порожній сабміт: показує підсумок помилок, шле GA-подію, фокусує перше поле і НЕ шле замовлення", async () => {
@@ -203,12 +214,17 @@ describe("OrderForm", () => {
     const submitSpy = vi
       .spyOn(HTMLFormElement.prototype, "submit")
       .mockImplementation(() => {});
+    useCardPaymentUnlock.setState({ unlocked: true });
     const user = userEvent.setup();
     render(<OrderForm />);
 
     await fillValidCheckout(user);
 
-    const cardRadio = document.querySelector('input[value="card"]') as HTMLInputElement;
+    const cardRadio = await waitFor(() => {
+      const el = document.querySelector('input[value="card"]');
+      if (!el) throw new Error("card option not rendered");
+      return el as HTMLInputElement;
+    });
     fireEvent.click(cardRadio);
 
     await user.click(screen.getByRole("button", { name: uk.checkout.submitPay }));

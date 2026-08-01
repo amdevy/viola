@@ -362,7 +362,8 @@
     "errWarehouse": "Select a branch from the list",
     "errOffer": "Please accept the public offer terms",
     "offerAccept": "I have read and accept the <offer>public offer</offer> (including the return policy) and the <delivery>delivery terms</delivery>. Shipping is paid separately at Nova Poshta rates.",
-    "productUnavailable": "An item in your cart is no longer available. Please refresh the cart and try again."
+    "productUnavailable": "An item in your cart is no longer available. Please refresh the cart and try again.",
+    "cardUnlocked": "Card payment enabled (test mode)"
   },
   "success": {
     "title": "Thank you for your order!",

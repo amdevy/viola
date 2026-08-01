@@ -5,8 +5,10 @@ import Image from "next/image";
 import { useTranslations, useLocale } from "next-intl";
 import { sendGAEvent } from "@next/third-parties/google";
 import { useCart } from "@/hooks/useCart";
+import { useCardPaymentUnlock } from "@/hooks/useCardPaymentUnlock";
 import { formatPrice, formatVolume } from "@/lib/utils";
 import type { CartItem } from "@/types";
+import toast from "react-hot-toast";
 
 export default function CheckoutSummary() {
   const t = useTranslations("checkout");
@@ -18,6 +20,12 @@ export default function CheckoutSummary() {
   const removeItem = useCart((s) => s.removeItem);
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+
+  const tapUnlock = useCardPaymentUnlock((s) => s.tap);
+
+  const handleTotalTap = () => {
+    if (tapUnlock()) toast.success(t("cardUnlocked"));
+  };
 
   const handleRemove = (item: CartItem) => {
     sendGAEvent("event", "remove_from_cart", {
@@ -116,7 +124,13 @@ export default function CheckoutSummary() {
           <span>{tc("delivery")}</span>
           <span>{tc("deliveryRate")}</span>
         </div>
-        <div className="flex justify-between font-semibold text-[#1A1A1A] pt-2 border-t border-[#E8E4DE]">
+        {/* Tapping this row ten times in quick succession reveals card payment
+            (see hooks/useCardPaymentUnlock) — a testing hatch until production
+            LiqPay keys are configured. */}
+        <div
+          onClick={handleTotalTap}
+          className="flex justify-between font-semibold text-[#1A1A1A] pt-2 border-t border-[#E8E4DE] select-none"
+        >
           <span>{tc("total")}</span>
           <span>{mounted ? formatPrice(cartTotal, locale) : ""}</span>
         </div>
