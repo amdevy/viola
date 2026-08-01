@@ -138,8 +138,44 @@ describe("assertLiqPayEnv", () => {
       LIQPAY_PUBLIC_KEY: "sandbox_i123",
       LIQPAY_PRIVATE_KEY: "sandbox_secret",
       NEXT_PUBLIC_SITE_URL: "https://violamukachevo.com",
+      LIQPAY_ALLOW_SANDBOX: undefined,
     });
     expect(() => assertLiqPayEnv()).toThrow(/sandbox/i);
+  });
+
+  it("LIQPAY_ALLOW_SANDBOX=1 свідомо дозволяє sandbox у продакшні", () => {
+    setEnv({
+      NODE_ENV: "production",
+      LIQPAY_PUBLIC_KEY: "sandbox_i123",
+      LIQPAY_PRIVATE_KEY: "sandbox_secret",
+      NEXT_PUBLIC_SITE_URL: "https://violamukachevo.com",
+      LIQPAY_ALLOW_SANDBOX: "1",
+    });
+    expect(assertLiqPayEnv().publicKey).toBe("sandbox_i123");
+  });
+
+  it("будь-яке інше значення прапорця не відкриває sandbox — тільки рівно \"1\"", () => {
+    for (const value of ["0", "true", "yes", ""]) {
+      setEnv({
+        NODE_ENV: "production",
+        LIQPAY_PUBLIC_KEY: "sandbox_i123",
+        LIQPAY_PRIVATE_KEY: "sandbox_secret",
+        NEXT_PUBLIC_SITE_URL: "https://violamukachevo.com",
+        LIQPAY_ALLOW_SANDBOX: value,
+      });
+      expect(() => assertLiqPayEnv()).toThrow(/sandbox/i);
+    }
+  });
+
+  it("прапорець не скасовує перевірку URL — callback усе одно має куди прийти", () => {
+    setEnv({
+      NODE_ENV: "production",
+      LIQPAY_PUBLIC_KEY: "sandbox_i123",
+      LIQPAY_PRIVATE_KEY: "sandbox_secret",
+      NEXT_PUBLIC_SITE_URL: "http://localhost:3000",
+      LIQPAY_ALLOW_SANDBOX: "1",
+    });
+    expect(() => assertLiqPayEnv()).toThrow(/NEXT_PUBLIC_SITE_URL/);
   });
 
   it("у продакшні відмовляє на localhost-URL — callback туди не дійде", () => {

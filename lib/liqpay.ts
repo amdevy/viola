@@ -67,6 +67,20 @@ export function isSandboxKey(publicKey: string | undefined): boolean {
 }
 
 /**
+ * Opt-in hatch for exercising the card flow on the live domain before real
+ * LiqPay credentials exist.
+ *
+ * Deliberately an env var and not a code default: a sandbox payment settles the
+ * order as paid without any money moving, so enabling it has to be an explicit
+ * act by whoever controls the host, and undoing it is deleting one variable.
+ * Orders paid this way are marked payment_status='sandbox' and are announced to
+ * Telegram as tests, so they can never be mistaken for revenue.
+ */
+export function sandboxAllowedInProduction(): boolean {
+  return process.env.LIQPAY_ALLOW_SANDBOX === "1";
+}
+
+/**
  * Guards the one misconfiguration that silently gives goods away: shipping with
  * sandbox keys marks every card order paid while no money moves. Throws rather
  * than degrading, so the failure is loud at the first card checkout.
@@ -84,8 +98,16 @@ export function assertLiqPayEnv(): { publicKey: string; privateKey: string; site
   }
   if (process.env.NODE_ENV === "production") {
     if (isSandboxKey(publicKey)) {
-      throw new Error(
-        "Refusing to take card payments in production with sandbox LiqPay keys — orders would be marked paid with no money received"
+      if (!sandboxAllowedInProduction()) {
+        throw new Error(
+          "Refusing to take card payments in production with sandbox LiqPay keys — orders would be marked paid with no money received. Set LIQPAY_ALLOW_SANDBOX=1 to test deliberately."
+        );
+      }
+      // Logged on every single checkout, not once at boot: this is a state the
+      // shop must not be left in, and a line that scrolls past in the deploy
+      // log is a line nobody sees again.
+      console.warn(
+        "LiqPay: SANDBOX keys accepted in production because LIQPAY_ALLOW_SANDBOX=1 — card orders will settle as paid with NO money received. Remove this variable once real keys are configured."
       );
     }
     if (siteUrl.startsWith("http://") || siteUrl.includes("localhost")) {

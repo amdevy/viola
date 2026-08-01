@@ -256,7 +256,32 @@ export default function OrderForm() {
         body: JSON.stringify({ orderId }),
       });
 
-      if (!pfRes.ok) throw new Error(t("orderCreateError"));
+      // The order itself already exists at this point — only the payment rail
+      // failed. Reporting "could not create order" would be a lie that leaves a
+      // pending card order nobody will ever pay, so fall back to the phone flow
+      // and tell the shopper exactly that.
+      if (!pfRes.ok) {
+        await fetch("/api/notify-callback", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ orderId, reason: "card_unavailable" }),
+        }).catch(() => {});
+
+        fetch("/api/abandoned-checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "ordered", phone: data.phone, orderId }),
+        }).catch(() => {});
+
+        sendGAEvent("event", "card_payment_unavailable", {
+          currency: "UAH",
+          value: cartTotal,
+        });
+
+        toast.error(t("cardUnavailableFallback"), { duration: 8000 });
+        router.push(`/checkout/success?orderId=${orderId}`);
+        return;
+      }
 
       const { data: lpData, signature, action } = await pfRes.json();
 

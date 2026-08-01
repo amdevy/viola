@@ -42,7 +42,7 @@ function jsonResponse(data: unknown) {
   return { ok: true, json: async () => data } as Response;
 }
 
-function installFetchMock() {
+function installFetchMock(opts: { liqpayFails?: boolean } = {}) {
   fetchCalls = [];
   vi.stubGlobal(
     "fetch",
@@ -54,12 +54,15 @@ function installFetchMock() {
       if (u.includes("/api/orders")) return jsonResponse({ orderId: "test-order-1", total: 450 });
       if (u.includes("/api/abandoned-checkout")) return jsonResponse({ ok: true });
       if (u.includes("/api/notify-callback")) return jsonResponse({ ok: true });
-      if (u.includes("/api/liqpay/checkout"))
+      if (u.includes("/api/liqpay/checkout")) {
+        if (opts.liqpayFails)
+          return { ok: false, status: 500, json: async () => ({ error: "payment_init_failed" }) } as Response;
         return jsonResponse({
           data: "ZGF0YQ==",
           signature: "sig",
           action: "https://www.liqpay.ua/api/3/checkout",
         });
+      }
       return jsonResponse({});
     })
   );
@@ -256,6 +259,46 @@ describe("OrderForm", () => {
     ).toBe(false);
 
     await waitFor(() => expect(submitSpy).toHaveBeenCalled(), { timeout: 3000 });
+    submitSpy.mockRestore();
+  }, 15000);
+
+  it("LiqPay недоступний: замовлення не гине, а стає заявкою на дзвінок", async () => {
+    const submitSpy = vi
+      .spyOn(HTMLFormElement.prototype, "submit")
+      .mockImplementation(() => {});
+    installFetchMock({ liqpayFails: true });
+    useCardPaymentUnlock.setState({ unlocked: true });
+    const user = userEvent.setup();
+    render(<OrderForm />);
+
+    await fillValidCheckout(user);
+
+    const cardRadio = await waitFor(() => {
+      const el = document.querySelector('input[value="card"]');
+      if (!el) throw new Error("card option not rendered");
+      return el as HTMLInputElement;
+    });
+    fireEvent.click(cardRadio);
+
+    await user.click(screen.getByRole("button", { name: uk.checkout.submitPay }));
+
+    // The owner is told, and told *why*, so the order gets a phone call rather
+    // than sitting as a pending card payment nobody will ever make.
+    await waitFor(
+      () =>
+        expect(
+          fetchCalls.find((c) => c.url.includes("/api/notify-callback"))?.body
+        ).toEqual({ orderId: "test-order-1", reason: "card_unavailable" }),
+      { timeout: 3000 }
+    );
+
+    // The shopper reaches the confirmation page instead of a dead form...
+    await waitFor(() =>
+      expect(pushMock).toHaveBeenCalledWith("/checkout/success?orderId=test-order-1")
+    );
+    // ...and is never handed off to LiqPay with an unsigned form.
+    expect(submitSpy).not.toHaveBeenCalled();
+
     submitSpy.mockRestore();
   }, 15000);
 });
