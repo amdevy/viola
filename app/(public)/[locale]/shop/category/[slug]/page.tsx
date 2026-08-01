@@ -99,7 +99,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const description =
     locale === "en"
-      ? `Buy ${category.name.toLowerCase()} ${brand.latin} (${brand.uk}) online. Professional Ukrainian cosmetics ${brand.subjectEn} with Nova Poshta delivery across Ukraine.`
+      ? `Buy ${category.name.toLowerCase()} ${brand.latin} (${brand.uk}) online. Professional Ukrainian ${brand.subjectEn} cosmetics with Nova Poshta delivery across Ukraine.`
       : `Купити ${category.name.toLowerCase()} ${brand.uk} (${brand.latin}) онлайн в Україні. Професійна українська аромакосметика ${brand.subjectUk} з доставкою Новою Поштою.`;
 
   return {
@@ -107,17 +107,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description,
     keywords: locale === "en" ? [
       category.name,
-      `${category.name} ${brand.latin}`,
+      `${category.name} ${brand.latinPlain}`,
       `buy ${category.name}`,
+      `${brand.latinPlain} ${category.name}`,
       ...brand.keywordsEn,
     ] : [
       category.name,
-      `${category.name} ${brand.latin}`,
+      `${category.name} ${brand.latinPlain}`,
       `${category.name} ${brand.uk}`,
       `${category.name} купити`,
       `купити ${category.name}`,
       `${category.name} купити Україна`,
       `${brand.uk} ${category.name}`,
+      `${brand.ukLower} ${category.name.toLowerCase()}`,
       ...brand.keywordsUk,
     ],
     alternates: {
@@ -237,8 +239,8 @@ export default async function CategoryPage({ params }: Props) {
 
   const introText =
     locale === "en"
-      ? `Professional ${brand.latin} ${category.name.toLowerCase()} — niche aromatic cosmetics ${brand.subjectEn} from a Ukrainian brand. High concentration of active ingredients and full range combinability. Sold exclusively through accredited brand technologists.`
-      : `Професійні ${category.name.toLowerCase()} ${brand.latin} — нішева аромакосметика ${brand.subjectUk} від українського бренду. Висока концентрація активних компонентів, повна сумісність між лінійками. Продається виключно через акредитованих технологів бренду.`;
+      ? `Professional ${brand.latin} ${category.name.toLowerCase()} — niche aromatic ${brand.subjectEn} cosmetics from Ukrainian brand. High concentration of active ingredients, ${brand.benefitEn}and full range combinability. Sold exclusively through accredited brand technologists.`
+      : `Професійні ${category.name.toLowerCase()} ${brand.latin} — нішева аромакосметика ${brand.subjectUk} від українського бренду. Висока концентрація активних компонентів, ${brand.benefitUk}повна сумісність між лінійками. Продається виключно через акредитованих технологів бренду.`;
 
   return (
     <>

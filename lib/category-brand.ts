@@ -19,9 +19,21 @@ export type BrandLine = {
   latin: string;
   /** Ukrainian brand name. Note: "На Голову", never "На Голови". */
   uk: string;
-  /** What the line is for — completes "аромакосметика ___". */
+  /** Plain Latin spelling, without the accent — how people actually type it. */
+  latinPlain: string;
+  /** Lowercase Ukrainian name, for keyword variants. */
+  ukLower: string;
+  /** Completes "аромакосметика ___" — Ukrainian puts the subject after. */
   subjectUk: string;
+  /**
+   * Attributive form: goes BEFORE "cosmetics" ("hair cosmetics"), not after.
+   * "cosmetics for hair" is grammatical but breaks the exact phrase the English
+   * pages already rank on and that sits in their keyword list.
+   */
   subjectEn: string;
+  /** The line's headline benefit, listed in the category intro. */
+  benefitUk: string;
+  benefitEn: string;
   /** Extra brand keywords appended to every category in the line. */
   keywordsUk: string[];
   keywordsEn: string[];
@@ -31,8 +43,15 @@ const HAIR: BrandLine = {
   eyebrow: "Na Gólov[y]",
   latin: "Na Gólov[y]",
   uk: "На Голову",
+  latinPlain: "Na Golovy",
+  ukLower: "на голову",
   subjectUk: "для волосся",
-  subjectEn: "for hair",
+  subjectEn: "hair",
+  // Kept word-for-word from the pre-hierarchy copy: this sentence is live on
+  // every hair category page and "захист кольору" is one of the line's real
+  // search terms. Generalising it away cost the pages a keyword for nothing.
+  benefitUk: "захист кольору, ",
+  benefitEn: "color protection, ",
   keywordsUk: [
     "Na Golovy",
     "Na Gólov[y]",
@@ -55,8 +74,12 @@ const SKIN: BrandLine = {
   eyebrow: "Na WKIR[y]",
   latin: "Na WKIR[y]",
   uk: "На Шкіру",
+  latinPlain: "Na WKIRy",
+  ukLower: "на шкіру",
   subjectUk: "для тіла та обличчя",
-  subjectEn: "for body and face",
+  subjectEn: "body and face",
+  benefitUk: "делікатні формули, ",
+  benefitEn: "gentle formulas, ",
   keywordsUk: [
     "Na WKIRy",
     "Na WKIR[y]",
