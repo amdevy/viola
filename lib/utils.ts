@@ -75,3 +75,28 @@ export const ORDER_STATUS_LABELS: Record<string, string> = {
   delivered: "Доставлено",
   cancelled: "Скасовано",
 };
+
+export const ORDER_STATUS_COLORS: Record<string, string> = {
+  pending: "text-yellow-600",
+  paid: "text-green-600",
+  processing: "text-blue-600",
+  shipped: "text-purple-600",
+  delivered: "text-green-700",
+  cancelled: "text-red-600",
+};
+
+/**
+ * Statuses that count as money actually taken.
+ *
+ * Shared rather than repeated per page: the dashboard and the statistics page
+ * both report revenue, and two screens quoting different totals for the same
+ * shop is worse than either number being wrong. "pending" is excluded on
+ * purpose — a "call me back" order is a lead until the owner confirms it.
+ */
+export const REVENUE_STATUSES = ["paid", "processing", "shipped", "delivered"] as const;
+
+/** Everything that still represents a real order — cancelled ones do not. */
+export const ACTIVE_ORDER_STATUSES = [
+  "pending",
+  ...REVENUE_STATUSES,
+] as const;

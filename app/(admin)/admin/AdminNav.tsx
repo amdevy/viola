@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 
 const NAV = [
   { href: "/admin", label: "Панель", exact: true },
+  { href: "/admin/stats", label: "Статистика" },
   { href: "/admin/orders", label: "Замовлення" },
   { href: "/admin/abandoned", label: "Незавершені" },
   { href: "/admin/products", label: "Товари" },
