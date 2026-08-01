@@ -59,7 +59,12 @@ export const useCart = create<CartStore>()(
         }));
       },
 
-      clearCart: () => set({ items: [] }),
+      // Returning the current state unchanged makes zustand skip the update
+      // entirely. `set({ items: [] })` allocated a fresh array on every call, so
+      // clearing an already-empty cart still notified every subscriber with a
+      // new reference — enough to spin any effect that depends on `items`.
+      clearCart: () =>
+        set((state) => (state.items.length === 0 ? state : { ...state, items: [] })),
 
       openCart: () => set({ isOpen: true }),
       closeCart: () => set({ isOpen: false }),

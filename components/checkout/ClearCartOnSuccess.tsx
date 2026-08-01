@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { sendGAEvent } from "@next/third-parties/google";
 import { useCart } from "@/hooks/useCart";
 
@@ -11,10 +11,22 @@ export default function ClearCartOnSuccess({
   orderId?: string;
   isPaid?: boolean;
 }) {
-  const items = useCart((s) => s.items);
   const clearCart = useCart((s) => s.clearCart);
+  // The cart is read imperatively rather than subscribed to. Selecting `items`
+  // here re-rendered this component the instant the cart was cleared, and since
+  // the effect depended on `items` it cleared again, re-rendered again, and took
+  // the whole success page down with React #185 (max update depth) — so the
+  // shopper saw "This page couldn't load" right after a successful order.
+  const fired = useRef(false);
 
   useEffect(() => {
+    // StrictMode mounts effects twice in development; without this the purchase
+    // event would be reported to GA twice for one order.
+    if (fired.current) return;
+    fired.current = true;
+
+    const items = useCart.getState().items;
+
     if (items.length > 0 && orderId) {
       const value = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
       const gaItems = items.map((i) => ({
@@ -46,7 +58,7 @@ export default function ClearCartOnSuccess({
       }
     }
     clearCart();
-  }, [orderId, isPaid, items, clearCart]);
+  }, [orderId, isPaid, clearCart]);
 
   return null;
 }
