@@ -3,6 +3,10 @@ export interface Category {
   name: string;
   name_en?: string | null;
   slug: string;
+  /** Батьківська категорія. Використовується рівно один рівень вкладеності. */
+  parent_id?: string | null;
+  /** Порядок у меню та фільтрі; менше — вище. */
+  sort_order?: number | null;
   created_at: string;
 }
 

@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import { sendGAEvent } from "@next/third-parties/google";
 import { useCategories } from "@/hooks/useProducts";
 import { HAIR_TYPES } from "@/lib/utils";
-import { sortCategories } from "@/lib/categories";
 
 interface FilterState {
   category: string;
@@ -24,8 +23,7 @@ export default function ProductFilter({ filters, onChange }: ProductFilterProps)
   const t = useTranslations("filter");
   const tc = useTranslations("categories");
   const th = useTranslations("hairTypes");
-  const { categories } = useCategories();
-  const sortedCategories = sortCategories(categories);
+  const { tree } = useCategories();
 
   // Debounced price inputs
   const [localMin, setLocalMin] = useState(filters.minPrice);
@@ -94,7 +92,7 @@ export default function ProductFilter({ filters, onChange }: ProductFilterProps)
       </div>
 
       {/* Categories */}
-      {categories.length > 0 && (
+      {tree.length > 0 && (
         <div>
           <label className="text-xs uppercase tracking-widest text-[#6B6B6B] block mb-2">
             {t("category")}
@@ -110,19 +108,43 @@ export default function ProductFilter({ filters, onChange }: ProductFilterProps)
             >
               {tc("allCategories")}
             </button>
-            {sortedCategories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => update("category", cat.slug)}
-                className={`w-full text-left text-sm px-2 py-1.5 rounded transition-colors ${
-                  filters.category === cat.slug
-                    ? "bg-[#1A1A1A] text-white"
-                    : "text-[#1A1A1A] hover:bg-[#F0EDE8]"
-                }`}
-              >
-                {cat.name}
-              </button>
-            ))}
+            {tree.map((cat) =>
+              // A parent holds no products of its own, so offering it as a
+              // filter would return an empty grid. It becomes a heading and its
+              // children become the options.
+              cat.children.length > 0 ? (
+                <div key={cat.id} className="pt-2">
+                  <p className="text-[11px] uppercase tracking-wider text-[#6B6B6B] px-2 pb-1">
+                    {cat.name}
+                  </p>
+                  {cat.children.map((child) => (
+                    <button
+                      key={child.id}
+                      onClick={() => update("category", child.slug)}
+                      className={`w-full text-left text-sm px-2 py-1.5 pl-4 rounded transition-colors ${
+                        filters.category === child.slug
+                          ? "bg-[#1A1A1A] text-white"
+                          : "text-[#1A1A1A] hover:bg-[#F0EDE8]"
+                      }`}
+                    >
+                      {child.name}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <button
+                  key={cat.id}
+                  onClick={() => update("category", cat.slug)}
+                  className={`w-full text-left text-sm px-2 py-1.5 rounded transition-colors ${
+                    filters.category === cat.slug
+                      ? "bg-[#1A1A1A] text-white"
+                      : "text-[#1A1A1A] hover:bg-[#F0EDE8]"
+                  }`}
+                >
+                  {cat.name}
+                </button>
+              )
+            )}
           </div>
         </div>
       )}

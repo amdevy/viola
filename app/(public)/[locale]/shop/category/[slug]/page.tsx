@@ -6,7 +6,12 @@ import ProductCard from "@/components/shop/ProductCard";
 import ProductListGA from "@/components/shop/ProductListGA";
 import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
 import { getCategorySeo } from "@/lib/category-seo";
-import { NON_EMPTY_CATEGORY_SELECT, stripJoinedProducts } from "@/lib/categories";
+import {
+  CATEGORY_WITH_PRODUCTS_SELECT,
+  buildCategoryTree,
+  flattenCategoryTree,
+} from "@/lib/categories";
+import { getBrandLine } from "@/lib/category-brand";
 import type { Category, Product } from "@/types";
 import type { Metadata } from "next";
 import { safeJsonLd } from "@/lib/utils";
@@ -17,83 +22,105 @@ interface Props {
   params: Promise<{ slug: string; locale: string }>;
 }
 
-async function getCategory(slug: string): Promise<Category | null> {
+type CategoryContext = {
+  category: Category;
+  /** Set only for a subcategory — drives the extra breadcrumb level. */
+  parent: Category | null;
+  /** Set only for a parent — its non-empty subcategories. */
+  children: Category[];
+  /** Top of the branch: decides which product line's branding applies. */
+  rootSlug: string;
+  /** Every category whose products belong on this page. */
+  listingIds: string[];
+};
+
+/**
+ * Loads the category together with the branch it sits in.
+ *
+ * A parent page lists its children's products rather than its own (it has
+ * none): a page that is only a list of links to other pages is a doorway, and
+ * carries no weight of its own.
+ */
+async function getCategoryContext(slug: string): Promise<CategoryContext | null> {
   const supabase = createPublicClient();
-  const { data } = await supabase
-    .from("categories")
-    .select("*")
-    .eq("slug", slug)
-    .single();
-  return (data as Category) ?? null;
+  const { data } = await supabase.from("categories").select(CATEGORY_WITH_PRODUCTS_SELECT);
+
+  const all = flattenCategoryTree(buildCategoryTree(data));
+  const node = all.find((c) => c.slug === slug);
+  if (!node) return null;
+
+  const parent = node.parent_id
+    ? (all.find((c) => c.id === node.parent_id) as Category | undefined) ?? null
+    : null;
+  const children = all.filter((c) => c.parent_id === node.id) as Category[];
+
+  return {
+    category: node as Category,
+    parent,
+    children,
+    rootSlug: parent?.slug ?? node.slug,
+    listingIds: [node.id, ...children.map((c) => c.id)],
+  };
 }
 
-async function getProductsByCategory(categoryId: string): Promise<Product[]> {
+async function getProductsByCategory(categoryIds: string[]): Promise<Product[]> {
   const supabase = createPublicClient();
   const { data } = await supabase
     .from("products")
     .select("*, category:categories(id,name,name_en,slug)")
-    .eq("category_id", categoryId)
+    .in("category_id", categoryIds)
     .order("created_at", { ascending: false });
   return (data as Product[]) ?? [];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, locale } = await params;
-  const raw = await getCategory(slug);
-  if (!raw) return { title: locale === "en" ? "Category not found" : "Категорію не знайдено" };
+  const ctx = await getCategoryContext(slug);
+  if (!ctx) return { title: locale === "en" ? "Category not found" : "Категорію не знайдено" };
 
   const { row: category } = localize(
-    raw as unknown as Record<string, unknown>,
+    ctx.category as unknown as Record<string, unknown>,
     locale,
     CATEGORY_I18N_FIELDS,
   ) as unknown as { row: Category };
 
-  const products = await getProductsByCategory(category.id);
+  const products = await getProductsByCategory(ctx.listingIds);
   const isEmpty = products.length === 0;
 
+  const brand = getBrandLine(ctx.rootSlug);
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
   const ukUrl = `${siteUrl}/shop/category/${slug}`;
   const enUrl = `${siteUrl}/en/shop/category/${slug}`;
 
   const title =
     locale === "en"
-      ? `${category.name} Na Gólov[y] — Buy in Ukraine`
-      : `${category.name} На Голову (Na Gólov[y]) — Купити в Україні`;
+      ? `${category.name} ${brand.latin} — Buy in Ukraine`
+      : `${category.name} ${brand.uk} (${brand.latin}) — Купити в Україні`;
 
   const description =
     locale === "en"
-      ? `Buy ${category.name.toLowerCase()} Na Gólov[y] (На Голову) online. Professional Ukrainian hair cosmetics with Nova Poshta delivery across Ukraine.`
-      : `Купити ${category.name.toLowerCase()} На Голову (Na Gólov[y]) онлайн в Україні. Професійна українська аромакосметика для волосся з доставкою Новою Поштою.`;
+      ? `Buy ${category.name.toLowerCase()} ${brand.latin} (${brand.uk}) online. Professional Ukrainian ${brand.subjectEn} cosmetics with Nova Poshta delivery across Ukraine.`
+      : `Купити ${category.name.toLowerCase()} ${brand.uk} (${brand.latin}) онлайн в Україні. Професійна українська аромакосметика ${brand.subjectUk} з доставкою Новою Поштою.`;
 
   return {
     title,
     description,
     keywords: locale === "en" ? [
       category.name,
-      `${category.name} Na Golovy`,
+      `${category.name} ${brand.latinPlain}`,
       `buy ${category.name}`,
-      `Na Golovy ${category.name}`,
-      "Na Golovy",
-      "Na Gólov[y]",
-      "Ukrainian hair cosmetics",
-      "professional hair care",
+      `${brand.latinPlain} ${category.name}`,
+      ...brand.keywordsEn,
     ] : [
       category.name,
-      `${category.name} Na Golovy`,
-      `${category.name} На Голову`,
+      `${category.name} ${brand.latinPlain}`,
+      `${category.name} ${brand.uk}`,
       `${category.name} купити`,
       `купити ${category.name}`,
       `${category.name} купити Україна`,
-      `На Голову ${category.name}`,
-      `на голову ${category.name.toLowerCase()}`,
-      "Na Golovy",
-      "Na Gólov[y]",
-      "на голову",
-      "На Голову",
-      "na golovy купити",
-      "на голову купити",
-      "професійна косметика для волосся",
-      "українська косметика для волосся",
+      `${brand.uk} ${category.name}`,
+      `${brand.ukLower} ${category.name.toLowerCase()}`,
+      ...brand.keywordsUk,
     ],
     alternates: {
       canonical: locale === "en" ? enUrl : ukUrl,
@@ -117,16 +144,24 @@ export default async function CategoryPage({ params }: Props) {
   const tc = await getTranslations({ locale, namespace: "common" });
   const ts = await getTranslations({ locale, namespace: "shop" });
 
-  const raw = await getCategory(slug);
-  if (!raw) notFound();
+  const ctx = await getCategoryContext(slug);
+  if (!ctx) notFound();
 
-  const { row: category } = localize(
-    raw as unknown as Record<string, unknown>,
-    locale,
-    CATEGORY_I18N_FIELDS,
-  ) as unknown as { row: Category };
+  const localizeCategory = (c: Category) =>
+    (
+      localize(
+        c as unknown as Record<string, unknown>,
+        locale,
+        CATEGORY_I18N_FIELDS,
+      ) as unknown as { row: Category }
+    ).row;
 
-  const productsRaw = await getProductsByCategory(category.id);
+  const category = localizeCategory(ctx.category);
+  const parent = ctx.parent ? localizeCategory(ctx.parent) : null;
+  const children = ctx.children.map(localizeCategory);
+  const brand = getBrandLine(ctx.rootSlug);
+
+  const productsRaw = await getProductsByCategory(ctx.listingIds);
 
   // Порожню категорію не показуємо — див. lib/categories.ts
   if (productsRaw.length === 0) notFound();
@@ -150,13 +185,28 @@ export default async function CategoryPage({ params }: Props) {
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
 
+  const localePrefix = locale === "en" ? "/en" : "";
+
+  // The parent level is the whole SEO point of the hierarchy: it is what tells
+  // Google (and the SERP breadcrumb strip) that "Гелі для душу" sits under
+  // "Догляд за шкірою", without nesting the URL.
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: tc("home"), item: locale === "en" ? `${siteUrl}/en` : siteUrl },
-      { "@type": "ListItem", position: 2, name: ts("breadcrumbShop"), item: locale === "en" ? `${siteUrl}/en/shop` : `${siteUrl}/shop` },
-      { "@type": "ListItem", position: 3, name: category.name },
+      { "@type": "ListItem", position: 2, name: ts("breadcrumbShop"), item: `${siteUrl}${localePrefix}/shop` },
+      ...(parent
+        ? [
+            {
+              "@type": "ListItem",
+              position: 3,
+              name: parent.name,
+              item: `${siteUrl}${localePrefix}/shop/category/${parent.slug}`,
+            },
+          ]
+        : []),
+      { "@type": "ListItem", position: parent ? 4 : 3, name: category.name },
     ],
   };
 
@@ -189,8 +239,8 @@ export default async function CategoryPage({ params }: Props) {
 
   const introText =
     locale === "en"
-      ? `Professional Na Gólov[y] ${category.name.toLowerCase()} — niche aromatic hair cosmetics from Ukrainian brand. High concentration of active ingredients, color protection, and full range combinability. Sold exclusively through accredited brand technologists.`
-      : `Професійні ${category.name.toLowerCase()} Na Gólov[y] — нішева аромакосметика для волосся від українського бренду. Висока концентрація активних компонентів, захист кольору, повна сумісність між лінійками. Продається виключно через акредитованих технологів бренду.`;
+      ? `Professional ${brand.latin} ${category.name.toLowerCase()} — niche aromatic ${brand.subjectEn} cosmetics from Ukrainian brand. High concentration of active ingredients, ${brand.benefitEn}and full range combinability. Sold exclusively through accredited brand technologists.`
+      : `Професійні ${category.name.toLowerCase()} ${brand.latin} — нішева аромакосметика ${brand.subjectUk} від українського бренду. Висока концентрація активних компонентів, ${brand.benefitUk}повна сумісність між лінійками. Продається виключно через акредитованих технологів бренду.`;
 
   return (
     <>
@@ -207,19 +257,47 @@ export default async function CategoryPage({ params }: Props) {
           <Link href="/" className="hover:text-[#C4A882]">{tc("home")}</Link>
           <span>/</span>
           <Link href="/shop" className="hover:text-[#C4A882]">{ts("breadcrumbShop")}</Link>
+          {parent && (
+            <>
+              <span>/</span>
+              <Link
+                href={`/shop/category/${parent.slug}`}
+                className="hover:text-[#C4A882]"
+              >
+                {parent.name}
+              </Link>
+            </>
+          )}
           <span>/</span>
           <span className="text-[#1A1A1A]">{category.name}</span>
         </nav>
 
         <header className="mb-10 max-w-3xl">
-          <p className="text-[#C4A882] text-xs uppercase tracking-[0.3em] mb-3">Na Gólov[y]</p>
+          <p className="text-[#C4A882] text-xs uppercase tracking-[0.3em] mb-3">{brand.eyebrow}</p>
           <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1A1A1A] mb-4 leading-tight">
             {locale === "en"
-              ? `${category.name} Na Gólov[y] — Buy in Ukraine`
-              : `${category.name} На Голову (Na Gólov[y]) — Купити в Україні`}
+              ? `${category.name} ${brand.latin} — Buy in Ukraine`
+              : `${category.name} ${brand.uk} (${brand.latin}) — Купити в Україні`}
           </h1>
           <p className="text-[#6B6B6B] leading-relaxed">{introText}</p>
         </header>
+
+        {/* Children as real crawlable links, above the grid. Gives the parent an
+            internal-linking role beyond the product list and lets a shopper
+            narrow down instead of scrolling a merged catalogue. */}
+        {children.length > 0 && (
+          <nav className="mb-8 flex flex-wrap gap-2" aria-label={category.name}>
+            {children.map((child) => (
+              <Link
+                key={child.id}
+                href={`/shop/category/${child.slug}`}
+                className="px-4 py-2 text-sm rounded border border-[#E8E4DE] bg-white text-[#1A1A1A] hover:border-[#C4A882] hover:text-[#C4A882] transition-colors"
+              >
+                {child.name}
+              </Link>
+            ))}
+          </nav>
+        )}
 
         {products.length > 0 ? (
           <>
@@ -303,19 +381,18 @@ async function OtherCategoriesList({
   locale: string;
 }) {
   const supabase = createPublicClient();
-  const { data } = await supabase
-    .from("categories")
-    .select(NON_EMPTY_CATEGORY_SELECT)
-    .neq("slug", currentSlug);
+  const { data } = await supabase.from("categories").select(CATEGORY_WITH_PRODUCTS_SELECT);
 
-  const categories = stripJoinedProducts(data).map((c) => {
-    const { row } = localize(
-      c as unknown as Record<string, unknown>,
-      locale,
-      CATEGORY_I18N_FIELDS,
-    ) as unknown as { row: Category };
-    return row;
-  });
+  const categories = flattenCategoryTree(buildCategoryTree(data))
+    .filter((c) => c.slug !== currentSlug)
+    .map((c) => {
+      const { row } = localize(
+        c as unknown as Record<string, unknown>,
+        locale,
+        CATEGORY_I18N_FIELDS,
+      ) as unknown as { row: Category };
+      return row;
+    });
 
   return (
     <div className="flex flex-wrap gap-3">

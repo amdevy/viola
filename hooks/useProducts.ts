@@ -4,7 +4,12 @@ import { useState, useEffect } from "react";
 import { useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
-import { NON_EMPTY_CATEGORY_SELECT, stripJoinedProducts } from "@/lib/categories";
+import {
+  CATEGORY_WITH_PRODUCTS_SELECT,
+  buildCategoryTree,
+  flattenCategoryTree,
+  type CategoryNode,
+} from "@/lib/categories";
 import type { Product, Category } from "@/types";
 
 export function useProducts(filters?: {
@@ -113,30 +118,37 @@ export function useProducts(filters?: {
 
 export function useCategories() {
   const locale = useLocale();
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [tree, setTree] = useState<CategoryNode[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetch = async () => {
       const supabase = createClient();
-      // Тільки непорожні категорії — див. lib/categories.ts
-      const { data } = await supabase
-        .from("categories")
-        .select(NON_EMPTY_CATEGORY_SELECT)
-        .order("name");
-      const localized = stripJoinedProducts(data).map((c) => {
-        const { row } = localize(
-          c as unknown as Record<string, unknown>,
+      // LEFT JOIN, а не INNER: батьківські категорії власних товарів не мають,
+      // і фільтрація порожніх відбувається вже в buildCategoryTree, яке вміє
+      // залишити батька живим заради непорожніх дітей. Див. lib/categories.ts.
+      // Порядок задає buildCategoryTree у JS, а не PostgREST. Сортувати тут по
+      // sort_order було б жорсткою залежністю від міграції: доки колонки немає,
+      // запит повертав би помилку, і меню зникло б цілком.
+      const { data } = await supabase.from("categories").select(CATEGORY_WITH_PRODUCTS_SELECT);
+
+      const localized = (data ?? []).map((row) => {
+        const { products, ...rest } = row as Record<string, unknown>;
+        const { row: translated } = localize(
+          rest,
           locale,
           CATEGORY_I18N_FIELDS,
-        ) as unknown as { row: Category };
-        return row;
+        ) as unknown as { row: Record<string, unknown> };
+        return { ...translated, products };
       });
-      setCategories(localized);
+
+      setTree(buildCategoryTree(localized));
       setLoading(false);
     };
     fetch();
   }, [locale]);
 
-  return { categories, loading };
+  // `categories` лишається пласким списком усього видимого — таким його чекають
+  // фільтр каталогу й footer. `tree` потрібне лише там, де малюється два рівні.
+  return { categories: flattenCategoryTree(tree), tree, loading };
 }

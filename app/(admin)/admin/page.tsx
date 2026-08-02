@@ -1,6 +1,11 @@
 import { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { formatPrice } from "@/lib/utils";
+import {
+  formatPrice,
+  ORDER_STATUS_LABELS,
+  ORDER_STATUS_COLORS,
+  REVENUE_STATUSES,
+} from "@/lib/utils";
 import Link from "next/link";
 
 export const metadata: Metadata = { title: "Admin — Dashboard" };
@@ -16,11 +21,12 @@ async function getDashboardStats() {
       .select("id", { count: "exact" })
       .gte("created_at", today.toISOString()),
     // Revenue must not disappear the moment the operator moves a paid order to
-    // "processing" — money collected stays collected through fulfilment.
+    // "processing" — money collected stays collected through fulfilment. The
+    // status list is shared with the statistics page so the two cannot drift.
     supabase
       .from("orders")
       .select("total")
-      .in("status", ["paid", "processing", "shipped", "delivered"])
+      .in("status", [...REVENUE_STATUSES])
       .gte("created_at", today.toISOString()),
     supabase
       .from("customers")
@@ -51,24 +57,6 @@ async function getRecentOrders() {
     .limit(5);
   return data ?? [];
 }
-
-const STATUS_COLORS: Record<string, string> = {
-  pending: "text-yellow-600",
-  paid: "text-green-600",
-  processing: "text-blue-600",
-  shipped: "text-purple-600",
-  delivered: "text-green-700",
-  cancelled: "text-red-600",
-};
-
-const STATUS_LABELS: Record<string, string> = {
-  pending: "Очікує",
-  paid: "Оплачено",
-  processing: "Обробляється",
-  shipped: "Відправлено",
-  delivered: "Доставлено",
-  cancelled: "Скасовано",
-};
 
 export default async function AdminDashboard() {
   const [stats, recentOrders] = await Promise.all([
@@ -161,8 +149,8 @@ export default async function AdminDashboard() {
                     <td className="px-5 py-3 font-medium">{order.customer_name}</td>
                     <td className="px-5 py-3">{formatPrice(order.total)}</td>
                     <td className="px-5 py-3">
-                      <span className={`text-xs font-medium ${STATUS_COLORS[order.status] ?? ""}`}>
-                        {STATUS_LABELS[order.status] ?? order.status}
+                      <span className={`text-xs font-medium ${ORDER_STATUS_COLORS[order.status] ?? ""}`}>
+                        {ORDER_STATUS_LABELS[order.status] ?? order.status}
                       </span>
                     </td>
                     <td className="px-5 py-3 text-[#6B6B6B]">

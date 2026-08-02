@@ -11,6 +11,18 @@ import toast from "react-hot-toast";
 import Image from "next/image";
 import type { Product, Category } from "@/types";
 
+/**
+ * "Догляд за шкірою → Гелі для душу" rather than a bare "Гелі для душу".
+ * The flat list gave no clue which branch a category sat in, which is how a
+ * body scrub ends up filed under hair care.
+ */
+function categoryLabel(category: Category, all: Category[]): string {
+  const parent = category.parent_id
+    ? all.find((c) => c.id === category.parent_id)
+    : undefined;
+  return parent ? `${parent.name} → ${category.name}` : category.name;
+}
+
 type StatusFilter =
   | "all"
   | "bestseller"
@@ -366,7 +378,7 @@ export default function AdminProductsPage() {
             const count = categoryCounts.get(c.id) ?? 0;
             return (
               <option key={c.id} value={c.id}>
-                {c.name} ({count})
+                {categoryLabel(c, categories)} ({count})
               </option>
             );
           })}
@@ -481,7 +493,9 @@ export default function AdminProductsPage() {
               >
                 <option value="">Без категорії</option>
                 {categories.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
+                  <option key={c.id} value={c.id}>
+                    {categoryLabel(c, categories)}
+                  </option>
                 ))}
               </select>
             </div>
