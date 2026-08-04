@@ -146,7 +146,23 @@ export default function Footer() {
           <p className='text-xs text-[#6B6B6B]'>
             {t("allRights", { year: new Date().getFullYear() })}
           </p>
-          <p className='text-xs text-[#6B6B6B]'>{t("developedBy")}</p>
+          <p className='text-xs text-[#6B6B6B]'>
+            {/* Only the name is clickable — "Розробка сайту —" is not part of
+                the link target. External, so a plain <a>: the routing Link
+                would try to prefix a locale onto t.me. */}
+            {t.rich("developedBy", {
+              author: (chunks) => (
+                <a
+                  href='https://t.me/AndriiMatt'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='hover:text-[#C4A882] transition-colors'
+                >
+                  {chunks}
+                </a>
+              ),
+            })}
+          </p>
           <div className='flex gap-4'>
             <Link
               href='/privacy'
