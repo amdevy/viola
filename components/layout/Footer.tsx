@@ -3,12 +3,14 @@
 import { useTranslations } from "next-intl";
 import { sendGAEvent } from "@next/third-parties/google";
 import { Link } from "@/i18n/routing";
-import { useCategories } from "@/hooks/useProducts";
+import { flattenCategoryTree, type CategoryNode } from "@/lib/categories";
 
-export default function Footer() {
+export default function Footer({ categories: tree }: { categories: CategoryNode[] }) {
   const t = useTranslations("footer");
   const th = useTranslations("header");
-  const { categories } = useCategories();
+  // Flat in the footer: nesting tells a reader nothing here, while a link to
+  // every category page is exactly what this block is for.
+  const categories = flattenCategoryTree(tree);
 
   return (
     <footer className='bg-[#1A1A1A] text-white'>

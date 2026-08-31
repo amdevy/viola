@@ -116,6 +116,7 @@ export default function NovaPoshtaSelect({
         <div className="relative">
           <input
             type="text"
+            autoComplete="off"
             placeholder={t("cityPlaceholder")}
             value={cityQuery}
             onChange={(e) => {
@@ -164,6 +165,7 @@ export default function NovaPoshtaSelect({
         <div className="relative">
           <input
             type="text"
+            autoComplete="off"
             disabled={!selectedCity}
             placeholder={
               !selectedCity

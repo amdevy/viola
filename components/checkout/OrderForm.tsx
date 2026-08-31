@@ -330,18 +330,21 @@ export default function OrderForm() {
           <Input
             label={t("firstName")}
             placeholder={t("firstNamePlaceholder")}
+            autoComplete="given-name"
             error={errors.firstName?.message}
             {...register("firstName")}
           />
           <Input
             label={t("lastName")}
             placeholder={t("lastNamePlaceholder")}
+            autoComplete="family-name"
             error={errors.lastName?.message}
             {...register("lastName")}
           />
           <Input
             label={t("phone")}
             placeholder={t("phonePlaceholder")}
+            autoComplete="tel"
             type="tel"
             error={errors.phone?.message}
             hint={t("phoneHint")}
@@ -350,6 +353,7 @@ export default function OrderForm() {
           <Input
             label={t("email")}
             placeholder={t("emailPlaceholder")}
+            autoComplete="email"
             type="email"
             error={errors.email?.message}
             {...register("email")}
