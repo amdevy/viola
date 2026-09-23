@@ -29,7 +29,7 @@ export default function MobileMenu({
 
   const NAV_LINKS = [
     { href: "/shop" as const, label: th("catalog") },
-    { href: "/about" as const, label: th("about") },
+    { href: "/about" as const, label: th("aboutViola") },
     { href: "/blog" as const, label: th("blog") },
     { href: "/reviews" as const, label: th("reviews") },
     { href: "/contacts" as const, label: th("contacts") },
@@ -61,7 +61,7 @@ export default function MobileMenu({
               onClick={onClose}
               className="block py-2.5 text-sm font-medium text-[#C4A882] hover:text-[#1A1A1A] transition-colors mb-4"
             >
-              Na Gólov[y]
+              {th("about")}
             </Link>
             <p className="text-xs uppercase tracking-widest text-[#6B6B6B] mb-3">{t("navigation")}</p>
             {NAV_LINKS.map((link) => (

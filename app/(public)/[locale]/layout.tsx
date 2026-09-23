@@ -43,10 +43,10 @@ export async function generateMetadata({
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
 
   return {
-    title: {
-      default: t("homeTitle"),
-      template: "%s — Na Gólov[y] | Viola",
-    },
+    // Без template: кожна сторінка збирає повний title сама (див. lib/seo-title.ts).
+    // Шаблон дописував "— Na Gólov[y] | Viola" до title, де бренд уже був, і
+    // застосовувався не до всіх сегментів — половина сайту мала суфікс, половина ні.
+    title: t("homeTitle"),
     description: t("homeDescription"),
     keywords: [
       "Na Golovy", "Na Gólov[y]", "na golovy", "na golovu",

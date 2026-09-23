@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { createPublicClient } from "@/lib/supabase/server";
 import { localize, BLOG_I18N_FIELDS } from "@/lib/i18n/localize";
 import { safeJsonLd } from "@/lib/utils";
+import { pageTitle } from "@/lib/seo-title";
 
 export const revalidate = 3600;
 
@@ -47,7 +48,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const shouldNoindex = locale === "en" && !hasTranslation;
 
   return {
-    title: post.title as string,
+    title: pageTitle(post.title as string),
     description: (post.excerpt as string | null) ?? "",
     alternates: {
       canonical: locale === "en" ? enUrl : ukUrl,
@@ -260,6 +261,26 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
         </Link>
       </div>
+
+      {/* Стаття "де купити На Голову" — брендовий інтент, але сторінка була
+          глухим кутом: жодного посилання на хаб бренду чи категорії. Тепер
+          вага йде далі, а стаття отримує зворотне посилання з /na-golovy. */}
+      <nav aria-label={t("relatedTitle")} className="mt-8 pt-8 border-t border-[#E8E4DE]">
+        <p className="text-xs uppercase tracking-widest text-[#6B6B6B] mb-3">{t("relatedTitle")}</p>
+        <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+          {[
+            { href: "/na-golovy" as const, label: t("relatedBrand") },
+            { href: "/shop" as const, label: t("relatedShop") },
+            { href: "/shop/category/shampoos" as const, label: t("relatedShampoos") },
+          ].map((l) => (
+            <li key={l.href}>
+              <Link href={l.href} className="text-[#1A1A1A] hover:text-[#C4A882] transition-colors underline-offset-4 hover:underline">
+                {l.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
 
       <div className="mt-8 pt-8 border-t border-[#E8E4DE]">
         <Link

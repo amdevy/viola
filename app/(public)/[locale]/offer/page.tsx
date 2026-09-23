@@ -9,7 +9,7 @@ export async function generateMetadata({
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
   const ukUrl = `${siteUrl}/offer`;
   return {
-    title: "Публічна оферта — Viola Salon Мукачево",
+    title: "Публічна оферта | Viola",
     description: "Публічна оферта інтернет-магазину Viola — умови купівлі-продажу косметики Na Golov[y].",
     alternates: {
       canonical: ukUrl,

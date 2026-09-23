@@ -9,7 +9,7 @@ export async function generateMetadata({
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
   const ukUrl = `${siteUrl}/privacy`;
   return {
-    title: "Політика конфіденційності — Viola Salon",
+    title: "Політика конфіденційності | Viola",
     description: "Політика конфіденційності інтернет-магазину Viola — захист та обробка персональних даних клієнтів.",
     alternates: {
       canonical: ukUrl,

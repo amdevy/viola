@@ -9,7 +9,7 @@ export async function generateMetadata({
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
   const ukUrl = `${siteUrl}/terms`;
   return {
-    title: "Умови використання сайту — Viola Salon",
+    title: "Умови використання сайту | Viola",
     description: "Умови використання сайту та інтернет-магазину Viola — права та обов'язки сторін, політика повернення.",
     alternates: {
       canonical: ukUrl,

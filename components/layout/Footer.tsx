@@ -68,7 +68,7 @@ export default function Footer({ categories: tree }: { categories: CategoryNode[
             <ul className='space-y-2'>
               {[
                 { href: '/shop' as const, label: t("shop") },
-                { href: '/na-golovy' as const, label: "Na Gólov[y]" },
+                { href: '/na-golovy' as const, label: t("naGolovy") },
               ].map((l) => (
                 <li key={l.href}>
                   <Link

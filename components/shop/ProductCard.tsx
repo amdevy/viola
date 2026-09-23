@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
-import { useRouter } from "@/i18n/routing";
+import { Link } from "@/i18n/routing";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice, formatVolume } from "@/lib/utils";
 import toast from "react-hot-toast";
@@ -22,13 +22,13 @@ export default function ProductCard({ product }: ProductCardProps) {
   const locale = useLocale();
   const [hovered, setHovered] = useState(false);
   const [notifyOpen, setNotifyOpen] = useState(false);
-  const router = useRouter();
   const { addItem, openCart } = useCart();
 
   const primaryImage = product.images?.[0]?.trim() || "/placeholder-product.png";
   const secondaryImage = product.images?.[1]?.trim() || primaryImage;
 
   const canBuy = product.in_stock && !product.is_coming_soon;
+  const productHref = `/shop/${product.slug}`;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -68,20 +68,20 @@ export default function ProductCard({ product }: ProductCardProps) {
         price: product.price,
       }],
     });
-    router.push(`/shop/${product.slug}`);
   };
 
   const discount = product.compare_price
     ? Math.round(((product.compare_price - product.price) / product.compare_price) * 100)
     : null;
 
+  // Раніше картка була <div onClick={router.push}>: у серверному HTML не було
+  // жодного <a href> на товар, і Google знаходив товари лише через sitemap —
+  // більшість так і лишалась "Discovered – not indexed". Тепер посилання одне,
+  // справжнє, на назві товару; ::after розтягує його на всю картку, а кнопки
+  // стоять вище за z-index, тож клік по них не веде на сторінку товару.
   return (
     <div
-      role="link"
-      tabIndex={0}
-      onClick={handleSelect}
-      onKeyDown={(e) => { if (e.key === "Enter") handleSelect(); }}
-      className="group flex flex-col cursor-pointer"
+      className="group relative flex flex-col"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -140,8 +140,9 @@ export default function ProductCard({ product }: ProductCardProps) {
         />
 
         {/* Quick add buttons */}
-        <div className="absolute bottom-0 left-0 right-0 translate-y-0 sm:translate-y-full sm:group-hover:translate-y-0 transition-transform duration-300 flex">
+        <div className="absolute bottom-0 left-0 right-0 z-10 translate-y-0 sm:translate-y-full sm:group-hover:translate-y-0 transition-transform duration-300 flex">
           <button
+            type="button"
             onClick={handleAddToCart}
             className="flex-1 bg-[#1A1A1A] text-white text-[10px] sm:text-xs font-medium py-2.5 sm:py-3 px-1 hover:bg-[#C4A882] transition-colors uppercase tracking-normal sm:tracking-wider leading-tight text-center"
           >
@@ -169,7 +170,13 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* Info */}
       <div className="flex flex-col gap-1 flex-1">
         <h3 className="text-sm font-medium text-[#1A1A1A] line-clamp-2 group-hover:text-[#C4A882] transition-colors">
-          {product.name}
+          <Link
+            href={productHref}
+            onClick={handleSelect}
+            className="after:absolute after:inset-0 after:content-['']"
+          >
+            {product.name}
+          </Link>
         </h3>
         {product.volume && (
           <p className="text-xs text-[#6B6B6B]">{formatVolume(product.volume, locale)}</p>
@@ -186,13 +193,11 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
       </div>
 
-      <div onClick={(e) => e.stopPropagation()}>
-        <StockNotifyModal
-          isOpen={notifyOpen}
-          onClose={() => setNotifyOpen(false)}
-          product={product}
-        />
-      </div>
+      <StockNotifyModal
+        isOpen={notifyOpen}
+        onClose={() => setNotifyOpen(false)}
+        product={product}
+      />
     </div>
   );
 }
