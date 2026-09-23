@@ -1,20 +1,20 @@
 {
   "meta": {
-    "homeTitle": "Buy Na Gólov[y] — Brand Technologist Store | Viola",
-    "homeDescription": "Buy Na Golovy hair cosmetics in Ukraine from brand technologist Viola Hehedosh. Professional shampoos, conditioners, masks. Personal consultation, Nova Poshta delivery.",
-    "shopTitle": "Buy Na Golov[y] Cosmetics — Shampoos, Masks, Conditioners",
+    "homeTitle": "Viola Beauty Salon in Mukachevo — Na Golovy Hair Cosmetics",
+    "homeDescription": "Viola beauty salon in Mukachevo and the Na Golovy cosmetics store of brand technologist Viola Hehedosh. Personal hair care consultation, Nova Poshta delivery across Ukraine.",
+    "shopTitle": "Na Golovy Catalog: Shampoos, Masks, Hair Care | Viola",
     "shopDescription": "Buy Na Golovy in Ukraine. Professional aromatic hair cosmetics: shampoos, conditioners, masks, leave-in care. Delivery by Nova Poshta across Ukraine.",
-    "aboutTitle": "Viola Hehedosh — Na Golov[y] Brand Technologist | Viola Salon",
+    "aboutTitle": "Viola Hehedosh — Na Golovy Brand Technologist | Viola",
     "aboutDescription": "Viola Hehedosh — Na Golovy Brand Expert. Learn more about the professional aromatic hair cosmetics brand and Viola salon in Mukachevo.",
-    "contactsTitle": "Contacts — Viola Beauty Salon in Mukachevo",
+    "contactsTitle": "Contacts — Viola Beauty Salon, Mukachevo",
     "contactsDescription": "Viola Salon address: Shevchenka St. 13A/35, Mukachevo. Phone: +380 50 058 21 75. Working hours, contact form and map.",
-    "deliveryTitle": "Delivery & Payment — Nova Poshta Across Ukraine",
+    "deliveryTitle": "Delivery & Payment — Nova Poshta Across Ukraine | Viola",
     "deliveryDescription": "Delivery and payment terms at Viola online store. Nova Poshta across Ukraine. We ship within 1-3 business days.",
-    "blogTitle": "Blog — Hair Care Tips from Viola",
+    "blogTitle": "Blog — Hair Care Tips from a Na Golovy Technologist | Viola",
     "blogDescription": "Useful articles and tips from Viola Hehedosh, Na Golovy Brand Expert, about hair care and using Na Golovy cosmetics.",
-    "reviewsTitle": "Reviews of Na Golov[y] Cosmetics — Viola Salon",
+    "reviewsTitle": "Reviews of Na Golovy Cosmetics | Viola",
     "reviewsDescription": "Customer reviews of Viola Salon about Na Golovy professional hair cosmetics. Real impressions and ratings from buyers.",
-    "poslugyTitle": "Services — Na Golov[y] Cosmetics Consultation",
+    "poslugyTitle": "Viola Salon Services in Mukachevo — Consultation",
     "poslugyDescription": "Viola Hehedosh — Na Golov[y] brand technologist, provides personal consultation services for selecting professional hair cosmetics. Individual approach, Mukachevo and online."
   },
   "common": {
@@ -23,7 +23,7 @@
     "consultation": "Consultation",
     "allProducts": "All Products",
     "learnMore": "Learn More",
-    "aboutNaGolovy": "About Na Gólov[y] brand",
+    "aboutNaGolovy": "About the Na Golovy brand",
     "readMore": "Read More",
     "goToShop": "Go to Shop",
     "contact": "Contact Us",
@@ -54,14 +54,15 @@
     "goToShop": "Go to shop",
     "catalog": "Product Catalog",
     "contacts": "Contacts",
-    "about": "About",
+    "about": "Na Golovy brand",
     "reviews": "Reviews",
     "blog": "Blog",
     "cart": "Cart",
     "menu": "Menu",
     "whereToConsult": "Where to get consultation & buy",
     "logoAlt": "Viola — Beauty Salon",
-    "cosmetics": "Na Gólov[y] Cosmetics"
+    "cosmetics": "Na Gólov[y] Cosmetics",
+    "aboutViola": "About Viola"
   },
   "mobileMenu": {
     "menu": "Menu",
@@ -81,7 +82,8 @@
     "termsOfUse": "Terms of Use",
     "allRights": "© {year} Viola. All rights reserved.",
     "developedBy": "Website by <author>Andrii Matsiuk</author>",
-    "workingHours": "Mon–Sat: 9:00 AM — 7:00 PM"
+    "workingHours": "Mon–Sat: 9:00 AM — 7:00 PM",
+    "naGolovy": "Na Golovy brand"
   },
   "categories": {
     "shampoos": "Shampoos",
@@ -392,7 +394,11 @@
     "authorName": "Viola Hehedosh",
     "authorRole": "Na Golov[y] Brand Technologist · Viola Salon Founder",
     "allArticles": "All articles",
-    "notFound": "Article not found"
+    "notFound": "Article not found",
+    "relatedTitle": "Useful links",
+    "relatedBrand": "About the Na Golovy brand",
+    "relatedShop": "Na Golovy cosmetics catalog",
+    "relatedShampoos": "Na Golovy shampoos"
   },
   "contactForm": {
     "nameLabel": "Name *",
