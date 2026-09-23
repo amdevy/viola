@@ -110,6 +110,36 @@ describe("OrderForm", () => {
     expect(document.querySelector('input[value="card"]')).not.toBeNull();
   });
 
+  it("поля контактів дозволяють автозаповнення браузера", async () => {
+    render(<OrderForm />);
+
+    // 83% трафіку — мобільний. Без цих атрибутів Safari й Chrome не пропонують
+    // збережені дані, і покупець вбиває чотири поля руками — рівно там, де
+    // воронка втрачає найбільше.
+    const expected: [string, string][] = [
+      [uk.checkout.firstName, "given-name"],
+      [uk.checkout.lastName, "family-name"],
+      [uk.checkout.phone, "tel"],
+      [uk.checkout.email, "email"],
+    ];
+    for (const [label, value] of expected) {
+      expect(screen.getByLabelText(label)).toHaveAttribute("autocomplete", value);
+    }
+  });
+
+  it("поля Нової Пошти навпаки вимикають автозаповнення", async () => {
+    render(<OrderForm />);
+
+    // У них власний список, і підказка браузера підставила б назву міста без
+    // Ref, якого вимагає замовлення.
+    expect(
+      screen.getByPlaceholderText(uk.checkout.cityPlaceholder)
+    ).toHaveAttribute("autocomplete", "off");
+    expect(
+      screen.getByPlaceholderText(uk.checkout.warehouseSelectCityFirst)
+    ).toHaveAttribute("autocomplete", "off");
+  });
+
   it("порожній сабміт: показує підсумок помилок, шле GA-подію, фокусує перше поле і НЕ шле замовлення", async () => {
     const user = userEvent.setup();
     render(<OrderForm />);

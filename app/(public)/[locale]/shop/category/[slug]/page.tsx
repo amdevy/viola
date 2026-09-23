@@ -12,6 +12,7 @@ import {
   flattenCategoryTree,
 } from "@/lib/categories";
 import { getBrandLine } from "@/lib/category-brand";
+import { categoryTitle, categoryDescription } from "@/lib/seo-title";
 import type { Category, Product } from "@/types";
 import type { Metadata } from "next";
 import { safeJsonLd } from "@/lib/utils";
@@ -92,15 +93,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const ukUrl = `${siteUrl}/shop/category/${slug}`;
   const enUrl = `${siteUrl}/en/shop/category/${slug}`;
 
-  const title =
-    locale === "en"
-      ? `${category.name} ${brand.latin} — Buy in Ukraine`
-      : `${category.name} ${brand.uk} (${brand.latin}) — Купити в Україні`;
-
-  const description =
-    locale === "en"
-      ? `Buy ${category.name.toLowerCase()} ${brand.latin} (${brand.uk}) online. Professional Ukrainian ${brand.subjectEn} cosmetics with Nova Poshta delivery across Ukraine.`
-      : `Купити ${category.name.toLowerCase()} ${brand.uk} (${brand.latin}) онлайн в Україні. Професійна українська аромакосметика ${brand.subjectUk} з доставкою Новою Поштою.`;
+  const meta = { slug, name: category.name, locale, brand };
+  const title = categoryTitle(meta);
+  const description = categoryDescription(meta);
 
   return {
     title,
@@ -274,10 +269,12 @@ export default async function CategoryPage({ params }: Props) {
 
         <header className="mb-10 max-w-3xl">
           <p className="text-[#C4A882] text-xs uppercase tracking-[0.3em] mb-3">{brand.eyebrow}</p>
+          {/* У H1 бренд без наголосу і дужок: "na golovy шампунь" — 2 275
+              показів за квартал, а "Gólov[y]" на цей запит не матчиться. */}
           <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1A1A1A] mb-4 leading-tight">
             {locale === "en"
-              ? `${category.name} ${brand.latin} — Buy in Ukraine`
-              : `${category.name} ${brand.uk} (${brand.latin}) — Купити в Україні`}
+              ? `${category.name} ${brand.latinPlain} — Buy in Ukraine`
+              : `${category.name} ${brand.uk} (${brand.latinPlain}) — Купити в Україні`}
           </h1>
           <p className="text-[#6B6B6B] leading-relaxed">{introText}</p>
         </header>
@@ -348,18 +345,21 @@ export default async function CategoryPage({ params }: Props) {
               </div>
             </div>
 
-            <div className="mt-10">
-              <Link
-                href="/na-golovy"
-                className="text-sm text-[#C4A882] hover:text-[#1A1A1A] transition-colors"
-              >
-                {locale === "en"
-                  ? "Learn more about the Na Gólov[y] brand →"
-                  : "Дізнатися більше про бренд Na Gólov[y] →"}
-              </Link>
-            </div>
           </section>
         )}
+
+        {/* Посилання на хаб бренду — з кожної категорії, не лише з тих, що
+            мають довгий текст, і з анкором у тому написанні, яким шукають. */}
+        <div className="mt-10">
+          <Link
+            href="/na-golovy"
+            className="text-sm text-[#C4A882] hover:text-[#1A1A1A] transition-colors"
+          >
+            {locale === "en"
+              ? "Learn more about the Na Golovy brand →"
+              : "Дізнатися більше про бренд На Голову (Na Golovy) →"}
+          </Link>
+        </div>
 
         {/* Internal linking: other categories */}
         <aside className="mt-16 pt-12 border-t border-[#E8E4DE]">

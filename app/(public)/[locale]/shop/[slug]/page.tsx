@@ -14,6 +14,7 @@ import MobileStickyBar from "@/components/shop/MobileStickyBar";
 import AddToCartButton from "./AddToCartButton";
 import { formatPrice, formatVolume, HAIR_TYPES, safeJsonLd } from "@/lib/utils";
 import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
+import { productTitle } from "@/lib/seo-title";
 import type { Product } from "@/types";
 import type { Metadata } from "next";
 
@@ -75,10 +76,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     PRODUCT_I18N_FIELDS,
   ) as unknown as { row: Product; hasTranslation: boolean };
 
-  const title =
-    locale === "en"
-      ? `${product.name} — buy Na Gólov[y]`
-      : `${product.name} — купити Na Gólov[y]`;
+  const title = productTitle(product.name, locale);
   const truncateAtWord = (text: string, max: number) => {
     if (text.length <= max) return text;
     const cut = text.slice(0, max);

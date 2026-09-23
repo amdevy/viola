@@ -11,7 +11,10 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { routing } from "@/i18n/routing";
+import { getCategoryTree } from "@/lib/categories-server";
 import { safeJsonLd } from "@/lib/utils";
+
+export const revalidate = 3600;
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -40,10 +43,10 @@ export async function generateMetadata({
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
 
   return {
-    title: {
-      default: t("homeTitle"),
-      template: "%s — Na Gólov[y] | Viola",
-    },
+    // Без template: кожна сторінка збирає повний title сама (див. lib/seo-title.ts).
+    // Шаблон дописував "— Na Gólov[y] | Viola" до title, де бренд уже був, і
+    // застосовувався не до всіх сегментів — половина сайту мала суфікс, половина ні.
+    title: t("homeTitle"),
     description: t("homeDescription"),
     keywords: [
       "Na Golovy", "Na Gólov[y]", "na golovy", "na golovu",
@@ -97,6 +100,7 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   const messages = await getMessages({ locale });
+  const categories = await getCategoryTree(locale);
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
 
   const salonName = locale === "en" ? "Viola Beauty Salon" : "Салон краси Viola";
@@ -199,9 +203,9 @@ export default async function LocaleLayout({
       </head>
       <body className="bg-[#FAFAF8] text-[#1A1A1A] antialiased flex flex-col min-h-screen">
         <NextIntlClientProvider messages={messages}>
-          <Header />
+          <Header categories={categories} />
           <main className="flex-1">{children}</main>
-          <Footer />
+          <Footer categories={categories} />
         </NextIntlClientProvider>
         <Analytics />
         <SpeedInsights />

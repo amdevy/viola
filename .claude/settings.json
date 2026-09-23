@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sed -i '' 's|\"./lib/validations\"|\"/Users/USER/Desktop/viola/lib/validations\"|' /private/tmp/claude-501/-Users-USER-Desktop-viola/bce17a2c-758c-44b9-ac8f-45df7660773b/scratchpad/phone-test.ts)",
+      "Bash(npx tsx *)",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('messages/uk.json'\\)\\); print\\('uk.bundle keys:', list\\(d.get\\('bundle',{}\\).keys\\(\\)\\)\\); d2=json.load\\(open\\('messages/en.json'\\)\\); print\\('en.bundle keys:', list\\(d2.get\\('bundle',{}\\).keys\\(\\)\\)\\)\")",
+      "Bash(grep -rln 'href=\"/na-golovy\"\\\\|href={`/na-golovy\\\\|\"/na-golovy\"\\\\|aboutNaGolovy' app components)"
+    ]
+  }
+}

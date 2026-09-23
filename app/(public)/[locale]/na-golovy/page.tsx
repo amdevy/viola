@@ -8,6 +8,7 @@ import ProductCard from "@/components/shop/ProductCard";
 import ProductListGA from "@/components/shop/ProductListGA";
 import type { Product } from "@/types";
 import { safeJsonLd } from "@/lib/utils";
+import { pageTitle } from "@/lib/seo-title";
 
 export const revalidate = 3600;
 
@@ -21,15 +22,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const ukUrl = `${siteUrl}/na-golovy`;
   const enUrl = `${siteUrl}/en/na-golovy`;
 
-  const title =
+  // Ця сторінка — хаб для чистого брендового запиту ("на голову", "na golovy",
+  // "на голову бренд/сайт"). Раніше її title дублював /shop і головну
+  // ("На Голову купити — …"), і три сторінки ділили між собою 1 963 покази.
+  const title = pageTitle(
     locale === "en"
-      ? "Na Gólov[y] — Buy from Brand Technologist in Ukraine | Viola"
-      : "На Голову (Na Gólov[y]) купити — Магазин технолога бренду Viola";
+      ? "Na Golovy — Brand, Product Lines, Where to Buy"
+      : "На Голову (Na Golovy) — бренд, лінійки, де купити",
+  );
 
   const description =
     locale === "en"
-      ? "Na Golovy (На Голову) — Ukrainian niche aromatic hair cosmetics. Buy shampoos, conditioners, masks from accredited brand technologist Viola Hehedosh. Delivery across Ukraine."
-      : "На Голову (Na Golovy) — українська нішева аромакосметика для волосся. Купити шампуні, кондиціонери, маски На Голову у акредитованого технолога бренду Віоли Гегедош. Доставка по Україні.";
+      ? "The Na Golovy (На Голову) brand: philosophy, shampoo, mask and care lines, how to choose. Buy from accredited brand technologist Viola Hehedosh with delivery across Ukraine."
+      : "Бренд На Голову (Na Golovy): філософія, лінійки шампунів, масок і догляду, як підібрати. Купити у акредитованого технолога бренду Віоли Гегедош з доставкою по Україні.";
 
   return {
     title,
@@ -118,7 +123,7 @@ export default async function NaGolovyPage({ params }: Props) {
   const content = isEn
     ? {
         eyebrow: "Na Gólov[y] Brand",
-        h1: "Na Gólov[y] — Buy from Brand Technologist in Ukraine",
+        h1: "Na Golovy — Ukrainian Professional Hair Cosmetics Brand",
         intro:
           "Na Golovy (На Голову) is a Ukrainian niche brand of professional aromatic hair cosmetics, founded by colorist Nataliya Holovchenko. Formulas are developed specifically to preserve hair color and maintain hair health. Viola is a store run by Viola Hehedosh — an accredited Na Golovy brand technologist. Buy the full product line with delivery across Ukraine and get personal expert consultation.",
         whyTitle: "Why buy Na Gólov[y] at Viola",
@@ -142,12 +147,12 @@ export default async function NaGolovyPage({ params }: Props) {
         ],
         linesTitle: "Na Gólov[y] product lines",
         lines: [
-          { name: "Shampoos", desc: "Collagen, amino-ceramide, sulfate-free, hyaluronic, chelating — for every hair type and goal." },
-          { name: "Conditioners", desc: "9-protein complex, exotic oils, amino acids — deep nourishment and detangling." },
-          { name: "Masks", desc: "Paraffin therapy, Diamond Gloss, polypeptide web, collagen — intensive reconstruction and shine." },
-          { name: "Leave-in care", desc: "BB creams, silk, thermal protection sprays with ceramides and trehalose." },
-          { name: "Tonics & ampoules", desc: "Multivitamin, hyaluronic — boosters for scalp health and hair density." },
-          { name: "Scalp care", desc: "Peels with thermal and cooling effect, sebo-balancing formulas for sensitive scalp." },
+          { name: "Shampoos", href: "/shop/category/shampoos", desc: "Collagen, amino-ceramide, sulfate-free, hyaluronic, chelating — for every hair type and goal." },
+          { name: "Conditioners", href: "/shop/category/conditioners", desc: "9-protein complex, exotic oils, amino acids — deep nourishment and detangling." },
+          { name: "Masks", href: "/shop/category/masks", desc: "Paraffin therapy, Diamond Gloss, polypeptide web, collagen — intensive reconstruction and shine." },
+          { name: "Leave-in care", href: "/shop/category/leave-in", desc: "BB creams, silk, thermal protection sprays with ceramides and trehalose." },
+          { name: "Tonics & ampoules", href: "/shop", desc: "Multivitamin, hyaluronic — boosters for scalp health and hair density." },
+          { name: "Scalp care", href: "/shop/category/peeling-shampoos", desc: "Peels with thermal and cooling effect, sebo-balancing formulas for sensitive scalp." },
         ],
         featuredTitle: "Popular Na Gólov[y] products",
         ctaTitle: "Need help choosing?",
@@ -180,7 +185,7 @@ export default async function NaGolovyPage({ params }: Props) {
       }
     : {
         eyebrow: "Бренд Na Gólov[y]",
-        h1: "Na Gólov[y] купити в Україні — Магазин технолога бренду",
+        h1: "На Голову (Na Golovy) — український бренд професійної косметики для волосся",
         intro:
           "Na Golovy (На Голову) — українська нішева косметика для волосся, заснована колористом Наталією Головченко. Формули розроблені спеціально для збереження кольору та здоров'я волосся. Viola — це магазин від Віоли Гегедош, акредитованого технолога бренду Na Golovy. Купити повну лінійку з доставкою по всій Україні та отримати персональну експертну консультацію.",
         whyTitle: "Чому купувати Na Gólov[y] в Viola",
@@ -204,12 +209,12 @@ export default async function NaGolovyPage({ params }: Props) {
         ],
         linesTitle: "Лінійки Na Gólov[y]",
         lines: [
-          { name: "Шампуні", desc: "Колагенові, аміноцерамідні, безсульфатні, гіалуронові, хелатуючі — для кожного типу волосся та цілі." },
-          { name: "Кондиціонери", desc: "Комплекс 9 протеїнів, екзотичні олії, амінокислоти — глибоке живлення і легке розчісування." },
-          { name: "Маски", desc: "Парафінотерапія, Diamond Gloss, поліпептидна павутина, колаген — інтенсивне відновлення і блиск." },
-          { name: "Незмивний догляд", desc: "BB креми, шовк, термозахист-спреї з церамідами та трегалозою." },
-          { name: "Тоніки та ампули", desc: "Мультивітамінні, гіалуронові — бустери для здоров'я шкіри голови та густоти волосся." },
-          { name: "Догляд за шкірою голови", desc: "Пілінги з термо- та охолоджувальним ефектом, себобалансуючі формули для чутливої шкіри." },
+          { name: "Шампуні", href: "/shop/category/shampoos", desc: "Колагенові, аміноцерамідні, безсульфатні, гіалуронові, хелатуючі — для кожного типу волосся та цілі." },
+          { name: "Кондиціонери", href: "/shop/category/conditioners", desc: "Комплекс 9 протеїнів, екзотичні олії, амінокислоти — глибоке живлення і легке розчісування." },
+          { name: "Маски", href: "/shop/category/masks", desc: "Парафінотерапія, Diamond Gloss, поліпептидна павутина, колаген — інтенсивне відновлення і блиск." },
+          { name: "Незмивний догляд", href: "/shop/category/leave-in", desc: "BB креми, шовк, термозахист-спреї з церамідами та трегалозою." },
+          { name: "Тоніки та ампули", href: "/shop", desc: "Мультивітамінні, гіалуронові — бустери для здоров'я шкіри голови та густоти волосся." },
+          { name: "Догляд за шкірою голови", href: "/shop/category/peeling-shampoos", desc: "Пілінги з термо- та охолоджувальним ефектом, себобалансуючі формули для чутливої шкіри." },
         ],
         featuredTitle: "Популярні товари Na Gólov[y]",
         ctaTitle: "Потрібна допомога з вибором?",
@@ -335,17 +340,20 @@ export default async function NaGolovyPage({ params }: Props) {
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-10">
             {content.linesTitle}
           </h2>
+          {/* Кожна лінійка — посилання на свою категорію: хаб бренду передає
+              вагу сторінкам, які й ранжуються за "на голову шампунь/маска". */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {content.lines.map((line) => (
-              <div
+              <Link
                 key={line.name}
-                className="bg-white rounded p-6 border border-[#E8E4DE]"
+                href={line.href}
+                className="block bg-white rounded p-6 border border-[#E8E4DE] hover:border-[#C4A882] transition-colors"
               >
                 <h3 className="font-serif text-lg font-semibold text-[#1A1A1A] mb-2">
                   {line.name}
                 </h3>
                 <p className="text-sm text-[#6B6B6B] leading-relaxed">{line.desc}</p>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

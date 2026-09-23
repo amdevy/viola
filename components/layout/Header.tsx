@@ -5,15 +5,14 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { useCart } from "@/hooks/useCart";
-import { useCategories } from "@/hooks/useProducts";
+import type { CategoryNode } from "@/lib/categories";
 import MobileMenu from "./MobileMenu";
 import LanguageSwitcher from "./LanguageSwitcher";
 import CartDrawer from "@/components/shop/CartDrawer";
 
-export default function Header() {
+export default function Header({ categories }: { categories: CategoryNode[] }) {
   const { openCart } = useCart();
   const count = useCart((s) => s.itemCount());
-  const { tree } = useCategories();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -52,7 +51,7 @@ export default function Header() {
                   {[
                     { href: '/shop' as const, label: t("catalog") },
                     { href: '/contacts' as const, label: t("contacts") },
-                    { href: '/about' as const, label: t("about") },
+                    { href: '/about' as const, label: t("aboutViola") },
                   ].map((link) => (
                     <Link
                       key={link.label}
@@ -157,11 +156,11 @@ export default function Header() {
             Links point at /shop/category/<slug>, not /shop?category=<slug>:
             the former is the canonical, content-bearing page, and sitewide nav
             is the strongest internal link a page can get. */}
-        {tree.length > 0 && (
+        {categories.length > 0 && (
           <div className='hidden md:block border-b border-[#E8E4DE] bg-white'>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
               <div className='flex items-center justify-center gap-8 h-10'>
-                {tree.map((cat) => (
+                {categories.map((cat) => (
                   <div key={cat.id} className='relative group h-full flex items-center'>
                     <Link
                       href={`/shop/category/${cat.slug}`}
@@ -200,7 +199,7 @@ export default function Header() {
       <MobileMenu
         isOpen={menuOpen}
         onClose={() => setMenuOpen(false)}
-        categories={tree}
+        categories={categories}
       />
       <CartDrawer />
     </>
