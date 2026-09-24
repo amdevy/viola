@@ -33,8 +33,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const description =
     locale === "en"
-      ? "The Na Golovy (На Голову) brand: philosophy, shampoo, mask and care lines, how to choose. Buy from accredited brand technologist Viola Hehedosh with delivery across Ukraine."
-      : "Бренд На Голову (Na Golovy): філософія, лінійки шампунів, масок і догляду, як підібрати. Купити у акредитованого технолога бренду Віоли Гегедош з доставкою по Україні.";
+      ? "The Na Golovy (На Голову) brand: philosophy, shampoo, mask and care lines. Buy from accredited brand technologist Viola Hehedosh with delivery across Ukraine."
+      : "Бренд На Голову (Na Golovy): філософія, лінійки шампунів, масок і догляду. Купити в акредитованого технолога бренду Віоли Гегедош з доставкою по Україні.";
 
   return {
     title,
@@ -151,7 +151,7 @@ export default async function NaGolovyPage({ params }: Props) {
           { name: "Conditioners", href: "/shop/category/conditioners", desc: "9-protein complex, exotic oils, amino acids — deep nourishment and detangling." },
           { name: "Masks", href: "/shop/category/masks", desc: "Paraffin therapy, Diamond Gloss, polypeptide web, collagen — intensive reconstruction and shine." },
           { name: "Leave-in care", href: "/shop/category/leave-in", desc: "BB creams, silk, thermal protection sprays with ceramides and trehalose." },
-          { name: "Tonics & ampoules", href: "/shop", desc: "Multivitamin, hyaluronic — boosters for scalp health and hair density." },
+          { name: "Tonics & ampoules", href: "/shop/category/leave-in", desc: "Multivitamin, hyaluronic — boosters for scalp health and hair density." },
           { name: "Scalp care", href: "/shop/category/peeling-shampoos", desc: "Peels with thermal and cooling effect, sebo-balancing formulas for sensitive scalp." },
         ],
         featuredTitle: "Popular Na Gólov[y] products",
@@ -213,7 +213,7 @@ export default async function NaGolovyPage({ params }: Props) {
           { name: "Кондиціонери", href: "/shop/category/conditioners", desc: "Комплекс 9 протеїнів, екзотичні олії, амінокислоти — глибоке живлення і легке розчісування." },
           { name: "Маски", href: "/shop/category/masks", desc: "Парафінотерапія, Diamond Gloss, поліпептидна павутина, колаген — інтенсивне відновлення і блиск." },
           { name: "Незмивний догляд", href: "/shop/category/leave-in", desc: "BB креми, шовк, термозахист-спреї з церамідами та трегалозою." },
-          { name: "Тоніки та ампули", href: "/shop", desc: "Мультивітамінні, гіалуронові — бустери для здоров'я шкіри голови та густоти волосся." },
+          { name: "Тоніки та ампули", href: "/shop/category/leave-in", desc: "Мультивітамінні, гіалуронові — бустери для здоров'я шкіри голови та густоти волосся." },
           { name: "Догляд за шкірою голови", href: "/shop/category/peeling-shampoos", desc: "Пілінги з термо- та охолоджувальним ефектом, себобалансуючі формули для чутливої шкіри." },
         ],
         featuredTitle: "Популярні товари Na Gólov[y]",

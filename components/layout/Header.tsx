@@ -51,7 +51,7 @@ export default function Header({ categories }: { categories: CategoryNode[] }) {
                   {[
                     { href: '/shop' as const, label: t("catalog") },
                     { href: '/contacts' as const, label: t("contacts") },
-                    { href: '/about' as const, label: t("aboutViola") },
+                    { href: '/about' as const, label: t("aboutUs") },
                   ].map((link) => (
                     <Link
                       key={link.label}

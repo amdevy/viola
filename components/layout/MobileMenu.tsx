@@ -29,7 +29,7 @@ export default function MobileMenu({
 
   const NAV_LINKS = [
     { href: "/shop" as const, label: th("catalog") },
-    { href: "/about" as const, label: th("aboutViola") },
+    { href: "/about" as const, label: th("aboutUs") },
     { href: "/blog" as const, label: th("blog") },
     { href: "/reviews" as const, label: th("reviews") },
     { href: "/contacts" as const, label: th("contacts") },
