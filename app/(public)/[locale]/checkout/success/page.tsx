@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import type { Metadata } from "next";
+import { pageTitle } from "@/lib/seo-title";
 import ClearCartOnSuccess from "@/components/checkout/ClearCartOnSuccess";
 
 import { fetchLiqPayStatus, isTerminalFailure } from "@/lib/liqpay";
@@ -107,7 +108,7 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "success" });
   return {
-    title: t("title"),
+    title: pageTitle(t("title")),
     robots: { index: false },
   };
 }

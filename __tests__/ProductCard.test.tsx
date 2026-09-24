@@ -92,7 +92,11 @@ describe("ProductCard — посилання на товар у розмітці
   it("клік по назві шле select_item у GA", () => {
     render(<ProductCard product={product} />);
 
-    fireEvent.click(screen.getByRole("link", { name: product.name }));
+    // jsdom не вміє переходити на інший документ і лаявся б у консоль на кожен
+    // прогін; тут перевіряємо лише подію, тож сам перехід скасовуємо.
+    const link = screen.getByRole("link", { name: product.name });
+    link.addEventListener("click", (e) => e.preventDefault());
+    fireEvent.click(link);
 
     expect(sendGAEvent).toHaveBeenCalledWith(
       "event",

@@ -3,6 +3,7 @@ import OrderForm from "@/components/checkout/OrderForm";
 import CheckoutSummary from "./CheckoutSummary";
 import CartRecommendations from "@/components/shop/CartRecommendations";
 import type { Metadata } from "next";
+import { pageTitle } from "@/lib/seo-title";
 
 export async function generateMetadata({
   params,
@@ -12,7 +13,7 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "checkout" });
   return {
-    title: t("title"),
+    title: pageTitle(t("title")),
     robots: { index: false },
   };
 }

@@ -57,6 +57,12 @@ export async function generateMetadata({
       canonical: locale === "en" ? enUrl : ukUrl,
       languages: { uk: ukUrl, en: enUrl, "x-default": ukUrl },
     },
+    openGraph: {
+      title: t("shopTitle"),
+      description: t("shopDescription"),
+      locale: locale === "en" ? "en_US" : "uk_UA",
+      images: [{ url: "/preview.jpg", width: 1200, height: 630 }],
+    },
   };
 }
 

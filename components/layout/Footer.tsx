@@ -102,7 +102,7 @@ export default function Footer({ categories: tree }: { categories: CategoryNode[
             </h4>
             <ul className='space-y-2'>
               {[
-                { href: '/about' as const, label: t("aboutBrand") },
+                { href: '/about' as const, label: th("aboutUs") },
                 { href: '/poslugy' as const, label: t("services") },
                 { href: '/blog' as const, label: th("blog") },
                 { href: '/reviews' as const, label: th("reviews") },

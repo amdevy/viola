@@ -15,7 +15,8 @@
  * 2. Titles wrote the brand only as the stylised "Na Gólov[y]". People type
  *    "na golovy" (7 000 impressions a quarter, CTR 1.2%) — the accent and the
  *    brackets break the exact match. Titles use the plain spelling; the
- *    stylised one stays in the body copy.
+ *    stylised one stays in the body copy. `pageTitle()` also rewrites it in
+ *    titles that come from the database (blog posts), which nobody re-types.
  *
  * 3. Category titles used the plural category name ("Шампуні"), while the
  *    query is singular: "на голову шампунь" — 4 300 impressions, vs 66 for
@@ -33,10 +34,25 @@ export const SITE_NAME = "Viola";
  */
 export const TITLE_MAX_LENGTH = 62;
 
+/** Google shows ~155–160 characters of a description before cutting it. */
+export const DESCRIPTION_MAX_LENGTH = 160;
+
+/**
+ * Collapses whitespace (product names in the database carry double spaces and
+ * trailing ones) and writes the hair line's stylised name the way people type it.
+ * Only the hair line: "Na WKIR[y]" has no search volume to match yet.
+ */
+function clean(text: string): string {
+  return text
+    .replace(/Na\s+G[oó]lov(?:\[y\]|y)/g, "Na Golovy")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 /** Appends " | Viola" exactly once. */
 export function pageTitle(base: string): string {
-  const trimmed = base.trim();
-  return trimmed.endsWith(`| ${SITE_NAME}`) ? trimmed : `${trimmed} | ${SITE_NAME}`;
+  const title = clean(base);
+  return title.endsWith(`| ${SITE_NAME}`) ? title : `${title} | ${SITE_NAME}`;
 }
 
 type LocaleText = { uk: string; en: string };
@@ -50,7 +66,9 @@ const CATEGORY_NOUN: Record<string, LocaleText> = {
 };
 
 // Named products beat the generic "professional cosmetics with delivery" line:
-// a searcher comparing resellers sees what is actually on the page.
+// a searcher comparing resellers sees what is actually on the page. Every name
+// here must be a product that the category lists — check the live page when
+// products move between categories.
 const CATEGORY_DESCRIPTION: Record<string, LocaleText> = {
   shampoos: {
     uk: "Шампуні На Голову (Na Golovy) від технолога бренду Віоли Гегедош: колагенові, безсульфатні, гіалуронові, Harmony для фарбованого волосся. Доставка Новою Поштою.",
@@ -62,15 +80,15 @@ const CATEGORY_DESCRIPTION: Record<string, LocaleText> = {
   },
   masks: {
     uk: "Маски для волосся На Голову (Na Golovy): ламінування, діамантовий блиск, поліпептидна павутинка, термомаска. Підбір від технолога бренду, доставка Новою Поштою.",
-    en: "Na Golovy hair masks: lamination, diamond gloss, polypeptide web, thermal mask, 5 lipids. Chosen with the brand technologist, Nova Poshta delivery across Ukraine.",
+    en: "Na Golovy hair masks: lamination, diamond gloss, polypeptide web, thermal mask. Chosen with the brand technologist, Nova Poshta delivery across Ukraine.",
   },
   "leave-in": {
     uk: "Незмивний догляд На Голову (Na Golovy): BB-креми, термозахист Royal Shine, Velvet Cream, флюїди Diamond Elixir. Підбір від технолога, доставка Новою Поштою.",
-    en: "Na Golovy leave-in care: BB creams, Royal Shine thermal protection, Velvet Cream, Diamond Elixir fluids. Chosen with the brand technologist, Nova Poshta delivery.",
+    en: "Na Golovy leave-in care: BB creams, Royal Shine heat protection, Velvet Cream, Diamond Elixir fluids. Technologist advice, Nova Poshta delivery.",
   },
   "peeling-shampoos": {
-    uk: "Пілінг-шампуні На Голову (Na Golovy) для шкіри голови: гіалуроновий, SoftGrain, з вітамінним комплексом, Active Clean. Консультація технолога, доставка по Україні.",
-    en: "Na Golovy scalp peeling shampoos: hyaluronic, SoftGrain cream, vitamin complex, Active Clean. Technologist consultation, delivery across Ukraine.",
+    uk: "Пілінг-шампуні На Голову (Na Golovy) для шкіри голови: гіалуроновий, SoftGrain, AminoRenew, Active Clean. Консультація технолога, доставка по Україні.",
+    en: "Na Golovy scalp peeling shampoos: hyaluronic, SoftGrain, AminoRenew, Active Clean. Technologist consultation, delivery across Ukraine.",
   },
 };
 
@@ -102,8 +120,22 @@ export function categoryDescription({ slug, name, locale, brand }: CategoryMetaI
     : `Купити ${name.toLowerCase()} ${brand.uk} (${brand.latinPlain}) онлайн в Україні. Професійна українська аромакосметика ${brand.subjectUk} з доставкою Новою Поштою.`;
 }
 
+// Longest first. Product names run 21–78 characters (median 41), so one fixed
+// suffix pushed 60 of 62 titles past the SERP cut-off — and the brand, the part
+// people add to the name when they search, was what got cut. The last rung is
+// the Latin spelling: "na golovy harmony" is the only branded query product
+// pages get.
+const PRODUCT_SUFFIXES: LocaleText[] = [
+  { uk: " — купити На Голову (Na Golovy) | Viola", en: " — Buy Na Golovy | Viola" },
+  { uk: " — На Голову (Na Golovy) | Viola", en: " — Na Golovy | Viola" },
+  { uk: " — На Голову (Na Golovy)", en: " — Na Golovy" },
+  { uk: " — Na Golovy", en: " — Na Golovy" },
+];
+
+/** The longest suffix that still fits; the product name itself is never cut. */
 export function productTitle(name: string, locale: string): string {
-  return locale === "en"
-    ? pageTitle(`${name} — Buy Na Golovy`)
-    : pageTitle(`${name} — купити На Голову (Na Golovy)`);
+  const base = clean(name);
+  const suffixes = PRODUCT_SUFFIXES.map((s) => pick(s, locale)!);
+  const fitting = suffixes.find((s) => base.length + s.length <= TITLE_MAX_LENGTH);
+  return base + (fitting ?? suffixes[suffixes.length - 1]);
 }

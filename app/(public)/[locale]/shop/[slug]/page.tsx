@@ -218,15 +218,24 @@ export default async function ProductPage({ params }: Props) {
         name: locale === "en" ? "Viola Beauty Salon" : "Салон краси Viola",
       },
       url: `${siteUrl}/shop/${product.slug}`,
+      // Recommended for merchant listings. We don't store when a price last
+      // changed, so the render date is the one we can vouch for: it is always
+      // true and never in the future.
+      validFrom: new Date().toISOString().split("T")[0],
       priceValidUntil: new Date(new Date().setFullYear(new Date().getFullYear() + 1))
         .toISOString()
         .split("T")[0],
+      // shippingRate is deliberately absent: /delivery says the buyer pays Nova
+      // Poshta's own tariff, so there is no price to state — and "0" would show
+      // as free delivery in the listing.
       shippingDetails: {
         "@type": "OfferShippingDetails",
         shippingDestination: { "@type": "DefinedRegion", addressCountry: "UA" },
         deliveryTime: {
           "@type": "ShippingDeliveryTime",
-          handlingTime: { "@type": "QuantitativeValue", minValue: 1, maxValue: 3, unitCode: "DAY" },
+          // Per /delivery: same day before 15:00, next morning after it, and
+          // Monday for Saturday-evening and Sunday orders.
+          handlingTime: { "@type": "QuantitativeValue", minValue: 0, maxValue: 2, unitCode: "DAY" },
           transitTime: { "@type": "QuantitativeValue", minValue: 1, maxValue: 3, unitCode: "DAY" },
         },
       },

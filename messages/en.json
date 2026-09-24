@@ -1,11 +1,11 @@
 {
   "meta": {
     "homeTitle": "Viola Beauty Salon in Mukachevo — Na Golovy Hair Cosmetics",
-    "homeDescription": "Viola beauty salon in Mukachevo and the Na Golovy cosmetics store of brand technologist Viola Hehedosh. Personal hair care consultation, Nova Poshta delivery across Ukraine.",
+    "homeDescription": "Viola beauty salon in Mukachevo and the Na Golovy hair cosmetics store of brand technologist Viola Hehedosh. Hair care advice, delivery across Ukraine.",
     "shopTitle": "Na Golovy Catalog: Shampoos, Masks, Hair Care | Viola",
     "shopDescription": "Buy Na Golovy in Ukraine. Professional aromatic hair cosmetics: shampoos, conditioners, masks, leave-in care. Delivery by Nova Poshta across Ukraine.",
-    "aboutTitle": "Viola Hehedosh — Na Golovy Brand Technologist | Viola",
-    "aboutDescription": "Viola Hehedosh — Na Golovy Brand Expert. Learn more about the professional aromatic hair cosmetics brand and Viola salon in Mukachevo.",
+    "aboutTitle": "About Na Golovy and Brand Technologist Viola Hehedosh | Viola",
+    "aboutDescription": "Na Golovy, the Ukrainian aromatic hair care brand: story, values, product lines. Brand technologist Viola Hehedosh and Viola salon in Mukachevo.",
     "contactsTitle": "Contacts — Viola Beauty Salon, Mukachevo",
     "contactsDescription": "Viola Salon address: Shevchenka St. 13A/35, Mukachevo. Phone: +380 50 058 21 75. Working hours, contact form and map.",
     "deliveryTitle": "Delivery & Payment — Nova Poshta Across Ukraine | Viola",
@@ -15,7 +15,7 @@
     "reviewsTitle": "Reviews of Na Golovy Cosmetics | Viola",
     "reviewsDescription": "Customer reviews of Viola Salon about Na Golovy professional hair cosmetics. Real impressions and ratings from buyers.",
     "poslugyTitle": "Viola Salon Services in Mukachevo — Consultation",
-    "poslugyDescription": "Viola Hehedosh — Na Golov[y] brand technologist, provides personal consultation services for selecting professional hair cosmetics. Individual approach, Mukachevo and online."
+    "poslugyDescription": "Personal consultation with Na Golovy brand technologist Viola Hehedosh: hair care matched to your hair type. At Viola salon in Mukachevo or online."
   },
   "common": {
     "home": "Home",
@@ -62,7 +62,7 @@
     "whereToConsult": "Where to get consultation & buy",
     "logoAlt": "Viola — Beauty Salon",
     "cosmetics": "Na Gólov[y] Cosmetics",
-    "aboutViola": "About Viola"
+    "aboutUs": "About us"
   },
   "mobileMenu": {
     "menu": "Menu",
@@ -74,7 +74,6 @@
     "shop": "Shop",
     "information": "Information",
     "contacts": "Contacts",
-    "aboutBrand": "About",
     "services": "Services",
     "deliveryPayment": "Delivery & Payment",
     "publicOffer": "Public Offer",
