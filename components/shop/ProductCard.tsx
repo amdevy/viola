@@ -79,6 +79,8 @@ export default function ProductCard({ product }: ProductCardProps) {
   // більшість так і лишалась "Discovered – not indexed". Тепер посилання одне,
   // справжнє, на назві товару; ::after розтягує його на всю картку, а кнопки
   // стоять вище за z-index, тож клік по них не веде на сторінку товару.
+  // Рамка фокуса теж на ::after: у h3 стоїть line-clamp (overflow: hidden),
+  // який обрізав би рамку навколо самого тексту.
   return (
     <div
       className="group relative flex flex-col"
@@ -173,7 +175,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <Link
             href={productHref}
             onClick={handleSelect}
-            className="after:absolute after:inset-0 after:content-['']"
+            className="after:absolute after:inset-0 after:rounded after:content-[''] focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-4 focus-visible:after:outline-[#C4A882]"
           >
             {product.name}
           </Link>
