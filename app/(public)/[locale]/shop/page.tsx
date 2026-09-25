@@ -1,7 +1,10 @@
-import { Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { createPublicClient } from "@/lib/supabase/server";
+import { fetchProducts } from "@/lib/products";
 import ShopContent from "./ShopContent";
 import type { Metadata } from "next";
+
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,
@@ -66,6 +69,21 @@ export async function generateMetadata({
   };
 }
 
+/**
+ * The unfiltered catalogue, rendered into the HTML. It used to be fetched only
+ * in the browser, so crawlers got /shop as an H1 and an intro with no products.
+ */
+async function getInitialProducts(locale: string) {
+  const { products, error } = await fetchProducts(createPublicClient(), undefined, locale);
+  if (error) {
+    // Fall back to the client fetching the list itself, rather than caching an
+    // empty shop until the next revalidation.
+    console.error("ShopPage: product fetch failed", error);
+    return null;
+  }
+  return products;
+}
+
 export default async function ShopPage({
   params,
 }: {
@@ -74,6 +92,7 @@ export default async function ShopPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "shop" });
+  const initialProducts = await getInitialProducts(locale);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -86,9 +105,7 @@ export default async function ShopPage({
         </p>
       </div>
 
-      <Suspense>
-        <ShopContent />
-      </Suspense>
+      <ShopContent initialProducts={initialProducts} />
     </div>
   );
 }

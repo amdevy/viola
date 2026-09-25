@@ -3,117 +3,67 @@
 import { useState, useEffect } from "react";
 import { useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
-import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
+import { localize, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
 import {
   CATEGORY_WITH_PRODUCTS_SELECT,
   buildCategoryTree,
   flattenCategoryTree,
   type CategoryNode,
 } from "@/lib/categories";
-import type { Product, Category } from "@/types";
+import {
+  fetchProducts,
+  isDefaultProductFilters,
+  type ProductFilters,
+} from "@/lib/products";
+import type { Product } from "@/types";
 
-export function useProducts(filters?: {
-  category?: string;
-  minPrice?: number;
-  maxPrice?: number;
-  hairType?: string;
-  sort?: string;
-  search?: string;
-}) {
+type ProductsResult = { key: string; products: Product[]; error: string | null };
+
+/**
+ * `initialProducts` is the unfiltered catalogue the server rendered. While the
+ * filters are at their default it is returned as is and nothing is fetched;
+ * every other filter set is fetched here. `null` — the server couldn't load
+ * the list — means the default list is fetched too.
+ */
+export function useProducts(
+  filters?: ProductFilters,
+  initialProducts: Product[] | null = null,
+) {
   const locale = useLocale();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { category, minPrice, maxPrice, hairType, sort, search } = filters ?? {};
+  const fromServer =
+    initialProducts !== null &&
+    isDefaultProductFilters({ category, minPrice, maxPrice, hairType, sort, search });
+  // Tags each result with the query it answers: `loading` is simply "the result
+  // on hand is for some other query", and a late response can't pass for a newer one.
+  const key = JSON.stringify([locale, category, minPrice, maxPrice, hairType, sort, search]);
+  const [result, setResult] = useState<ProductsResult | null>(null);
+
+  // Back on the default list: drop the filtered result, so coming back to the
+  // same filters shows the skeleton and refetches instead of the stale list.
+  if (fromServer && result !== null) setResult(null);
 
   useEffect(() => {
-    const fetch = async () => {
-      setLoading(true);
-      const supabase = createClient();
-
-      let categoryId: string | undefined;
-      if (filters?.category) {
-        const { data: cat } = await supabase
-          .from("categories")
-          .select("id")
-          .eq("slug", filters.category)
-          .single();
-        if (!cat) {
-          setProducts([]);
-          setLoading(false);
-          return;
-        }
-        categoryId = cat.id;
-      }
-
-      let query = supabase
-        .from("products")
-        .select("*, category:categories(id,name,name_en,slug)");
-
-      if (categoryId) {
-        query = query.eq("category_id", categoryId);
-      }
-      if (filters?.minPrice) query = query.gte("price", filters.minPrice);
-      if (filters?.maxPrice) query = query.lte("price", filters.maxPrice);
-      if (filters?.hairType) {
-        query = query.contains("hair_type", [filters.hairType]);
-      }
-      if (filters?.search) {
-        query = query.ilike("name", `%${filters.search}%`);
-      }
-
-      switch (filters?.sort) {
-        case "price_asc":
-          query = query.order("price", { ascending: true });
-          break;
-        case "price_desc":
-          query = query.order("price", { ascending: false });
-          break;
-        case "newest":
-          query = query.order("created_at", { ascending: false });
-          break;
-        default:
-          query = query
-            .order("is_bestseller", { ascending: false })
-            .order("created_at", { ascending: false });
-      }
-
-      const { data, error } = await query;
-      if (error) {
-        setError(error.message);
-      } else {
-        const localized = (data as Product[]).map((p) => {
-          const { row } = localize(
-            p as unknown as Record<string, unknown>,
-            locale,
-            PRODUCT_I18N_FIELDS,
-          ) as unknown as { row: Product };
-          if (row.category) {
-            const { row: cat } = localize(
-              row.category as unknown as Record<string, unknown>,
-              locale,
-              CATEGORY_I18N_FIELDS,
-            ) as unknown as { row: typeof row.category };
-            row.category = cat;
-          }
-          return row;
-        });
-        setProducts(localized);
-      }
-      setLoading(false);
+    if (fromServer) return;
+    let ignore = false;
+    fetchProducts(
+      createClient(),
+      { category, minPrice, maxPrice, hairType, sort, search },
+      locale,
+    ).then((res) => {
+      if (!ignore) setResult({ key, ...res });
+    });
+    return () => {
+      ignore = true;
     };
+  }, [fromServer, key, category, minPrice, maxPrice, hairType, sort, search, locale]);
 
-    fetch();
-  }, [
-    filters?.category,
-    filters?.minPrice,
-    filters?.maxPrice,
-    filters?.hairType,
-    filters?.sort,
-    filters?.search,
-    locale,
-  ]);
-
-  return { products, loading, error };
+  if (fromServer) return { products: initialProducts, loading: false, error: null };
+  return {
+    products: result?.products ?? [],
+    loading: result?.key !== key,
+    error: result?.error ?? null,
+  };
 }
 
 export function useCategories() {
