@@ -239,12 +239,13 @@ export default async function ProductPage({ params }: Props) {
           transitTime: { "@type": "QuantitativeValue", minValue: 1, maxValue: 3, unitCode: "DAY" },
         },
       },
+      // Public offer §5 and terms §4: cosmetics of proper quality can't be
+      // returned (Cabinet of Ministers resolution No. 172). A damaged parcel is
+      // refused at the post office — a delivery refusal, not a return.
       hasMerchantReturnPolicy: {
         "@type": "MerchantReturnPolicy",
         applicableCountry: "UA",
-        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
-        merchantReturnDays: 14,
-        returnMethod: "https://schema.org/ReturnByMail",
+        returnPolicyCategory: "https://schema.org/MerchantReturnNotPermitted",
       },
     },
     ...(reviews.length > 0 && {
