@@ -15,7 +15,7 @@ async function getDashboardStats() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const [ordersRes, revenueRes, customersRes, pendingRes] = await Promise.all([
+  const [ordersRes, revenueRes, customersRes, pendingRes, pendingReviewsRes] = await Promise.all([
     supabase
       .from("orders")
       .select("id", { count: "exact" })
@@ -36,6 +36,11 @@ async function getDashboardStats() {
       .from("orders")
       .select("id", { count: "exact" })
       .eq("status", "pending"),
+    // Reviews left on the site wait here unpublished until someone approves them.
+    supabase
+      .from("reviews")
+      .select("id", { count: "exact", head: true })
+      .eq("approved", false),
   ]);
 
   const todayRevenue = (revenueRes.data ?? []).reduce((s, o) => s + Number(o.total), 0);
@@ -45,6 +50,7 @@ async function getDashboardStats() {
     todayRevenue,
     newCustomers: customersRes.count ?? 0,
     pendingOrders: pendingRes.count ?? 0,
+    pendingReviews: pendingReviewsRes.count ?? 0,
   };
 }
 
@@ -94,6 +100,18 @@ export default async function AdminDashboard() {
   return (
     <div>
       <h1 className="font-serif text-2xl font-bold text-[#1A1A1A] mb-6">Панель управління</h1>
+
+      {stats.pendingReviews > 0 && (
+        <Link
+          href="/admin/reviews"
+          className="flex items-center justify-between gap-4 mb-6 rounded border border-[#C4A882] bg-white px-5 py-4 hover:bg-[#FAF7F2] transition-colors"
+        >
+          <span className="text-sm text-[#1A1A1A]">
+            Нових відгуків на модерації: <strong>{stats.pendingReviews}</strong>
+          </span>
+          <span className="text-sm text-[#C4A882]">Переглянути →</span>
+        </Link>
+      )}
 
       {/* Stats grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
