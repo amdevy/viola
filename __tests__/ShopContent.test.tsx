@@ -153,7 +153,12 @@ describe("ShopContent — каталог у розмітці", () => {
     expect(skeleton()).not.toBeNull();
     await waitFor(() => expect(productHrefs()).toEqual(hrefsOf([MASK])));
     expect(productsUrl()).toContain("category_id=eq.c-masks");
-    // Повний каталог, що встиг показатися до гідратації, як переглянутий не рахуємо.
+    // view_item_list іде з ефекту після коміту, а не разом із DOM: при
+    // паралельному прогоні він доходить уже після посилань, тож його чекаємо.
+    // Повний каталог, що встиг показатися до гідратації, як переглянутий не рахуємо —
+    // з ним у списку рівність не настане ніколи.
+    await waitFor(() => expect(viewedLists()).toEqual([["p2"]]));
+    await flush();
     expect(viewedLists()).toEqual([["p2"]]);
   });
 
@@ -182,12 +187,16 @@ describe("ShopContent — каталог у розмітці", () => {
     await waitFor(() => expect(productHrefs()).toEqual(hrefsOf([TONIC, SHAMPOO, MASK])));
     expect(fetchSpy).toHaveBeenCalled();
 
-    expect(viewedLists()).toEqual([
+    // Остання подія приходить з ефекту вже після посилань — див. тест вище.
+    const expectedViews = [
       ["p1", "p2", "p3"],
       ["p3", "p1", "p2"],
       ["p1", "p2", "p3"],
       ["p3", "p1", "p2"],
-    ]);
+    ];
+    await waitFor(() => expect(viewedLists()).toEqual(expectedViews));
+    await flush();
+    expect(viewedLists()).toEqual(expectedViews);
   });
 
   it("без initialProducts (сервер не віддав список) вантажить каталог на клієнті, як раніше", async () => {
