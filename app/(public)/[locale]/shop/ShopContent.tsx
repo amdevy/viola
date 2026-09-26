@@ -1,44 +1,58 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { useProducts } from "@/hooks/useProducts";
 import ProductGrid from "@/components/shop/ProductGrid";
 import ProductFilter from "@/components/shop/ProductFilter";
 import { useSearchParams } from "next/navigation";
+import type { Product } from "@/types";
 
-export default function ShopContent() {
+export default function ShopContent({
+  initialProducts,
+}: {
+  /** The unfiltered catalogue from the server; `null` if it failed to load. */
+  initialProducts: Product[] | null;
+}) {
   const t = useTranslations("shop");
   const tc = useTranslations("common");
   const tf = useTranslations("filter");
-  const searchParams = useSearchParams();
   const [showFilter, setShowFilter] = useState(false);
   const [filters, setFilters] = useState({
-    category: searchParams.get("category") ?? "",
+    category: "",
     minPrice: "",
     maxPrice: "",
     hairType: "",
     sort: "popular",
   });
+  // ?category= is only known after hydration (see CategoryParam). Until then
+  // the grid shows the unfiltered list but doesn't report it as viewed, so a
+  // visit to /shop?category=… sends one view_item_list — for the filtered list.
+  const [categoryParamRead, setCategoryParamRead] = useState(false);
 
-  useEffect(() => {
-    setFilters((prev) => ({
-      ...prev,
-      category: searchParams.get("category") ?? "",
-    }));
-  }, [searchParams]);
+  const applyCategoryParam = useCallback((category: string) => {
+    setFilters((prev) => (prev.category === category ? prev : { ...prev, category }));
+    setCategoryParamRead(true);
+  }, []);
 
-  const { products, loading } = useProducts({
-    category: filters.category || undefined,
-    minPrice: filters.minPrice ? Number(filters.minPrice) : undefined,
-    maxPrice: filters.maxPrice ? Number(filters.maxPrice) : undefined,
-    hairType: filters.hairType || undefined,
-    sort: filters.sort,
-  });
+  const { products, loading } = useProducts(
+    {
+      category: filters.category || undefined,
+      minPrice: filters.minPrice ? Number(filters.minPrice) : undefined,
+      maxPrice: filters.maxPrice ? Number(filters.maxPrice) : undefined,
+      hairType: filters.hairType || undefined,
+      sort: filters.sort,
+    },
+    initialProducts,
+  );
 
   return (
     <>
+      <Suspense fallback={null}>
+        <CategoryParam onChange={applyCategoryParam} />
+      </Suspense>
+
       {/* Breadcrumb */}
       <nav className="text-xs text-[#6B6B6B] mb-6">
         <Link href="/" className="hover:text-[#C4A882]">{tc("home")}</Link>
@@ -71,9 +85,30 @@ export default function ShopContent() {
 
         {/* Product grid */}
         <div className="flex-1 min-w-0">
-          <ProductGrid products={products} loading={loading} listName="shop" />
+          <ProductGrid
+            products={products}
+            loading={loading}
+            listName="shop"
+            trackView={categoryParamRead}
+          />
         </div>
       </div>
     </>
   );
+}
+
+/**
+ * Applies ?category= to the filters. It sits in a Suspense boundary of its own
+ * because useSearchParams() opts everything up to the nearest boundary out of
+ * the prerendered HTML: while ShopContent called it directly, /shop shipped
+ * without a single product link even when the list itself was ready.
+ */
+function CategoryParam({ onChange }: { onChange: (category: string) => void }) {
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    onChange(searchParams.get("category") ?? "");
+  }, [searchParams, onChange]);
+
+  return null;
 }
