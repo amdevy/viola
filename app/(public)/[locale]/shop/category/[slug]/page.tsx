@@ -12,7 +12,7 @@ import {
   flattenCategoryTree,
 } from "@/lib/categories";
 import { getBrandLine } from "@/lib/category-brand";
-import { categoryTitle, categoryDescription } from "@/lib/seo-title";
+import { categoryTitle, categoryDescription, pageTitle } from "@/lib/seo-title";
 import type { Category, Product } from "@/types";
 import type { Metadata } from "next";
 import { safeJsonLd } from "@/lib/utils";
@@ -77,7 +77,7 @@ async function getProductsByCategory(categoryIds: string[]): Promise<Product[]> 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, locale } = await params;
   const ctx = await getCategoryContext(slug);
-  if (!ctx) return { title: locale === "en" ? "Category not found" : "Категорію не знайдено" };
+  if (!ctx) return { title: pageTitle(locale === "en" ? "Category not found" : "Категорію не знайдено"), robots: { index: false, follow: true } };
 
   const { row: category } = localize(
     ctx.category as unknown as Record<string, unknown>,

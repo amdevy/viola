@@ -33,7 +33,7 @@ async function getPost(slug: string) {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, locale } = await params;
   const raw = await getPost(slug);
-  if (!raw) return { title: locale === "en" ? "Article not found" : "Стаття не знайдена" };
+  if (!raw) return { title: pageTitle(locale === "en" ? "Article not found" : "Стаття не знайдена"), robots: { index: false, follow: true } };
 
   const { row: post, hasTranslation } = localize(
     raw as Record<string, unknown>,
