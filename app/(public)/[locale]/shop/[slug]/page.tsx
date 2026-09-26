@@ -14,7 +14,7 @@ import MobileStickyBar from "@/components/shop/MobileStickyBar";
 import AddToCartButton from "./AddToCartButton";
 import { formatPrice, formatVolume, HAIR_TYPES, safeJsonLd } from "@/lib/utils";
 import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
-import { productTitle } from "@/lib/seo-title";
+import { pageTitle, productTitle } from "@/lib/seo-title";
 import type { Product } from "@/types";
 import type { Metadata } from "next";
 
@@ -72,7 +72,7 @@ async function getRelated(product: Product): Promise<Product[]> {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, locale } = await params;
   const raw = await getProduct(slug);
-  if (!raw) return { title: locale === "en" ? "Product not found" : "Товар не знайдено" };
+  if (!raw) return { title: pageTitle(locale === "en" ? "Product not found" : "Товар не знайдено"), robots: { index: false, follow: true } };
 
   const { row: product, hasTranslation } = localize(
     raw as unknown as Record<string, unknown>,

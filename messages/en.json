@@ -459,5 +459,15 @@
     "basedOn": "Based on {count} reviews",
     "topReviewsTitle": "What clients say about the salon",
     "viewAllOnGoogle": "View all {count} reviews on Google"
+  },
+  "notFound": {
+    "metaTitle": "Page not found",
+    "title": "This page doesn't exist",
+    "text": "The link may be out of date, or there's a typo in the address. Your hair care is still easy to find — start here.",
+    "toCatalog": "Go to the catalog",
+    "askTechnologist": "Ask the technologist",
+    "popular": "Popular sections",
+    "brand": "Na Golovy brand",
+    "blog": "Blog"
   }
 }
