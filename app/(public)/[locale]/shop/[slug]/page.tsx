@@ -49,6 +49,10 @@ async function getProductReviews(productId: string): Promise<ProductReview[]> {
     .select("id, author_name, rating, text, created_at")
     .eq("product_id", productId)
     .eq("approved", true)
+    // Only reviews left on this site. They feed the Product JSON-LD rating, and
+    // Google doesn't count ratings copied from elsewhere (Google Maps reviews
+    // are about the salon anyway); the admin page won't link those either.
+    .eq("source", "internal")
     .order("created_at", { ascending: false });
   return (data as ProductReview[]) ?? [];
 }

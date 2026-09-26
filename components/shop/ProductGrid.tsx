@@ -10,11 +10,18 @@ interface ProductGridProps {
   products: Product[];
   loading?: boolean;
   listName?: string;
+  /** Holds back view_item_list while false; the list is reported once it turns true. */
+  trackView?: boolean;
 }
 
-export default function ProductGrid({ products, loading, listName }: ProductGridProps) {
+export default function ProductGrid({
+  products,
+  loading,
+  listName,
+  trackView = true,
+}: ProductGridProps) {
   useEffect(() => {
-    if (!products.length) return;
+    if (!trackView || !products.length) return;
     sendGAEvent("event", "view_item_list", {
       item_list_name: listName ?? "shop",
       items: products.slice(0, 20).map((p, idx) => ({
@@ -26,7 +33,7 @@ export default function ProductGrid({ products, loading, listName }: ProductGrid
         index: idx,
       })),
     });
-  }, [products, listName]);
+  }, [products, listName, trackView]);
 
   if (loading) return <ProductGridSkeleton count={6} />;
 

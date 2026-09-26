@@ -11,6 +11,7 @@ const NAV = [
   { href: "/admin/orders", label: "Замовлення" },
   { href: "/admin/abandoned", label: "Незавершені" },
   { href: "/admin/products", label: "Товари" },
+  { href: "/admin/reviews", label: "Відгуки" },
   { href: "/admin/customers", label: "Клієнти" },
   { href: "/admin/blog", label: "Блог" },
 ];
