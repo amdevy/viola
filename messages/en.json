@@ -450,6 +450,13 @@
   "productBundle": {
     "title": "Build your full hair care ritual",
     "subtitle": "Combine Na Gólov[y] products from the same line — cleansing, hydration and protection work together for a consistent result.",
+    "subtitleComplement": "Complete your routine with a product for each step — cleansing, conditioning, a mask and leave-in care work together.",
+    "subtitleCurated": "Picked by brand technologist Viola Hehedosh — products that work best with this one.",
+    "thisProduct": "this product",
+    "stepCleanse": "Cleanse",
+    "stepCondition": "Condition",
+    "stepMask": "Mask",
+    "stepLeaveIn": "Leave-in",
     "totalLabel": "Bundle total",
     "itemsCount": "{count} item(s) in bundle",
     "buyBundle": "Add bundle to cart",

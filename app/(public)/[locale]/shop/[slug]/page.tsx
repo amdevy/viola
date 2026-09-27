@@ -15,6 +15,7 @@ import AddToCartButton from "./AddToCartButton";
 import { formatPrice, formatVolume, HAIR_TYPES, safeJsonLd } from "@/lib/utils";
 import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
 import { pageTitle, productTitle } from "@/lib/seo-title";
+import { buildRitual } from "@/lib/ritual";
 import type { Product } from "@/types";
 import type { Metadata } from "next";
 
@@ -65,7 +66,17 @@ async function getRelated(product: Product): Promise<Product[]> {
     .select("*, category:categories(id,name,name_en,slug)")
     .eq("category_id", product.category_id)
     .neq("id", product.id)
-    .limit(4);
+    // Room to drop the ones already offered in the ritual and still show four.
+    .limit(8);
+  return (data as Product[]) ?? [];
+}
+
+/** Every product, in the columns the care ritual reads and the bundle shows. */
+async function getRitualCatalogue(): Promise<Product[]> {
+  const supabase = createPublicClient();
+  const { data } = await supabase
+    .from("products")
+    .select("id, slug, name, name_en, price, images, volume, in_stock, is_coming_soon, likes_count");
   return (data as Product[]) ?? [];
 }
 
@@ -167,12 +178,24 @@ export default async function ProductPage({ params }: Props) {
     product.category = localizedCategory;
   }
 
-  const [relatedRaw, reviews] = await Promise.all([
+  const [relatedRaw, reviews, ritualCatalogue] = await Promise.all([
     getRelated(product),
     getProductReviews(product.id),
+    getRitualCatalogue(),
   ]);
 
-  const related = relatedRaw.map((p) => {
+  // From the Ukrainian rows: steps and lines are read from the product names.
+  const ritual = buildRitual(raw, ritualCatalogue);
+  const ritualItems = ritual.items.map((item) => ({
+    ...item,
+    product: item.isMain
+      ? product
+      : (localize(item.product as unknown as Record<string, unknown>, locale, PRODUCT_I18N_FIELDS)
+          .row as unknown as Product),
+  }));
+  const inRitual = new Set(ritual.items.map((item) => item.product.id));
+
+  const related = relatedRaw.filter((p) => !inRitual.has(p.id)).slice(0, 4).map((p) => {
     const { row } = localize(
       p as unknown as Record<string, unknown>,
       locale,
@@ -420,8 +443,8 @@ export default async function ProductPage({ params }: Props) {
         </div>
 
         {/* Bundle / cross-sell */}
-        {related.length > 0 && (
-          <ProductBundle mainProduct={product} candidates={related} />
+        {ritualItems.length > 0 && (
+          <ProductBundle kind={ritual.kind} items={ritualItems} />
         )}
 
         {/* Reviews */}
