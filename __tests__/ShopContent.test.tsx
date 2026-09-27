@@ -29,7 +29,7 @@ vi.mock("next/image", () => ({
   default: ({ alt }: { alt: string }) => <img alt={alt} />,
 }));
 
-vi.mock("@next/third-parties/google", () => ({ sendGAEvent }));
+vi.mock("@/lib/analytics", () => ({ sendGAEvent }));
 vi.mock("@/hooks/useCart", () => ({ useCart: () => ({ addItem: vi.fn(), openCart: vi.fn() }) }));
 vi.mock("react-hot-toast", () => ({ default: { success: vi.fn(), error: vi.fn() } }));
 vi.mock("@/components/shop/StockNotifyModal", () => ({ default: () => null }));

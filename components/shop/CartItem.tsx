@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useLocale } from "next-intl";
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGAEvent } from "@/lib/analytics";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice, formatVolume } from "@/lib/utils";
 import type { CartItem as CartItemType } from "@/types";

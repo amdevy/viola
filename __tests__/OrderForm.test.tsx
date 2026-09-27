@@ -3,7 +3,7 @@ import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import OrderForm from "@/components/checkout/OrderForm";
 import { useCart } from "@/hooks/useCart";
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGAEvent } from "@/lib/analytics";
 import uk from "@/messages/uk.json";
 
 const pushMock = vi.hoisted(() => vi.fn());
@@ -27,7 +27,7 @@ vi.mock("@/i18n/routing", () => ({
   useRouter: () => ({ push: pushMock }),
 }));
 
-vi.mock("@next/third-parties/google", () => ({
+vi.mock("@/lib/analytics", () => ({
   sendGAEvent: vi.fn(),
 }));
 

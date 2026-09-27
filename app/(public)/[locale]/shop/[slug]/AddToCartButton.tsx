@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useCart } from "@/hooks/useCart";
 import toast from "react-hot-toast";
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGAEvent } from "@/lib/analytics";
 import StockNotifyModal from "@/components/shop/StockNotifyModal";
 import type { Product } from "@/types";
 

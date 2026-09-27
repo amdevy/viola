@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice } from "@/lib/utils";
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGAEvent } from "@/lib/analytics";
 import toast from "react-hot-toast";
 
 interface RecommendationProduct {

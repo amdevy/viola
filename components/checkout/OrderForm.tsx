@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, Link } from "@/i18n/routing";
 import { useLocale } from "next-intl";
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGAEvent } from "@/lib/analytics";
 import type { NovaPoshtaCity, NovaPoshtaWarehouse } from "@/types";
 
 export default function OrderForm() {
