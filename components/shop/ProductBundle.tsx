@@ -3,27 +3,52 @@
 import { useMemo, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
+import toast from "react-hot-toast";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice } from "@/lib/utils";
 import { sendGAEvent } from "@/lib/analytics";
+import type { CareStep, RitualKind } from "@/lib/ritual";
 import type { Product } from "@/types";
 
-interface Props {
-  mainProduct: Product;
-  candidates: Product[];
+export type BundleProduct = Pick<Product, "id" | "name" | "price" | "images" | "volume">;
+
+export interface BundleItem {
+  product: BundleProduct;
+  step: CareStep | null;
+  /** The product this page is about: always in the set, can't be unticked. */
+  isMain: boolean;
 }
 
-export default function ProductBundle({ mainProduct, candidates }: Props) {
+interface Props {
+  kind: RitualKind;
+  /** The whole routine in order (see lib/ritual.ts), this page's product included. */
+  items: BundleItem[];
+}
+
+// "Same line" is only claimed when it's true; a hand-picked set says who picked it.
+const SUBTITLE: Record<RitualKind, string> = {
+  line: "subtitle",
+  complement: "subtitleComplement",
+  curated: "subtitleCurated",
+};
+
+const STEP_LABEL: Record<CareStep, string> = {
+  cleanse: "stepCleanse",
+  condition: "stepCondition",
+  mask: "stepMask",
+  leave_in: "stepLeaveIn",
+};
+
+export default function ProductBundle({ kind, items }: Props) {
   const t = useTranslations("productBundle");
   const locale = useLocale();
-  const { addItem } = useCart();
+  const { addItem, openCart } = useCart();
 
-  const shortlist = useMemo(() => candidates.slice(0, 4), [candidates]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const bundleProducts = useMemo(
-    () => [mainProduct, ...shortlist.filter((c) => selected.has(c.id))],
-    [mainProduct, shortlist, selected],
+    () => items.filter((i) => i.isMain || selected.has(i.product.id)).map((i) => i.product),
+    [items, selected],
   );
 
   const total = useMemo(
@@ -54,12 +79,20 @@ export default function ProductBundle({ mainProduct, candidates }: Props) {
     sendGAEvent("event", "bundle_add_to_cart", {
       items: bundleProducts.map((p) => p.id),
       value: total,
+      ritual_kind: kind,
     });
+    // Without this the button gave no sign of working, and a second press put
+    // every product in the cart twice.
+    toast.success(t("addedToast"));
+    openCart();
   };
 
-  if (shortlist.length === 0) return null;
+  if (!items.some((i) => !i.isMain)) return null;
 
   const canBuy = selected.size > 0;
+
+  const label = (item: BundleItem) =>
+    [item.step && t(STEP_LABEL[item.step]), item.isMain && t("thisProduct")].filter(Boolean).join(" · ");
 
   return (
     <section className="mt-16">
@@ -67,7 +100,7 @@ export default function ProductBundle({ mainProduct, candidates }: Props) {
         <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#1A1A1A] mb-2">
           {t("title")}
         </h2>
-        <p className="text-sm text-[#6B6B6B] max-w-2xl">{t("subtitle")}</p>
+        <p className="text-sm text-[#6B6B6B] max-w-2xl">{t(SUBTITLE[kind])}</p>
       </div>
 
       <div className="grid lg:grid-cols-[1fr_320px] gap-4 lg:gap-6">
@@ -75,31 +108,35 @@ export default function ProductBundle({ mainProduct, candidates }: Props) {
         <div className="bg-white border border-[#E8E4DE] rounded p-3 sm:p-6">
           {/* Mobile: stacked list */}
           <div className="flex flex-col gap-2 sm:hidden">
-            <BundleRow product={mainProduct} locale={locale} selected disabled />
-            {shortlist.map((c) => (
+            {items.map((item) => (
               <BundleRow
-                key={c.id}
-                product={c}
+                key={item.product.id}
+                product={item.product}
+                label={label(item)}
                 locale={locale}
-                selected={selected.has(c.id)}
-                onToggle={() => toggle(c.id)}
+                selected={item.isMain || selected.has(item.product.id)}
+                disabled={item.isMain}
+                onToggle={item.isMain ? undefined : () => toggle(item.product.id)}
               />
             ))}
           </div>
 
           {/* Desktop: horizontal cards with + separators */}
           <div className="hidden sm:flex flex-wrap items-stretch gap-4">
-            <BundleCard product={mainProduct} locale={locale} selected disabled />
-            {shortlist.map((c) => (
-              <div key={c.id} className="flex items-stretch gap-4">
-                <div className="flex items-center text-[#C4A882] text-xl font-light select-none">
-                  +
-                </div>
+            {items.map((item, i) => (
+              <div key={item.product.id} className="flex items-stretch gap-4">
+                {i > 0 && (
+                  <div className="flex items-center text-[#C4A882] text-xl font-light select-none">
+                    +
+                  </div>
+                )}
                 <BundleCard
-                  product={c}
+                  product={item.product}
+                  label={label(item)}
                   locale={locale}
-                  selected={selected.has(c.id)}
-                  onToggle={() => toggle(c.id)}
+                  selected={item.isMain || selected.has(item.product.id)}
+                  disabled={item.isMain}
+                  onToggle={item.isMain ? undefined : () => toggle(item.product.id)}
                 />
               </div>
             ))}
@@ -133,15 +170,17 @@ export default function ProductBundle({ mainProduct, candidates }: Props) {
   );
 }
 
-/* Mobile row layout: image | name+price | checkbox */
+/* Mobile row layout: image | step + name + price | checkbox */
 function BundleRow({
   product,
+  label,
   locale,
   selected,
   disabled,
   onToggle,
 }: {
-  product: Product;
+  product: BundleProduct;
+  label: string;
   locale: string;
   selected: boolean;
   disabled?: boolean;
@@ -170,6 +209,9 @@ function BundleRow({
         />
       </div>
       <div className="flex-1 min-w-0">
+        {label && (
+          <p className="text-[10px] uppercase tracking-widest text-[#6B6B6B] mb-0.5">{label}</p>
+        )}
         <p className="text-xs text-[#1A1A1A] leading-tight line-clamp-2 mb-1">
           {product.name}
         </p>
@@ -193,15 +235,17 @@ function BundleRow({
   );
 }
 
-/* Desktop card layout: image on top, name + price below */
+/* Desktop card layout: image on top, step + name + price below */
 function BundleCard({
   product,
+  label,
   locale,
   selected,
   disabled,
   onToggle,
 }: {
-  product: Product;
+  product: BundleProduct;
+  label: string;
   locale: string;
   selected: boolean;
   disabled?: boolean;
@@ -239,6 +283,9 @@ function BundleCard({
         )}
       </div>
       <div className="p-3 w-full">
+        {label && (
+          <p className="text-[10px] uppercase tracking-widest text-[#6B6B6B] mb-1">{label}</p>
+        )}
         <p className="text-xs text-[#1A1A1A] leading-tight line-clamp-2 mb-1">
           {product.name}
         </p>

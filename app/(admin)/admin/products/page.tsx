@@ -7,6 +7,14 @@ import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import { formatPrice, slugify, HAIR_TYPES } from "@/lib/utils";
+import {
+  buildRitual,
+  careStep,
+  normalizeRitualIds,
+  MAX_RITUAL_PRODUCTS,
+  type CareStep,
+  type RitualCandidate,
+} from "@/lib/ritual";
 import toast from "react-hot-toast";
 import Image from "next/image";
 import type { Product, Category } from "@/types";
@@ -22,6 +30,17 @@ function categoryLabel(category: Category, all: Category[]): string {
     : undefined;
   return parent ? `${parent.name} → ${category.name}` : category.name;
 }
+
+const EMPTY_RITUAL: string[] = Array(MAX_RITUAL_PRODUCTS).fill("");
+
+/** The ritual pickers group products by the step they'd fill. */
+const RITUAL_GROUPS: { step: CareStep | null; label: string }[] = [
+  { step: "cleanse", label: "Шампуні" },
+  { step: "condition", label: "Кондиціонери" },
+  { step: "mask", label: "Маски" },
+  { step: "leave_in", label: "Незмивний догляд" },
+  { step: null, label: "Інше" },
+];
 
 type StatusFilter =
   | "all"
@@ -66,7 +85,12 @@ export default function AdminProductsPage() {
     description_en: "",
     ingredients_en: "",
     how_to_use_en: "",
+    ritual: EMPTY_RITUAL,
   });
+
+  // The ritual column arrives with migration 014. Until it exists the picker is
+  // hidden and nothing is sent: an unknown column would fail every product save.
+  const ritualEnabled = products.some((p) => p.ritual_ids !== undefined);
 
   useEffect(() => {
     loadData();
@@ -93,6 +117,7 @@ export default function AdminProductsPage() {
       is_bestseller: false, benefits: "", benefits_en: "",
       images: [], hair_type: [],
       name_en: "", description_en: "", ingredients_en: "", how_to_use_en: "",
+      ritual: EMPTY_RITUAL,
     });
     setShowModal(true);
   };
@@ -121,6 +146,7 @@ export default function AdminProductsPage() {
       description_en: p.description_en ?? "",
       ingredients_en: p.ingredients_en ?? "",
       how_to_use_en: p.how_to_use_en ?? "",
+      ritual: [...(p.ritual_ids ?? []), ...EMPTY_RITUAL].slice(0, MAX_RITUAL_PRODUCTS),
     });
     setShowModal(true);
   };
@@ -194,6 +220,7 @@ export default function AdminProductsPage() {
       description_en: form.description_en || null,
       ingredients_en: form.ingredients_en || null,
       how_to_use_en: form.how_to_use_en || null,
+      ...(ritualEnabled && { ritual_ids: normalizeRitualIds(form.ritual, editing?.id) }),
     };
 
     const { error } = editing
@@ -329,6 +356,17 @@ export default function AdminProductsPage() {
   };
 
   const filteredProducts = products.filter((p) => byCategory(p) && byStatus(p));
+
+  const ritualChoices = products
+    .filter((p) => p.id !== editing?.id)
+    .sort((a, b) => a.name.localeCompare(b.name, "uk"));
+  // What the page shows while nothing is picked, so it's clear what a pick replaces.
+  const autoRitual = buildRitual<RitualCandidate>(
+    { id: editing?.id ?? "", name: form.name, in_stock: true, is_coming_soon: false, likes_count: 0 },
+    products,
+  ).items
+    .filter((item) => !item.isMain)
+    .map((item) => item.product.name);
 
   const categoryCounts = new Map<string, number>();
   let uncategorizedCount = 0;
@@ -678,6 +716,56 @@ export default function AdminProductsPage() {
               Покажеться під кнопкою «Додати до кошика» на сторінці товару. 3–5 коротких пунктів — оптимально.
             </p>
           </div>
+
+          {/* Care ritual */}
+          {ritualEnabled && (
+            <div>
+              <label className="text-sm font-medium text-[#1A1A1A] block mb-1">Ритуал догляду</label>
+              <p className="text-xs text-[#6B6B6B] mb-2">
+                Засоби для блоку «Створіть повний ритуал догляду» на сторінці товару. На сайті
+                вони підписані як добірка технолога бренду Віоли Гегедош. Якщо нічого не вибрати,
+                сайт підбере сам: по засобу на кожен крок, спершу з тієї ж лінії.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                {form.ritual.map((value, slot) => (
+                  <select
+                    key={slot}
+                    value={value}
+                    aria-label={`Ритуал: засіб ${slot + 1}`}
+                    onChange={(e) =>
+                      setForm((f) => ({
+                        ...f,
+                        ritual: f.ritual.map((v, i) => (i === slot ? e.target.value : v)),
+                      }))
+                    }
+                    className="w-full px-3 py-2 text-sm border border-[#E8E4DE] rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#C4A882]"
+                  >
+                    <option value="">— Засіб {slot + 1} —</option>
+                    {RITUAL_GROUPS.map((group) => {
+                      const options = ritualChoices.filter((p) => careStep(p.name) === group.step);
+                      return (
+                        options.length > 0 && (
+                          <optgroup key={group.label} label={group.label}>
+                            {options.map((p) => (
+                              <option key={p.id} value={p.id}>
+                                {p.name}
+                                {p.in_stock ? "" : " (немає в наявності)"}
+                              </option>
+                            ))}
+                          </optgroup>
+                        )
+                      );
+                    })}
+                  </select>
+                ))}
+              </div>
+              {form.ritual.every((id) => !id) && autoRitual.length > 0 && (
+                <p className="text-xs text-[#6B6B6B] mt-2">
+                  Зараз сайт підбирає сам: {autoRitual.join(", ")}.
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Image upload */}
           <div>

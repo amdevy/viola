@@ -35,6 +35,8 @@ export interface Product {
   likes_count: number;
   volume: string | null;
   hair_type: string[];
+  /** Hand-picked care ritual (migration 014); empty or missing = picked automatically. */
+  ritual_ids?: string[] | null;
   created_at: string;
 }
 
