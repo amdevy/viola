@@ -2,9 +2,9 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, waitFor } from "@testing-library/react";
 import ClearCartOnSuccess from "@/components/checkout/ClearCartOnSuccess";
 import { useCart } from "@/hooks/useCart";
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGAEvent } from "@/lib/analytics";
 
-vi.mock("@next/third-parties/google", () => ({
+vi.mock("@/lib/analytics", () => ({
   sendGAEvent: vi.fn(),
 }));
 

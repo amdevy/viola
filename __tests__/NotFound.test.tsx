@@ -25,7 +25,7 @@ vi.mock("@/i18n/routing", () => ({
   ),
 }));
 
-vi.mock("@next/third-parties/google", () => ({ sendGAEvent: vi.fn() }));
+vi.mock("@/lib/analytics", () => ({ sendGAEvent: vi.fn() }));
 
 vi.mock("@/lib/categories-server", () => ({
   getCategoryTree: async (): Promise<CategoryNode[]> => [

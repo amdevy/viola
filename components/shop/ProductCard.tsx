@@ -7,7 +7,7 @@ import { Link } from "@/i18n/routing";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice, formatVolume } from "@/lib/utils";
 import toast from "react-hot-toast";
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGAEvent } from "@/lib/analytics";
 import StockNotifyModal from "@/components/shop/StockNotifyModal";
 import ProductLikeButton from "@/components/shop/ProductLikeButton";
 import type { Product } from "@/types";

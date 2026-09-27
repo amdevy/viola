@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/routing";
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGAEvent } from "@/lib/analytics";
 import { useCart } from "@/hooks/useCart";
 import CartItem from "./CartItem";
 import CartRecommendations from "./CartRecommendations";

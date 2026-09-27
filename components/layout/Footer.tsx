@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGAEvent } from "@/lib/analytics";
 import { Link } from "@/i18n/routing";
 import { flattenCategoryTree, type CategoryNode } from "@/lib/categories";
 

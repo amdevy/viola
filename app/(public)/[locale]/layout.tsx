@@ -7,12 +7,12 @@ import { notFound } from "next/navigation";
 import { Toaster } from "react-hot-toast";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { GoogleAnalytics } from "@next/third-parties/google";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { routing } from "@/i18n/routing";
 import { getCategoryTree } from "@/lib/categories-server";
 import { safeJsonLd } from "@/lib/utils";
+import { gaInitScript } from "@/lib/analytics";
 
 export const revalidate = 3600;
 
@@ -103,6 +103,7 @@ export default async function LocaleLayout({
   const categories = await getCategoryTree(locale);
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
 
+  const gaId = process.env.NEXT_PUBLIC_GA_ID;
   const salonName = locale === "en" ? "Viola Beauty Salon" : "Салон краси Viola";
   const salonDesc =
     locale === "en"
@@ -112,6 +113,15 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className={`${inter.variable} ${cormorant.variable}`}>
       <head>
+        {/* Google's gtag snippet, in <head> so it runs before any React code:
+            events sent from mount effects (view_item, purchase…) need the
+            dataLayer and `config` to exist already. See lib/analytics.ts. */}
+        {gaId && (
+          <>
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />
+            <script dangerouslySetInnerHTML={{ __html: gaInitScript(gaId) }} />
+          </>
+        )}
         <link rel="alternate" type="application/rss+xml" title="Viola — Na Gólov[y] Блог" href={`${siteUrl}/feed.xml`} />
         <script
           type="application/ld+json"
@@ -209,9 +219,6 @@ export default async function LocaleLayout({
         </NextIntlClientProvider>
         <Analytics />
         <SpeedInsights />
-        {process.env.NEXT_PUBLIC_GA_ID && (
-          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
-        )}
         <Toaster
           position="top-right"
           toastOptions={{

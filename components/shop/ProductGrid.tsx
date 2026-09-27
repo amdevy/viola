@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGAEvent } from "@/lib/analytics";
 import ProductCard from "./ProductCard";
 import { ProductGridSkeleton } from "@/components/ui/Skeleton";
 import type { Product } from "@/types";

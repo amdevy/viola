@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGAEvent } from "@/lib/analytics";
 import { useOrders } from "@/hooks/useOrders";
 import DataTable from "@/components/admin/DataTable";
 import OrderStatusBadge from "@/components/admin/OrderStatusBadge";

@@ -5,7 +5,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice } from "@/lib/utils";
 import toast from "react-hot-toast";
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGAEvent } from "@/lib/analytics";
 import StockNotifyModal from "@/components/shop/StockNotifyModal";
 import type { Product } from "@/types";
 
