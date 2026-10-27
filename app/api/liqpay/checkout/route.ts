@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { assertLiqPayEnv, buildCheckout, isSandboxKey, type LiqPayParams } from "@/lib/liqpay";
 import { rateLimitRequest } from "@/lib/rate-limit";
+import { CARD_PAYMENT_ENABLED } from "@/lib/payment-flags";
 
 type OrderItemRow = { quantity: number; products: { name: string } | null };
 
@@ -26,6 +27,12 @@ export async function POST(req: NextRequest) {
   try {
     if (!rateLimitRequest(req, "liqpay-checkout", 20, 60_000)) {
       return NextResponse.json({ error: "too_many_requests" }, { status: 429 });
+    }
+
+    // A checkout tab opened before the switch was flipped can still post a card
+    // order; failing here hands it to the client's callback fallback.
+    if (!CARD_PAYMENT_ENABLED) {
+      return NextResponse.json({ error: "card_payment_disabled" }, { status: 503 });
     }
 
     const { publicKey, privateKey, siteUrl } = assertLiqPayEnv();

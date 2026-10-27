@@ -12,6 +12,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, Link } from "@/i18n/routing";
 import { useLocale } from "next-intl";
 import { sendGAEvent } from "@/lib/analytics";
+import { CARD_PAYMENT_ENABLED } from "@/lib/payment-flags";
 import type { NovaPoshtaCity, NovaPoshtaWarehouse } from "@/types";
 
 export default function OrderForm() {
@@ -383,10 +384,12 @@ export default function OrderForm() {
       {/* Payment */}
       <div>
         <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-4">{t("paymentSection")}</h2>
-        <div className="grid gap-3 grid-cols-2">
+        <div className={`grid gap-3 ${CARD_PAYMENT_ENABLED ? "grid-cols-2" : "grid-cols-1"}`}>
           {[
             { value: "callback", icon: "📞", label: t("callback"), sub: t("callbackSub") },
-            { value: "card", icon: "💳", label: t("card"), sub: t("cardSub") },
+            ...(CARD_PAYMENT_ENABLED
+              ? [{ value: "card", icon: "💳", label: t("card"), sub: t("cardSub") }]
+              : []),
           ].map((opt) => (
             <label
               key={opt.value}

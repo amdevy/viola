@@ -7,6 +7,13 @@ import { sendGAEvent } from "@/lib/analytics";
 import uk from "@/messages/uk.json";
 
 const pushMock = vi.hoisted(() => vi.fn());
+const flags = vi.hoisted(() => ({ card: true }));
+
+vi.mock("@/lib/payment-flags", () => ({
+  get CARD_PAYMENT_ENABLED() {
+    return flags.card;
+  },
+}));
 
 vi.mock("next-intl", () => {
   const makeT = (ns: string) => {
@@ -95,6 +102,7 @@ async function fillValidCheckout(user: ReturnType<typeof userEvent.setup>) {
 describe("OrderForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    flags.card = true;
     installFetchMock();
     useCart.setState({
       items: [{ productId: "p1", name: "Шампунь Harmony", price: 450, image: "/img.jpg", quantity: 1 }],
@@ -108,6 +116,16 @@ describe("OrderForm", () => {
     );
     expect(screen.getByText(uk.checkout.card)).toBeInTheDocument();
     expect(document.querySelector('input[value="card"]')).not.toBeNull();
+  });
+
+  it("коли оплату карткою вимкнено, лишається тільки зворотний зв'язок", async () => {
+    flags.card = false;
+    render(<OrderForm />);
+    await waitFor(() =>
+      expect(screen.getByText(uk.checkout.callback)).toBeInTheDocument()
+    );
+    expect(screen.queryByText(uk.checkout.card)).not.toBeInTheDocument();
+    expect(document.querySelector('input[value="card"]')).toBeNull();
   });
 
   it("поля контактів дозволяють автозаповнення браузера", async () => {
