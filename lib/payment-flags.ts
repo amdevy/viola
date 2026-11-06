@@ -2,7 +2,7 @@
  * Card payment (LiqPay) on/off switch, shared by the checkout form and the
  * signing route.
  *
- * Off since 2026-10-27: LiqPay monitoring blocked the merchant pending KYC
- * documents. Flip back to true once the account is reactivated.
+ * Was off 2026-10-27 – 2026-11-06 while LiqPay monitoring held the merchant
+ * pending KYC documents; set to false again if the account is ever blocked.
  */
-export const CARD_PAYMENT_ENABLED = false;
+export const CARD_PAYMENT_ENABLED = true;
