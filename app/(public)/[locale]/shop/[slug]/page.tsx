@@ -13,7 +13,7 @@ import ProductTrustBadges from "@/components/shop/ProductTrustBadges";
 import MobileStickyBar from "@/components/shop/MobileStickyBar";
 import AddToCartButton from "./AddToCartButton";
 import { formatPrice, formatVolume, HAIR_TYPES, safeJsonLd } from "@/lib/utils";
-import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
+import { localize, hasEnTranslation, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
 import { pageTitle, productTitle } from "@/lib/seo-title";
 import { buildRitual } from "@/lib/ritual";
 import type { Product } from "@/types";
@@ -85,11 +85,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const raw = await getProduct(slug);
   if (!raw) return { title: pageTitle(locale === "en" ? "Product not found" : "Товар не знайдено"), robots: { index: false, follow: true } };
 
-  const { row: product, hasTranslation } = localize(
+  const { row: product } = localize(
     raw as unknown as Record<string, unknown>,
     locale,
     PRODUCT_I18N_FIELDS,
-  ) as unknown as { row: Product; hasTranslation: boolean };
+  ) as unknown as { row: Product };
+
+  // Asked of the row, not of the locale being rendered: localize() reports
+  // hasTranslation = true on uk, so the uk page advertised an EN alternate
+  // for every product, including the ones whose EN page is noindexed.
+  const enReady = hasEnTranslation(raw as unknown as Record<string, unknown>, PRODUCT_I18N_FIELDS);
 
   const title = productTitle(product.name, locale);
   const truncateAtWord = (text: string, max: number) => {
@@ -112,7 +117,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const enUrl = `${siteUrl}/en/shop/${product.slug}`;
 
   // If EN translation is incomplete, noindex the EN page to protect SEO
-  const shouldNoindex = locale === "en" && !hasTranslation;
+  const shouldNoindex = locale === "en" && !enReady;
 
   return {
     title,
@@ -126,7 +131,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       languages: {
         uk: ukUrl,
         // Only advertise EN alternate if it's fully translated
-        ...(hasTranslation ? { en: enUrl } : {}),
+        ...(enReady ? { en: enUrl } : {}),
         "x-default": ukUrl,
       },
     },
