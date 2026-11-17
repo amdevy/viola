@@ -5,7 +5,7 @@ import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { createPublicClient } from "@/lib/supabase/server";
-import { localize, BLOG_I18N_FIELDS } from "@/lib/i18n/localize";
+import { localize, hasEnTranslation, BLOG_I18N_FIELDS } from "@/lib/i18n/localize";
 import { safeJsonLd } from "@/lib/utils";
 import { pageTitle } from "@/lib/seo-title";
 
@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const raw = await getPost(slug);
   if (!raw) return { title: pageTitle(locale === "en" ? "Article not found" : "Стаття не знайдена"), robots: { index: false, follow: true } };
 
-  const { row: post, hasTranslation } = localize(
+  const { row: post } = localize(
     raw as Record<string, unknown>,
     locale,
     BLOG_I18N_FIELDS,
@@ -45,7 +45,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const ukUrl = `${siteUrl}/blog/${slug}`;
   const enUrl = `${siteUrl}/en/blog/${slug}`;
 
-  const shouldNoindex = locale === "en" && !hasTranslation;
+  // Asked of the row, not of the locale being rendered: localize() reports
+  // hasTranslation = true on uk, which would advertise a noindexed EN alternate.
+  const enReady = hasEnTranslation(raw as Record<string, unknown>, BLOG_I18N_FIELDS);
+  const shouldNoindex = locale === "en" && !enReady;
 
   return {
     title: pageTitle(post.title as string),
@@ -54,7 +57,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: locale === "en" ? enUrl : ukUrl,
       languages: {
         uk: ukUrl,
-        ...(hasTranslation ? { en: enUrl } : {}),
+        ...(enReady ? { en: enUrl } : {}),
         "x-default": ukUrl,
       },
     },
