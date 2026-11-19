@@ -12,6 +12,7 @@ import {
   flattenCategoryTree,
 } from "@/lib/categories";
 import { getBrandLine } from "@/lib/category-brand";
+import { getCategoryFacts, categoryFactsLine, categoryPriceFaq } from "@/lib/category-facts";
 import { categoryTitle, categoryDescription, pageTitle } from "@/lib/seo-title";
 import type { Category, Product } from "@/types";
 import type { Metadata } from "next";
@@ -220,17 +221,27 @@ export default async function CategoryPage({ params }: Props) {
 
   const seo = getCategorySeo(slug, locale);
 
-  const faqLd = seo
-    ? {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity: seo.faq.map((f) => ({
-          "@type": "Question",
-          name: f.q,
-          acceptedAnswer: { "@type": "Answer", text: f.a },
-        })),
-      }
-    : null;
+  // Count, price range and stock, straight from the products on this page.
+  const facts = getCategoryFacts(products);
+  const factsInput = facts && { slug, name: category.name, locale, brand, facts };
+
+  // The price question is generated, so a category without hand-written copy
+  // (peeling shampoos, the skin line) still gets an FAQ, and no price in an
+  // answer can drift away from the price on the card.
+  const faq = [...(seo?.faq ?? []), ...(factsInput ? [categoryPriceFaq(factsInput)] : [])];
+
+  const faqLd =
+    faq.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faq.map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+          })),
+        }
+      : null;
 
   const introText =
     locale === "en"
@@ -277,6 +288,11 @@ export default async function CategoryPage({ params }: Props) {
               : `${category.name} ${brand.uk} (${brand.latinPlain}) — Купити в Україні`}
           </h1>
           <p className="text-[#6B6B6B] leading-relaxed">{introText}</p>
+          {factsInput && (
+            <p className="mt-3 text-sm font-medium text-[#1A1A1A]">
+              {categoryFactsLine(factsInput)}
+            </p>
+          )}
         </header>
 
         {/* Children as real crawlable links, above the grid. Gives the parent an
@@ -312,38 +328,42 @@ export default async function CategoryPage({ params }: Props) {
         )}
 
         {/* Long-form SEO content: technologist guidance + FAQ */}
-        {seo && (
+        {(seo || faq.length > 0) && (
           <section className="mt-16 pt-12 border-t border-[#E8E4DE] max-w-3xl">
-            <div className="space-y-10">
-              {seo.sections.map((s) => (
-                <div key={s.heading}>
-                  <h2 className="font-serif text-2xl font-semibold text-[#1A1A1A] mb-4">
-                    {s.heading}
-                  </h2>
-                  <div className="space-y-3">
-                    {s.body.map((p, i) => (
-                      <p key={i} className="text-[#6B6B6B] leading-relaxed">
-                        {p}
-                      </p>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-12">
-              <h2 className="font-serif text-2xl font-semibold text-[#1A1A1A] mb-6">
-                {locale === "en" ? "Frequently asked questions" : "Часті запитання"}
-              </h2>
-              <div className="space-y-6">
-                {seo.faq.map((f) => (
-                  <div key={f.q} className="border-b border-[#E8E4DE] pb-6">
-                    <h3 className="font-medium text-[#1A1A1A] mb-2">{f.q}</h3>
-                    <p className="text-[#6B6B6B] leading-relaxed">{f.a}</p>
+            {seo && (
+              <div className="space-y-10 mb-12">
+                {seo.sections.map((s) => (
+                  <div key={s.heading}>
+                    <h2 className="font-serif text-2xl font-semibold text-[#1A1A1A] mb-4">
+                      {s.heading}
+                    </h2>
+                    <div className="space-y-3">
+                      {s.body.map((p, i) => (
+                        <p key={i} className="text-[#6B6B6B] leading-relaxed">
+                          {p}
+                        </p>
+                      ))}
+                    </div>
                   </div>
                 ))}
               </div>
-            </div>
+            )}
+
+            {faq.length > 0 && (
+              <div>
+                <h2 className="font-serif text-2xl font-semibold text-[#1A1A1A] mb-6">
+                  {locale === "en" ? "Frequently asked questions" : "Часті запитання"}
+                </h2>
+                <div className="space-y-6">
+                  {faq.map((f) => (
+                    <div key={f.q} className="border-b border-[#E8E4DE] pb-6">
+                      <h3 className="font-medium text-[#1A1A1A] mb-2">{f.q}</h3>
+                      <p className="text-[#6B6B6B] leading-relaxed">{f.a}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </section>
         )}
 

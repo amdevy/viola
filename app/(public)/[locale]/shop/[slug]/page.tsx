@@ -16,6 +16,9 @@ import { formatPrice, formatVolume, HAIR_TYPES, safeJsonLd } from "@/lib/utils";
 import { localize, hasEnTranslation, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
 import { pageTitle, productTitle } from "@/lib/seo-title";
 import { buildRitual } from "@/lib/ritual";
+import { getCategoryTree } from "@/lib/categories-server";
+import { getBrandLine } from "@/lib/category-brand";
+import { categoryLinkLabel } from "@/lib/category-facts";
 import type { Product } from "@/types";
 import type { Metadata } from "next";
 
@@ -183,11 +186,35 @@ export default async function ProductPage({ params }: Props) {
     product.category = localizedCategory;
   }
 
-  const [relatedRaw, reviews, ritualCatalogue] = await Promise.all([
+  const [relatedRaw, reviews, ritualCatalogue, categoryTree] = await Promise.all([
     getRelated(product),
     getProductReviews(product.id),
     getRitualCatalogue(),
+    getCategoryTree(locale),
   ]);
+
+  // The link up to the category, with the brand in the anchor. The breadcrumb
+  // already points there, but says only "Шампуні"; and a product page is where
+  // Google lands people who then leave — category pages convert better. The
+  // brand comes from the root of the branch: a skin-line product must not be
+  // sent to "… На Голову".
+  const categoryRoot = product.category
+    ? categoryTree.find(
+        (root) =>
+          root.id === product.category!.id ||
+          root.children.some((child) => child.id === product.category!.id),
+      )
+    : undefined;
+  const categoryLink = product.category
+    ? {
+        href: `/shop/category/${product.category.slug}`,
+        label: categoryLinkLabel(
+          product.category.name,
+          getBrandLine(categoryRoot?.slug ?? product.category.slug),
+          locale,
+        ),
+      }
+    : null;
 
   // From the Ukrainian rows: steps and lines are read from the product names.
   const ritual = buildRitual(raw, ritualCatalogue);
@@ -471,6 +498,19 @@ export default async function ProductPage({ params }: Props) {
               ))}
             </div>
           </section>
+        )}
+
+        {categoryLink && (
+          <div className="mt-10">
+            <Link
+              href={categoryLink.href}
+              className="text-sm text-[#C4A882] hover:text-[#1A1A1A] transition-colors"
+            >
+              {locale === "en"
+                ? `${categoryLink.label} — the whole category →`
+                : `${categoryLink.label} — уся категорія →`}
+            </Link>
+          </div>
         )}
       </div>
 

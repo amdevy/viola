@@ -11,9 +11,12 @@ import type { Product } from "@/types";
 
 export default function ShopContent({
   initialProducts,
+  categoryLinks,
 }: {
   /** The unfiltered catalogue from the server; `null` if it failed to load. */
   initialProducts: Product[] | null;
+  /** Server-rendered links to the category pages, shown above the grid. */
+  categoryLinks?: React.ReactNode;
 }) {
   const t = useTranslations("shop");
   const tc = useTranslations("common");
@@ -59,6 +62,8 @@ export default function ShopContent({
         <span className="mx-2">/</span>
         <span className="text-[#1A1A1A]">{t("breadcrumbShop")}</span>
       </nav>
+
+      {categoryLinks}
 
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
