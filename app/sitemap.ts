@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
 import { createPublicClient } from "@/lib/supabase/server";
 import { hasEnTranslation, PRODUCT_I18N_FIELDS, BLOG_I18N_FIELDS } from "@/lib/i18n/localize";
+import { lastModified } from "@/lib/seo-freshness";
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://violamukachevo.com";
 
@@ -21,7 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     supabase
       .from("products")
       .select(
-        "slug, created_at, name, name_en, description, description_en, ingredients, ingredients_en, how_to_use, how_to_use_en, benefits, benefits_en",
+        "slug, created_at, category_id, name, name_en, description, description_en, ingredients, ingredients_en, how_to_use, how_to_use_en, benefits, benefits_en",
       )
       .eq("in_stock", true),
     supabase
@@ -51,32 +52,39 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (c.parent_id && directlyStocked.has(c.id)) nonEmptyCategoryIds.add(c.parent_id);
   }
 
-  // Use the most recent product as a proxy for shop/home freshness
-  const latestProduct = (products ?? []).reduce((latest, p) => {
-    if (!p.created_at) return latest;
-    const d = new Date(p.created_at);
-    return d > latest ? d : latest;
-  }, new Date("2026-03-01"));
+  // `lastmod` is the later of the page's data and its template — see
+  // lib/seo-freshness.ts for why `created_at` alone left Google re-reading the
+  // shop every two months.
+  const productDates = (products ?? []).map((p) => p.created_at);
+  const postDates = (posts ?? []).map((p) => p.created_at);
 
-  const latestPost = (posts ?? []).reduce((latest, p) => {
-    if (!p.created_at) return latest;
-    const d = new Date(p.created_at);
-    return d > latest ? d : latest;
-  }, new Date("2026-03-01"));
+  // Newest product per category, counted for the parent as well: a parent page
+  // lists its children's products, so a new one changes both.
+  const newestInCategory = new Map<string, string>();
+  const noteProduct = (categoryId: string | null | undefined, createdAt: string | null) => {
+    if (!categoryId || !createdAt) return;
+    const known = newestInCategory.get(categoryId);
+    if (!known || createdAt > known) newestInCategory.set(categoryId, createdAt);
+  };
+  const parentOf = new Map((categories ?? []).map((c) => [c.id, c.parent_id as string | null]));
+  for (const p of products ?? []) {
+    noteProduct(p.category_id, p.created_at);
+    noteProduct(parentOf.get(p.category_id), p.created_at);
+  }
 
   const staticRoutes: MetadataRoute.Sitemap = [
-    { url: BASE, lastModified: latestProduct, changeFrequency: "weekly", priority: 1, alternates: withAlternates("") },
-    { url: `${BASE}/shop`, lastModified: latestProduct, changeFrequency: "daily", priority: 0.9, alternates: withAlternates("/shop") },
-    { url: `${BASE}/na-golovy`, lastModified: new Date("2026-04-15"), changeFrequency: "monthly", priority: 0.9, alternates: withAlternates("/na-golovy") },
-    { url: `${BASE}/about`, lastModified: new Date("2026-04-13"), changeFrequency: "monthly", priority: 0.7, alternates: withAlternates("/about") },
-    { url: `${BASE}/contacts`, lastModified: new Date("2026-04-13"), changeFrequency: "monthly", priority: 0.7, alternates: withAlternates("/contacts") },
-    { url: `${BASE}/blog`, lastModified: latestPost, changeFrequency: "weekly", priority: 0.7, alternates: withAlternates("/blog") },
-    { url: `${BASE}/reviews`, lastModified: new Date("2026-04-13"), changeFrequency: "weekly", priority: 0.6, alternates: withAlternates("/reviews") },
-    { url: `${BASE}/poslugy`, lastModified: new Date("2026-04-13"), changeFrequency: "monthly", priority: 0.7, alternates: withAlternates("/poslugy") },
-    { url: `${BASE}/delivery`, lastModified: new Date("2026-04-13"), changeFrequency: "monthly", priority: 0.5, alternates: withAlternates("/delivery") },
-    { url: `${BASE}/offer`, lastModified: new Date("2026-04-13"), changeFrequency: "yearly", priority: 0.3, alternates: withAlternates("/offer", false) },
-    { url: `${BASE}/privacy`, lastModified: new Date("2026-04-13"), changeFrequency: "yearly", priority: 0.3, alternates: withAlternates("/privacy", false) },
-    { url: `${BASE}/terms`, lastModified: new Date("2026-04-13"), changeFrequency: "yearly", priority: 0.3, alternates: withAlternates("/terms", false) },
+    { url: BASE, lastModified: lastModified("home", ...productDates, ...postDates), changeFrequency: "weekly", priority: 1, alternates: withAlternates("") },
+    { url: `${BASE}/shop`, lastModified: lastModified("shop", ...productDates), changeFrequency: "daily", priority: 0.9, alternates: withAlternates("/shop") },
+    { url: `${BASE}/na-golovy`, lastModified: lastModified("brandHub"), changeFrequency: "monthly", priority: 0.9, alternates: withAlternates("/na-golovy") },
+    { url: `${BASE}/about`, lastModified: lastModified("about"), changeFrequency: "monthly", priority: 0.7, alternates: withAlternates("/about") },
+    { url: `${BASE}/contacts`, lastModified: lastModified("contacts"), changeFrequency: "monthly", priority: 0.7, alternates: withAlternates("/contacts") },
+    { url: `${BASE}/blog`, lastModified: lastModified("blogIndex", ...postDates), changeFrequency: "weekly", priority: 0.7, alternates: withAlternates("/blog") },
+    { url: `${BASE}/reviews`, lastModified: lastModified("reviews"), changeFrequency: "weekly", priority: 0.6, alternates: withAlternates("/reviews") },
+    { url: `${BASE}/poslugy`, lastModified: lastModified("services"), changeFrequency: "monthly", priority: 0.7, alternates: withAlternates("/poslugy") },
+    { url: `${BASE}/delivery`, lastModified: lastModified("delivery"), changeFrequency: "monthly", priority: 0.5, alternates: withAlternates("/delivery") },
+    { url: `${BASE}/offer`, lastModified: lastModified("legal"), changeFrequency: "yearly", priority: 0.3, alternates: withAlternates("/offer", false) },
+    { url: `${BASE}/privacy`, lastModified: lastModified("legal"), changeFrequency: "yearly", priority: 0.3, alternates: withAlternates("/privacy", false) },
+    { url: `${BASE}/terms`, lastModified: lastModified("legal"), changeFrequency: "yearly", priority: 0.3, alternates: withAlternates("/terms", false) },
   ];
 
   const productRoutes: MetadataRoute.Sitemap = (products ?? []).map((p) => {
@@ -86,7 +94,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     );
     return {
       url: `${BASE}/shop/${p.slug}`,
-      lastModified: p.created_at ? new Date(p.created_at) : new Date(),
+      lastModified: lastModified("product", p.created_at),
       changeFrequency: "weekly",
       priority: 0.8,
       alternates: withAlternates(`/shop/${p.slug}`, fullyTranslated),
@@ -100,7 +108,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     );
     return {
       url: `${BASE}/blog/${post.slug}`,
-      lastModified: post.created_at ? new Date(post.created_at) : new Date(),
+      lastModified: lastModified("blogPost", post.created_at),
       changeFrequency: "monthly",
       priority: 0.6,
       alternates: withAlternates(`/blog/${post.slug}`, fullyTranslated),
@@ -111,7 +119,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter((c) => nonEmptyCategoryIds.has(c.id))
     .map((c) => ({
       url: `${BASE}/shop/category/${c.slug}`,
-      lastModified: c.created_at ? new Date(c.created_at) : new Date("2026-04-17"),
+      lastModified: lastModified("category", c.created_at, newestInCategory.get(c.id)),
       changeFrequency: "weekly",
       priority: 0.8,
       alternates: withAlternates(`/shop/category/${c.slug}`),
