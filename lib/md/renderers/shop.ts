@@ -5,6 +5,7 @@ import { getCategoryContext, getCategoryTree } from "@/lib/categories-server";
 import { flattenCategoryTree } from "@/lib/categories";
 import { getBrandLine, categoryHeading, categoryIntro } from "@/lib/category-brand";
 import { getCategorySeo } from "@/lib/category-seo";
+import { getCategoryFacts, categoryFactsLine, categoryPriceFaq } from "@/lib/category-facts";
 import { categoryDescription } from "@/lib/seo-title";
 import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
 import { createPublicClient } from "@/lib/supabase/server";
@@ -122,15 +123,20 @@ export async function renderCategory(slug: string, locale: MdLocale): Promise<st
   const others = flattenCategoryTree(await getCategoryTree(locale)).filter((c) => c.slug !== slug);
   const seo = getCategorySeo(slug, locale);
 
+  // Count, price range and stock, and the generated price question: the same
+  // facts the HTML page states under its intro and at the end of its FAQ.
+  const facts = getCategoryFacts(products);
+  const factsInput = facts && { slug, name: category.name, locale, brand, facts };
+  const faq = [...(seo?.faq ?? []), ...(factsInput ? [categoryPriceFaq(factsInput)] : [])];
+
   const parts = [categoryIntro(category.name, brand, locale)];
+  if (factsInput) parts.push(categoryFactsLine(factsInput));
   if (children.length > 0) {
     parts.push(`## ${L.subcategories}\n\n${list(children.map((c) => link(c.name, htmlUrl(`/shop/category/${c.slug}`, locale))))}`);
   }
   parts.push(`## ${L.products}\n\n${list(products.map((p) => productLine(p, locale, tCard("outOfStock"))))}`);
-  if (seo) {
-    parts.push(...seo.sections.map((s) => `## ${s.heading}\n\n${s.body.join("\n\n")}`));
-    parts.push(`## ${L.faq}\n\n${seo.faq.map((f) => `### ${f.q}\n\n${f.a}`).join("\n\n")}`);
-  }
+  if (seo) parts.push(...seo.sections.map((s) => `## ${s.heading}\n\n${s.body.join("\n\n")}`));
+  if (faq.length > 0) parts.push(`## ${L.faq}\n\n${faq.map((f) => `### ${f.q}\n\n${f.a}`).join("\n\n")}`);
   parts.push(`## ${L.otherCategories}\n\n${list(others.map((c) => link(c.name, htmlUrl(`/shop/category/${c.slug}`, locale))))}`);
 
   const parent = ctx.parent ? localizeCategory(ctx.parent, locale) : null;
