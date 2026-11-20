@@ -19,12 +19,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = createPublicClient();
 
   const [{ data: products }, { data: posts }, { data: categories }] = await Promise.all([
+    // Out-of-stock products too: their pages stay live, indexable and linked
+    // from /shop (with OutOfStock offers), so leaving them out of the sitemap
+    // only contradicts the page and delays Google finding them.
     supabase
       .from("products")
       .select(
-        "slug, created_at, category_id, name, name_en, description, description_en, ingredients, ingredients_en, how_to_use, how_to_use_en, benefits, benefits_en",
-      )
-      .eq("in_stock", true),
+        "slug, created_at, in_stock, category_id, name, name_en, description, description_en, ingredients, ingredients_en, how_to_use, how_to_use_en, benefits, benefits_en",
+      ),
     supabase
       .from("blog_posts")
       .select("slug, created_at, title, title_en, excerpt, excerpt_en, content, content_en")
@@ -96,7 +98,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${BASE}/shop/${p.slug}`,
       lastModified: lastModified("product", p.created_at),
       changeFrequency: "weekly",
-      priority: 0.8,
+      priority: p.in_stock ? 0.8 : 0.5,
       alternates: withAlternates(`/shop/${p.slug}`, fullyTranslated),
     };
   });
