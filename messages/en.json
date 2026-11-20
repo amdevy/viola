@@ -144,9 +144,10 @@
     "benefitOriginalDesc": "Only certified Na Golov[y] cosmetics from an official brand representative."
   },
   "shop": {
-    "title": "Na Golov[y] Cosmetics — Buy in Ukraine",
+    "title": "Na Golovy Cosmetics — Buy in Ukraine",
     "description": "Official store of professional Na Golovy aromatic cosmetics. Shampoos, conditioners, masks and leave-in care for color preservation and hair health. Delivery by Nova Poshta across Ukraine.",
-    "breadcrumbShop": "Shop"
+    "breadcrumbShop": "Shop",
+    "categoriesHeading": "Catalogue categories"
   },
   "about": {
     "brandLabel": "About the Brand",

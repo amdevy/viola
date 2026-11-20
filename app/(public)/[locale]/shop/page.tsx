@@ -1,7 +1,17 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { createPublicClient } from "@/lib/supabase/server";
 import { fetchProducts } from "@/lib/products";
+import { getCategoryTree } from "@/lib/categories-server";
+import { getBrandLine } from "@/lib/category-brand";
+import {
+  getCategoryFacts,
+  categoryLinkLabel,
+  productCountText,
+  priceFromText,
+} from "@/lib/category-facts";
+import CategoryLinks, { type CategoryLinkItem } from "@/components/shop/CategoryLinks";
 import ShopContent from "./ShopContent";
+import type { Product } from "@/types";
 import type { Metadata } from "next";
 
 export const revalidate = 3600;
@@ -84,6 +94,34 @@ async function getInitialProducts(locale: string) {
   return products;
 }
 
+/**
+ * One link per visible category, labelled with the brand of its line and what
+ * is inside. A parent category counts its children's products, as its page does.
+ */
+async function getCategoryLinks(
+  locale: string,
+  products: Product[] | null,
+): Promise<CategoryLinkItem[]> {
+  const tree = await getCategoryTree(locale);
+
+  return tree.flatMap((root) => {
+    const brand = getBrandLine(root.slug);
+    return [root, ...root.children].map((node) => {
+      const ids = new Set([node.id, ...node.children.map((c) => c.id)]);
+      const facts = products
+        ? getCategoryFacts(products.filter((p) => p.category_id && ids.has(p.category_id)))
+        : null;
+      return {
+        slug: node.slug,
+        label: categoryLinkLabel(node.name, brand, locale),
+        meta: facts
+          ? `${productCountText(facts.count, locale)} · ${priceFromText(facts, locale)}`
+          : null,
+      };
+    });
+  });
+}
+
 export default async function ShopPage({
   params,
 }: {
@@ -93,6 +131,7 @@ export default async function ShopPage({
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "shop" });
   const initialProducts = await getInitialProducts(locale);
+  const categoryLinks = await getCategoryLinks(locale, initialProducts);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -105,7 +144,12 @@ export default async function ShopPage({
         </p>
       </div>
 
-      <ShopContent initialProducts={initialProducts} />
+      <ShopContent
+        initialProducts={initialProducts}
+        categoryLinks={
+          <CategoryLinks heading={t("categoriesHeading")} items={categoryLinks} />
+        }
+      />
     </div>
   );
 }

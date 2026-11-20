@@ -105,6 +105,11 @@ function pick(text: LocaleText | undefined, locale: string): string | undefined 
   return locale === "en" ? text.en : text.uk;
 }
 
+/** The singular for a hair category ("Шампунь"), or undefined if it has none. */
+export function categoryNoun(slug: string, locale: string): string | undefined {
+  return pick(CATEGORY_NOUN[slug], locale);
+}
+
 export function categoryTitle({ slug, name, locale, brand }: CategoryMetaInput): string {
   const noun = pick(CATEGORY_NOUN[slug], locale) ?? name;
   return locale === "en"
