@@ -6,73 +6,25 @@ import ProductCard from "@/components/shop/ProductCard";
 import ProductListGA from "@/components/shop/ProductListGA";
 import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
 import { getCategorySeo } from "@/lib/category-seo";
+import { getCategoryContext } from "@/lib/categories-server";
+import { getProductsByCategoryIds } from "@/lib/products-server";
 import {
   CATEGORY_WITH_PRODUCTS_SELECT,
   buildCategoryTree,
   flattenCategoryTree,
 } from "@/lib/categories";
-import { getBrandLine } from "@/lib/category-brand";
+import { getBrandLine, categoryHeading, categoryIntro } from "@/lib/category-brand";
 import { getCategoryFacts, categoryFactsLine, categoryPriceFaq } from "@/lib/category-facts";
 import { categoryTitle, categoryDescription, pageTitle } from "@/lib/seo-title";
 import type { Category, Product } from "@/types";
 import type { Metadata } from "next";
 import { safeJsonLd } from "@/lib/utils";
+import { markdownAlternate } from "@/lib/md/format";
 
 export const revalidate = 3600;
 
 interface Props {
   params: Promise<{ slug: string; locale: string }>;
-}
-
-type CategoryContext = {
-  category: Category;
-  /** Set only for a subcategory — drives the extra breadcrumb level. */
-  parent: Category | null;
-  /** Set only for a parent — its non-empty subcategories. */
-  children: Category[];
-  /** Top of the branch: decides which product line's branding applies. */
-  rootSlug: string;
-  /** Every category whose products belong on this page. */
-  listingIds: string[];
-};
-
-/**
- * Loads the category together with the branch it sits in.
- *
- * A parent page lists its children's products rather than its own (it has
- * none): a page that is only a list of links to other pages is a doorway, and
- * carries no weight of its own.
- */
-async function getCategoryContext(slug: string): Promise<CategoryContext | null> {
-  const supabase = createPublicClient();
-  const { data } = await supabase.from("categories").select(CATEGORY_WITH_PRODUCTS_SELECT);
-
-  const all = flattenCategoryTree(buildCategoryTree(data));
-  const node = all.find((c) => c.slug === slug);
-  if (!node) return null;
-
-  const parent = node.parent_id
-    ? (all.find((c) => c.id === node.parent_id) as Category | undefined) ?? null
-    : null;
-  const children = all.filter((c) => c.parent_id === node.id) as Category[];
-
-  return {
-    category: node as Category,
-    parent,
-    children,
-    rootSlug: parent?.slug ?? node.slug,
-    listingIds: [node.id, ...children.map((c) => c.id)],
-  };
-}
-
-async function getProductsByCategory(categoryIds: string[]): Promise<Product[]> {
-  const supabase = createPublicClient();
-  const { data } = await supabase
-    .from("products")
-    .select("*, category:categories(id,name,name_en,slug)")
-    .in("category_id", categoryIds)
-    .order("created_at", { ascending: false });
-  return (data as Product[]) ?? [];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -86,7 +38,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     CATEGORY_I18N_FIELDS,
   ) as unknown as { row: Category };
 
-  const products = await getProductsByCategory(ctx.listingIds);
+  const products = await getProductsByCategoryIds(ctx.listingIds);
   const isEmpty = products.length === 0;
 
   const brand = getBrandLine(ctx.rootSlug);
@@ -119,6 +71,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ...brand.keywordsUk,
     ],
     alternates: {
+      // The markdown version exists only where this page is indexable.
+      ...(!isEmpty && { types: markdownAlternate(`/shop/category/${slug}`, locale) }),
       canonical: locale === "en" ? enUrl : ukUrl,
       languages: { uk: ukUrl, en: enUrl, "x-default": ukUrl },
     },
@@ -157,7 +111,7 @@ export default async function CategoryPage({ params }: Props) {
   const children = ctx.children.map(localizeCategory);
   const brand = getBrandLine(ctx.rootSlug);
 
-  const productsRaw = await getProductsByCategory(ctx.listingIds);
+  const productsRaw = await getProductsByCategoryIds(ctx.listingIds);
 
   // Порожню категорію не показуємо — див. lib/categories.ts
   if (productsRaw.length === 0) notFound();
@@ -243,10 +197,7 @@ export default async function CategoryPage({ params }: Props) {
         }
       : null;
 
-  const introText =
-    locale === "en"
-      ? `Professional ${brand.latin} ${category.name.toLowerCase()} — niche aromatic ${brand.subjectEn} cosmetics from Ukrainian brand. High concentration of active ingredients, ${brand.benefitEn}and full range combinability. Sold exclusively through accredited brand technologists.`
-      : `Професійні ${category.name.toLowerCase()} ${brand.latin} — нішева аромакосметика ${brand.subjectUk} від українського бренду. Висока концентрація активних компонентів, ${brand.benefitUk}повна сумісність між лінійками. Продається виключно через акредитованих технологів бренду.`;
+  const introText = categoryIntro(category.name, brand, locale);
 
   return (
     <>
@@ -283,9 +234,7 @@ export default async function CategoryPage({ params }: Props) {
           {/* У H1 бренд без наголосу і дужок: "na golovy шампунь" — 2 275
               показів за квартал, а "Gólov[y]" на цей запит не матчиться. */}
           <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1A1A1A] mb-4 leading-tight">
-            {locale === "en"
-              ? `${category.name} ${brand.latinPlain} — Buy in Ukraine`
-              : `${category.name} ${brand.uk} (${brand.latinPlain}) — Купити в Україні`}
+            {categoryHeading(category.name, brand, locale)}
           </h1>
           <p className="text-[#6B6B6B] leading-relaxed">{introText}</p>
           {factsInput && (

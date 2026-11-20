@@ -1,9 +1,9 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
-import { createPublicClient } from "@/lib/supabase/server";
-import { localize, BLOG_I18N_FIELDS } from "@/lib/i18n/localize";
+import { getPublishedPosts } from "@/lib/blog";
 import type { Metadata } from "next";
+import { markdownAlternate } from "@/lib/md/format";
 
 export const revalidate = 3600;
 
@@ -40,40 +40,11 @@ export async function generateMetadata({
       "Віола Гегедош поради",
     ],
     alternates: {
+      types: markdownAlternate("/blog", locale),
       canonical: locale === "en" ? enUrl : ukUrl,
       languages: { uk: ukUrl, en: enUrl, "x-default": ukUrl },
     },
   };
-}
-
-interface BlogPost {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string | null;
-  cover_image: string | null;
-  published_at: string;
-  reading_time: number | null;
-}
-
-async function getPosts(locale: string): Promise<BlogPost[]> {
-  try {
-    const supabase = createPublicClient();
-    const { data } = await supabase
-      .from("blog_posts")
-      .select(
-        "id,title,title_en,slug,excerpt,excerpt_en,cover_image,published_at,reading_time"
-      )
-      .eq("published", true)
-      .order("published_at", { ascending: false });
-    const rows = (data ?? []) as unknown as Record<string, unknown>[];
-    return rows.map((r) => {
-      const { row } = localize(r, locale, BLOG_I18N_FIELDS);
-      return row as unknown as BlogPost;
-    });
-  } catch {
-    return [];
-  }
 }
 
 export default async function BlogPage({
@@ -85,7 +56,7 @@ export default async function BlogPage({
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "blog" });
   const tc = await getTranslations({ locale, namespace: "common" });
-  const posts = await getPosts(locale);
+  const posts = await getPublishedPosts(locale);
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

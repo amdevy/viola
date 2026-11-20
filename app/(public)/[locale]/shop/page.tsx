@@ -13,6 +13,7 @@ import CategoryLinks, { type CategoryLinkItem } from "@/components/shop/Category
 import ShopContent from "./ShopContent";
 import type { Product } from "@/types";
 import type { Metadata } from "next";
+import { markdownAlternate } from "@/lib/md/format";
 
 export const revalidate = 3600;
 
@@ -67,6 +68,7 @@ export async function generateMetadata({
       "нішева косметика для волосся",
     ],
     alternates: {
+      types: markdownAlternate("/shop", locale),
       canonical: locale === "en" ? enUrl : ukUrl,
       languages: { uk: ukUrl, en: enUrl, "x-default": ukUrl },
     },

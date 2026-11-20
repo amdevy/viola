@@ -4,10 +4,11 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { createPublicClient } from "@/lib/supabase/server";
+import { getPublishedPost } from "@/lib/blog";
 import { localize, hasEnTranslation, BLOG_I18N_FIELDS } from "@/lib/i18n/localize";
 import { safeJsonLd } from "@/lib/utils";
 import { pageTitle } from "@/lib/seo-title";
+import { markdownAlternate } from "@/lib/md/format";
 
 export const revalidate = 3600;
 
@@ -15,24 +16,9 @@ interface Props {
   params: Promise<{ slug: string; locale: string }>;
 }
 
-async function getPost(slug: string) {
-  try {
-    const supabase = createPublicClient();
-    const { data } = await supabase
-      .from("blog_posts")
-      .select("*")
-      .eq("slug", slug)
-      .eq("published", true)
-      .single();
-    return data;
-  } catch {
-    return null;
-  }
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, locale } = await params;
-  const raw = await getPost(slug);
+  const raw = await getPublishedPost(slug);
   if (!raw) return { title: pageTitle(locale === "en" ? "Article not found" : "Стаття не знайдена"), robots: { index: false, follow: true } };
 
   const { row: post } = localize(
@@ -54,6 +40,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: pageTitle(post.title as string),
     description: (post.excerpt as string | null) ?? "",
     alternates: {
+      // The markdown version exists only where this page is indexable.
+      ...(!shouldNoindex && { types: markdownAlternate(`/blog/${slug}`, locale) }),
       canonical: locale === "en" ? enUrl : ukUrl,
       languages: {
         uk: ukUrl,
@@ -129,7 +117,7 @@ export default async function BlogPostPage({ params }: Props) {
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "blogPost" });
   const tc = await getTranslations({ locale, namespace: "common" });
-  const raw = await getPost(slug);
+  const raw = await getPublishedPost(slug);
   if (!raw) notFound();
 
   const { row: post } = localize(

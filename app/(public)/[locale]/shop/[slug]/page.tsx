@@ -19,23 +19,15 @@ import { buildRitual } from "@/lib/ritual";
 import { getCategoryTree } from "@/lib/categories-server";
 import { getBrandLine } from "@/lib/category-brand";
 import { categoryLinkLabel } from "@/lib/category-facts";
+import { getProductBySlug } from "@/lib/products-server";
 import type { Product } from "@/types";
 import type { Metadata } from "next";
+import { markdownAlternate } from "@/lib/md/format";
 
 export const revalidate = 3600;
 
 interface Props {
   params: Promise<{ slug: string; locale: string }>;
-}
-
-async function getProduct(slug: string): Promise<Product | null> {
-  const supabase = createPublicClient();
-  const { data } = await supabase
-    .from("products")
-    .select("*, category:categories(id,name,name_en,slug)")
-    .eq("slug", slug)
-    .single();
-  return (data as Product) ?? null;
 }
 
 interface ProductReview {
@@ -85,7 +77,7 @@ async function getRitualCatalogue(): Promise<Product[]> {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, locale } = await params;
-  const raw = await getProduct(slug);
+  const raw = await getProductBySlug(slug);
   if (!raw) return { title: pageTitle(locale === "en" ? "Product not found" : "Товар не знайдено"), robots: { index: false, follow: true } };
 
   const { row: product } = localize(
@@ -130,6 +122,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       `купити ${product.name}`, "купити na golovy", "косметика для волосся Na Golovy",
     ],
     alternates: {
+      // The markdown version exists only where this page is indexable.
+      ...(!shouldNoindex && { types: markdownAlternate(`/shop/${product.slug}`, locale) }),
       canonical: locale === "en" ? enUrl : ukUrl,
       languages: {
         uk: ukUrl,
@@ -168,7 +162,7 @@ export default async function ProductPage({ params }: Props) {
   const ts = await getTranslations({ locale, namespace: "shop" });
   const th = await getTranslations({ locale, namespace: "hairTypes" });
 
-  const raw = await getProduct(slug);
+  const raw = await getProductBySlug(slug);
   if (!raw) notFound();
 
   const { row: product } = localize(
