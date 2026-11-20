@@ -9,6 +9,7 @@ import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS, BLOG_I18N_FIELDS }
 import type { Product } from "@/types";
 import type { Metadata } from "next";
 import { safeJsonLd } from "@/lib/utils";
+import { markdownAlternate } from "@/lib/md/format";
 
 interface HomeBlogPost {
   id: string;
@@ -88,6 +89,7 @@ export async function generateMetadata({
     description: t("homeDescription"),
     keywords: locale === "en" ? enKeywords : ukKeywords,
     alternates: {
+      types: markdownAlternate("/", locale),
       canonical: locale === "en" ? enUrl : siteUrl,
       languages: { uk: siteUrl, en: enUrl, "x-default": siteUrl },
     },

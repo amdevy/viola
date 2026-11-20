@@ -30,6 +30,13 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // Markdown versions of pages for AI agents: /shop/x.md → lib/md (see
+  // app/api/md). proxy.ts never sees these — its matcher skips paths with a dot.
+  async rewrites() {
+    return {
+      beforeFiles: [{ source: "/:path*.md", destination: "/api/md/:path*" }],
+    };
+  },
   async redirects() {
     return [
       {

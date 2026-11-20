@@ -2,6 +2,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import type { Metadata } from "next";
 import { safeJsonLd } from "@/lib/utils";
+import { markdownAlternate } from "@/lib/md/format";
 
 export async function generateMetadata({
   params,
@@ -33,6 +34,7 @@ export async function generateMetadata({
       "косметика для волосся доставка",
     ],
     alternates: {
+      types: markdownAlternate("/delivery", locale),
       canonical: locale === "en" ? enUrl : ukUrl,
       languages: { uk: ukUrl, en: enUrl, "x-default": ukUrl },
     },

@@ -111,3 +111,17 @@ export function getBrandLine(rootSlug: string): BrandLine {
 export function isSkinLine(rootSlug: string): boolean {
   return SKIN_ROOTS.has(rootSlug);
 }
+
+/** The category page's H1. The brand goes in without the accent and brackets: see the page. */
+export function categoryHeading(name: string, brand: BrandLine, locale: string): string {
+  return locale === "en"
+    ? `${name} ${brand.latinPlain} — Buy in Ukraine`
+    : `${name} ${brand.uk} (${brand.latinPlain}) — Купити в Україні`;
+}
+
+/** The paragraph under the category H1. */
+export function categoryIntro(name: string, brand: BrandLine, locale: string): string {
+  return locale === "en"
+    ? `Professional ${brand.latin} ${name.toLowerCase()} — niche aromatic ${brand.subjectEn} cosmetics from Ukrainian brand. High concentration of active ingredients, ${brand.benefitEn}and full range combinability. Sold exclusively through accredited brand technologists.`
+    : `Професійні ${name.toLowerCase()} ${brand.latin} — нішева аромакосметика ${brand.subjectUk} від українського бренду. Висока концентрація активних компонентів, ${brand.benefitUk}повна сумісність між лінійками. Продається виключно через акредитованих технологів бренду.`;
+}

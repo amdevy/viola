@@ -3,6 +3,7 @@ import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import type { Metadata } from "next";
 import { safeJsonLd } from "@/lib/utils";
+import { markdownAlternate } from "@/lib/md/format";
 
 export async function generateMetadata({
   params,
@@ -42,6 +43,7 @@ export async function generateMetadata({
       "нішева косметика для волосся",
     ],
     alternates: {
+      types: markdownAlternate("/about", locale),
       canonical: locale === "en" ? enUrl : ukUrl,
       languages: { uk: ukUrl, en: enUrl, "x-default": ukUrl },
     },

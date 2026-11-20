@@ -13,6 +13,7 @@ import { routing } from "@/i18n/routing";
 import { getCategoryTree } from "@/lib/categories-server";
 import { safeJsonLd } from "@/lib/utils";
 import { gaInitScript } from "@/lib/analytics";
+import { SITE, SAME_AS } from "@/lib/site";
 
 export const revalidate = 3600;
 
@@ -135,8 +136,8 @@ export default async function LocaleLayout({
                   name: salonName,
                   description: salonDesc,
                   url: siteUrl,
-                  telephone: "+380500582175",
-                  email: "hello@viola.com.ua",
+                  telephone: SITE.phone,
+                  email: SITE.email,
                   image: `${siteUrl}/preview.jpg`,
                   priceRange: "₴₴",
                   inLanguage: locale === "en" ? "en-US" : "uk-UA",
@@ -161,10 +162,7 @@ export default async function LocaleLayout({
                       closes: "19:00",
                     },
                   ],
-                  sameAs: [
-                    "https://www.instagram.com/viola.mukachevo",
-                    "https://t.me/violagegedosh",
-                  ],
+                  sameAs: SAME_AS,
                   areaServed: { "@type": "Country", name: "Ukraine" },
                   brand: { "@id": "https://violamukachevo.com/#brand" },
                 },
@@ -174,19 +172,16 @@ export default async function LocaleLayout({
                   name: salonName,
                   url: siteUrl,
                   logo: `${siteUrl}/logo.png`,
-                  email: "hello@viola.com.ua",
-                  telephone: "+380500582175",
-                  sameAs: [
-                    "https://www.instagram.com/viola.mukachevo",
-                    "https://t.me/violagegedosh",
-                  ],
+                  email: SITE.email,
+                  telephone: SITE.phone,
+                  sameAs: SAME_AS,
                 },
                 {
                   "@type": "Brand",
                   "@id": "https://violamukachevo.com/#brand",
                   name: "Na Gólov[y]",
                   alternateName: ["Na Golovy", "На Голову", "na golovy"],
-                  url: "https://www.nagolovy.pro/",
+                  url: SITE.brandUrl,
                   logo: `${siteUrl}/logo.png`,
                 },
                 {
