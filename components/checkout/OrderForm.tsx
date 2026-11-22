@@ -51,7 +51,10 @@ export default function OrderForm() {
     mode: "onTouched",
     // Порожні рядки замість undefined, щоб zod давав локалізовані min(1)-помилки
     defaultValues: {
-      paymentMethod: "callback",
+      // Card by default (the owner's choice). When card payment is switched
+      // off its tile is not rendered, so the form must not keep that invisible
+      // option selected: fall back to callback.
+      paymentMethod: CARD_PAYMENT_ENABLED ? "card" : "callback",
       firstName: "",
       lastName: "",
       phone: "",

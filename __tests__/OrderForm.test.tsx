@@ -99,6 +99,13 @@ async function fillValidCheckout(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("checkbox"));
 }
 
+/** Card is the default; the callback flow has to be chosen, as a shopper would. */
+const chooseCallback = () => {
+  const el = document.querySelector('input[value="callback"]');
+  if (!el) throw new Error("callback option not rendered");
+  fireEvent.click(el);
+};
+
 describe("OrderForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -126,6 +133,22 @@ describe("OrderForm", () => {
     );
     expect(screen.queryByText(uk.checkout.card)).not.toBeInTheDocument();
     expect(document.querySelector('input[value="card"]')).toBeNull();
+  });
+
+  it("за замовчуванням вибрана оплата карткою, і кнопка пропонує оплатити", async () => {
+    render(<OrderForm />);
+
+    expect(document.querySelector<HTMLInputElement>('input[value="card"]')?.checked).toBe(true);
+    expect(document.querySelector<HTMLInputElement>('input[value="callback"]')?.checked).toBe(false);
+    expect(screen.getByRole("button", { name: uk.checkout.submitPay })).toBeInTheDocument();
+  });
+
+  it("коли картку вимкнено, за замовчуванням — зворотний зв'язок, а не невидима картка", async () => {
+    flags.card = false;
+    render(<OrderForm />);
+
+    expect(document.querySelector<HTMLInputElement>('input[value="callback"]')?.checked).toBe(true);
+    expect(screen.getByRole("button", { name: uk.checkout.submit })).toBeInTheDocument();
   });
 
   it("поля контактів дозволяють автозаповнення браузера", async () => {
@@ -162,7 +185,8 @@ describe("OrderForm", () => {
     const user = userEvent.setup();
     render(<OrderForm />);
 
-    await user.click(screen.getByRole("button", { name: uk.checkout.submit }));
+    // The form as a shopper first sees it: card payment selected.
+    await user.click(screen.getByRole("button", { name: uk.checkout.submitPay }));
 
     expect(await screen.findByText(uk.checkout.formHasErrors)).toBeInTheDocument();
 
@@ -178,6 +202,7 @@ describe("OrderForm", () => {
 
     expect(calledUrls().some((u) => u.includes("/api/orders"))).toBe(false);
     expect(calledUrls().some((u) => u.includes("/api/notify-callback"))).toBe(false);
+    expect(calledUrls().some((u) => u.includes("/api/liqpay/checkout"))).toBe(false);
   });
 
   it("невалідний телефон: помилка з'являється одразу після виходу з поля, без сабміту", async () => {
@@ -207,7 +232,7 @@ describe("OrderForm", () => {
     const user = userEvent.setup();
     render(<OrderForm />);
 
-    await user.click(screen.getByRole("button", { name: uk.checkout.submit }));
+    await user.click(screen.getByRole("button", { name: uk.checkout.submitPay }));
 
     expect(await screen.findByText(uk.checkout.errOffer)).toBeInTheDocument();
     expect(calledUrls().some((u) => u.includes("/api/orders"))).toBe(false);
@@ -218,6 +243,7 @@ describe("OrderForm", () => {
     render(<OrderForm />);
 
     await fillValidCheckout(user);
+    chooseCallback();
     await user.click(screen.getByRole("button", { name: uk.checkout.submit }));
 
     await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/checkout/success?orderId=test-order-1"), {
@@ -243,6 +269,7 @@ describe("OrderForm", () => {
     render(<OrderForm />);
 
     await fillValidCheckout(user);
+    chooseCallback();
     await user.click(screen.getByRole("button", { name: uk.checkout.submit }));
 
     await waitFor(() => expect(pushMock).toHaveBeenCalled(), { timeout: 3000 });
