@@ -335,6 +335,7 @@
   "checkout": {
     "title": "Checkout",
     "yourOrder": "Your Order",
+    "goToForm": "Continue to checkout",
     "contactInfo": "Contact details",
     "firstName": "First name",
     "firstNamePlaceholder": "Olena",

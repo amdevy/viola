@@ -35,6 +35,19 @@ export default function CheckoutSummary() {
     removeItem(item.productId);
   };
 
+  // In one column the order sits above the form, so the shopper needs a clear
+  // way on to it. From lg the form is beside the summary and this is hidden.
+  const goToForm = () => {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document
+      .getElementById("checkout-form")
+      ?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+    sendGAEvent("event", "select_content", {
+      content_type: "checkout_go_to_form",
+      content_id: "order_summary",
+    });
+  };
+
   return (
     <div className="bg-white rounded border border-[#E8E4DE] p-6 lg:sticky lg:top-24">
       <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-4">
@@ -121,6 +134,19 @@ export default function CheckoutSummary() {
           <span>{mounted ? formatPrice(cartTotal, locale) : ""}</span>
         </div>
       </div>
+
+      {mounted && items.length > 0 && (
+        <button
+          type="button"
+          onClick={goToForm}
+          className="lg:hidden mt-5 flex h-12 w-full items-center justify-center gap-2 rounded bg-[#1A1A1A] text-sm font-medium uppercase tracking-wider text-white transition-colors active:bg-[#333333]"
+        >
+          {t("goToForm")}
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14m0 0-6-6m6 6 6-6" />
+          </svg>
+        </button>
+      )}
     </div>
   );
 }
