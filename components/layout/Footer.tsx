@@ -13,7 +13,7 @@ export default function Footer({ categories: tree }: { categories: CategoryNode[
   const categories = flattenCategoryTree(tree);
 
   return (
-    <footer className='bg-[#1A1A1A] text-white'>
+    <footer className='bg-[#1A1A1A] text-white pb-[calc(3.5rem+env(safe-area-inset-bottom))] md:pb-0'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
         <div className='grid grid-cols-1 md:grid-cols-4 gap-8'>
           {/* Brand */}

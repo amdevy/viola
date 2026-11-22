@@ -25,13 +25,14 @@
     "learnMore": "Learn More",
     "aboutNaGolovy": "About the Na Golovy brand",
     "readMore": "Read More",
+    "showLess": "Show less",
     "goToShop": "Go to Shop",
     "contact": "Contact Us",
     "followInstagram": "Follow on Instagram",
     "minReading": "{min} min read",
     "noArticles": "No articles yet",
     "currency": "UAH",
-    "products": "{count} products",
+    "products": "{count, plural, one {# product} other {# products}}",
     "newBadge": "New",
     "comingSoonBadge": "Coming Soon",
     "bestsellerBadge": "Bestseller",
@@ -50,8 +51,6 @@
     "fillFields": "Please fill name and phone"
   },
   "header": {
-    "announcement": "Delivery by Nova Poshta across Ukraine.",
-    "goToShop": "Go to shop",
     "catalog": "Product Catalog",
     "contacts": "Contacts",
     "about": "Na Golovy brand",
@@ -62,7 +61,8 @@
     "whereToConsult": "Where to get consultation & buy",
     "logoAlt": "Viola — Beauty Salon",
     "cosmetics": "Na Gólov[y] Cosmetics",
-    "aboutUs": "About us"
+    "aboutUs": "About us",
+    "search": "Search"
   },
   "mobileMenu": {
     "menu": "Menu",
@@ -116,7 +116,10 @@
     "to": "To",
     "hairType": "Hair Type",
     "resetFilters": "Reset Filters",
-    "filters": "Filters"
+    "filters": "Filters",
+    "filtersActive": "Filters, active: {count}",
+    "showResults": "{count, plural, =0 {No products found} one {Show # product} other {Show # products}}",
+    "showProducts": "Show products"
   },
   "home": {
     "greeting": "Hello, my name is",
@@ -304,7 +307,11 @@
     "continueShopping": "Continue shopping",
     "remove": "Remove",
     "increase": "Increase quantity",
-    "decrease": "Decrease quantity"
+    "decrease": "Decrease quantity",
+    "open": "Open cart",
+    "openShort": "Open",
+    "added": "Added to cart",
+    "close": "Close cart"
   },
   "cartRecommendations": {
     "title": "Complete your routine",
@@ -320,7 +327,10 @@
     "like": "Like",
     "unlike": "Unlike",
     "quantity": "Quantity:",
-    "addToCartFull": "Add to Cart"
+    "addToCartFull": "Add to Cart",
+    "inCart": "In cart",
+    "inCartOpen": "In cart — open cart",
+    "inCartCount": "In cart: {count}"
   },
   "checkout": {
     "title": "Checkout",
@@ -461,12 +471,22 @@
     "totalLabel": "Bundle total",
     "itemsCount": "{count} item(s) in bundle",
     "buyBundle": "Add bundle to cart",
-    "addedToast": "Bundle added to cart"
+    "addedToast": "Bundle added to cart",
+    "details": "Details",
+    "detailsAria": "Details: {name}",
+    "add": "Add",
+    "inSet": "In bundle",
+    "addToBundle": "Add to bundle",
+    "removeFromBundle": "Remove from bundle",
+    "addAria": "Add to bundle: {name}",
+    "removeAria": "Remove from bundle: {name}",
+    "openProduct": "Product page",
+    "close": "Close"
   },
   "googleReviews": {
     "basedOn": "Based on {count} reviews",
     "topReviewsTitle": "What clients say about the salon",
-    "viewAllOnGoogle": "View all {count} reviews on Google"
+    "viewAllOnGoogle": "{count, plural, one {View # review on Google} other {View all # reviews on Google}}"
   },
   "notFound": {
     "metaTitle": "Page not found",
@@ -477,5 +497,34 @@
     "popular": "Popular sections",
     "brand": "Na Golovy brand",
     "blog": "Blog"
+  },
+  "bottomNav": {
+    "label": "Quick navigation",
+    "catalog": "Catalog",
+    "search": "Search",
+    "cart": "Cart",
+    "cartWithSum": "Cart, items: {count}, total {sum}",
+    "ask": "Ask",
+    "askAria": "Ask the technologist on Telegram",
+    "menu": "Menu"
+  },
+  "search": {
+    "title": "Product search",
+    "placeholder": "Search products",
+    "close": "Close",
+    "clear": "Clear",
+    "results": "Products found",
+    "loadError": "Could not load the products.",
+    "retry": "Try again",
+    "noResults": "Nothing found for “{query}”",
+    "noResultsHint": "Try another word or ask our technologist — we will suggest a product.",
+    "askTelegram": "Message on Telegram",
+    "allProducts": "Full catalog",
+    "popular": "Popular",
+    "categories": "Categories",
+    "showAll": "Show all results ({count})",
+    "resultsFor": "Search results: “{query}”",
+    "reset": "Clear search",
+    "nothingFound": "Nothing matches this search. Try another word."
   }
 }

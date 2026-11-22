@@ -3,14 +3,20 @@
 import { useMemo, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
-import toast from "react-hot-toast";
 import { useCart } from "@/hooks/useCart";
+import { showAddedToCart } from "@/components/shop/addedToCartToast";
 import { formatPrice } from "@/lib/utils";
 import { sendGAEvent } from "@/lib/analytics";
+import BundleQuickView from "@/components/shop/BundleQuickView";
 import type { CareStep, RitualKind } from "@/lib/ritual";
 import type { Product } from "@/types";
 
-export type BundleProduct = Pick<Product, "id" | "name" | "price" | "images" | "volume">;
+export type BundleProduct = Pick<Product, "id" | "name" | "price" | "images" | "volume"> & {
+  /** With a slug the quick look can link to the product's own page. */
+  slug?: string;
+  /** The opening of the description, shown in the quick look. */
+  summary?: string | null;
+};
 
 export interface BundleItem {
   product: BundleProduct;
@@ -41,10 +47,13 @@ const STEP_LABEL: Record<CareStep, string> = {
 
 export default function ProductBundle({ kind, items }: Props) {
   const t = useTranslations("productBundle");
+  const tcart = useTranslations("cart");
   const locale = useLocale();
-  const { addItem, openCart } = useCart();
+  const { addItem } = useCart();
 
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  // The product being looked at in the quick view, if any.
+  const [previewId, setPreviewId] = useState<string | null>(null);
 
   const bundleProducts = useMemo(
     () => items.filter((i) => i.isMain || selected.has(i.product.id)).map((i) => i.product),
@@ -56,7 +65,16 @@ export default function ProductBundle({ kind, items }: Props) {
     [bundleProducts],
   );
 
-  const toggle = (id: string) => {
+  // `method` says which control did it — the row/card toggle ("list") or the
+  // quick view's button ("quick_view") — so the two ways can be compared.
+  const toggle = (id: string, method: "list" | "quick_view") => {
+    const product = items.find((i) => i.product.id === id)?.product;
+    if (product) {
+      sendGAEvent("event", selected.has(id) ? "bundle_item_remove" : "bundle_item_add", {
+        method,
+        items: [{ item_id: product.id, item_name: product.name, price: Number(product.price) }],
+      });
+    }
     setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
@@ -82,9 +100,9 @@ export default function ProductBundle({ kind, items }: Props) {
       ritual_kind: kind,
     });
     // Without this the button gave no sign of working, and a second press put
-    // every product in the cart twice.
-    toast.success(t("addedToast"));
-    openCart();
+    // every product in the cart twice. The toast carries the way to the cart;
+    // the cart itself no longer opens over the page (see addedToCartToast.tsx).
+    showAddedToCart({ title: t("addedToast"), openLabel: tcart("openShort") });
   };
 
   if (!items.some((i) => !i.isMain)) return null;
@@ -93,6 +111,39 @@ export default function ProductBundle({ kind, items }: Props) {
 
   const label = (item: BundleItem) =>
     [item.step && t(STEP_LABEL[item.step]), item.isMain && t("thisProduct")].filter(Boolean).join(" · ");
+
+  const openPreview = (item: BundleItem) => {
+    sendGAEvent("event", "select_item", {
+      item_list_id: "care_ritual",
+      item_list_name: "care_ritual",
+      items: [{ item_id: item.product.id, item_name: item.product.name, price: Number(item.product.price) }],
+    });
+    setPreviewId(item.product.id);
+  };
+  const previewItem = items.find((i) => i.product.id === previewId && !i.isMain);
+
+  // Every product but the page's own has two controls: "details" opens the
+  // quick look, the toggle puts it in or out of the set. The page's own
+  // product has neither — it is always in the set and the shopper is already
+  // looking at it.
+  const controls = (item: BundleItem) => {
+    const isSelected = selected.has(item.product.id);
+    return {
+      product: item.product,
+      label: label(item),
+      locale,
+      isMain: item.isMain,
+      selected: item.isMain || isSelected,
+      detailsLabel: t("details"),
+      // One accessible name for both layouts' "details" control, so it says
+      // which product it opens rather than a bare "Details".
+      detailsAria: t("detailsAria", { name: item.product.name }),
+      toggleText: t(isSelected ? "inSet" : "add"),
+      toggleLabel: t(isSelected ? "removeAria" : "addAria", { name: item.product.name }),
+      onToggle: () => toggle(item.product.id, "list"),
+      onPreview: () => openPreview(item),
+    };
+  };
 
   return (
     <section className="mt-16">
@@ -106,20 +157,17 @@ export default function ProductBundle({ kind, items }: Props) {
       <div className="grid lg:grid-cols-[1fr_320px] gap-4 lg:gap-6">
         {/* Products */}
         <div className="bg-white border border-[#E8E4DE] rounded p-3 sm:p-6">
-          {/* Mobile: stacked list */}
-          <div className="flex flex-col gap-2 sm:hidden">
-            {items.map((item) => (
-              <BundleRow
+          {/* Mobile: the routine as numbered steps, in the order they are used */}
+          <ol className="flex flex-col sm:hidden">
+            {items.map((item, i) => (
+              <BundleStep
                 key={item.product.id}
-                product={item.product}
-                label={label(item)}
-                locale={locale}
-                selected={item.isMain || selected.has(item.product.id)}
-                disabled={item.isMain}
-                onToggle={item.isMain ? undefined : () => toggle(item.product.id)}
+                {...controls(item)}
+                number={i + 1}
+                isLast={i === items.length - 1}
               />
             ))}
-          </div>
+          </ol>
 
           {/* Desktop: horizontal cards with + separators */}
           <div className="hidden sm:flex flex-wrap items-stretch gap-4">
@@ -130,14 +178,7 @@ export default function ProductBundle({ kind, items }: Props) {
                     +
                   </div>
                 )}
-                <BundleCard
-                  product={item.product}
-                  label={label(item)}
-                  locale={locale}
-                  selected={item.isMain || selected.has(item.product.id)}
-                  disabled={item.isMain}
-                  onToggle={item.isMain ? undefined : () => toggle(item.product.id)}
-                />
+                <BundleCard {...controls(item)} />
               </div>
             ))}
           </div>
@@ -152,7 +193,9 @@ export default function ProductBundle({ kind, items }: Props) {
             <p className="font-serif text-2xl lg:text-3xl font-bold text-[#1A1A1A]">
               {formatPrice(total, locale)}
             </p>
-            <p className="hidden sm:block text-sm text-[#6B6B6B] mt-3">
+            {/* On phones this sits right under the total, so it is clear how
+                many products that price covers. */}
+            <p className="text-xs sm:text-sm text-[#6B6B6B] mt-0.5 sm:mt-3">
               {t("itemsCount", { count: bundleProducts.length })}
             </p>
           </div>
@@ -166,133 +209,212 @@ export default function ProductBundle({ kind, items }: Props) {
           </button>
         </aside>
       </div>
+
+      {previewItem && (
+        <BundleQuickView
+          product={previewItem.product}
+          label={label(previewItem)}
+          locale={locale}
+          selected={selected.has(previewItem.product.id)}
+          onToggle={() => toggle(previewItem.product.id, "quick_view")}
+          onClose={() => setPreviewId(null)}
+        />
+      )}
     </section>
   );
 }
 
-/* Mobile row layout: image | step + name + price | checkbox */
-function BundleRow({
-  product,
-  label,
-  locale,
-  selected,
-  disabled,
-  onToggle,
-}: {
+interface ControlProps {
   product: BundleProduct;
   label: string;
   locale: string;
+  isMain: boolean;
   selected: boolean;
-  disabled?: boolean;
-  onToggle?: () => void;
-}) {
-  const image = product.images?.[0] ?? "/placeholder-product.png";
+  detailsLabel: string;
+  detailsAria: string;
+  toggleText: string;
+  toggleLabel: string;
+  onToggle: () => void;
+  onPreview: () => void;
+}
+
+function Tick({ selected, className = "" }: { selected: boolean; className?: string }) {
   return (
-    <button
-      type="button"
-      onClick={onToggle}
-      disabled={disabled}
-      aria-pressed={selected}
-      className={`flex items-center gap-3 p-2 rounded border transition-all text-left ${
+    <span
+      aria-hidden
+      className={`flex h-6 w-6 items-center justify-center rounded-full border-2 transition-colors ${
         selected
-          ? "border-[#C4A882] bg-[#FAFAF8]"
-          : "border-[#E8E4DE] bg-white"
-      } ${disabled ? "cursor-default" : "cursor-pointer"}`}
+          ? "border-[#C4A882] bg-[#C4A882] text-white"
+          : "border-[#D9D4CC] bg-white text-transparent"
+      } ${className}`}
     >
-      <div className="relative w-16 h-16 flex-shrink-0 bg-[#F0EDE8] rounded overflow-hidden">
-        <Image
-          src={image}
-          alt={product.name}
-          fill
-          sizes="64px"
-          className="object-cover"
-        />
-      </div>
-      <div className="flex-1 min-w-0">
-        {label && (
-          <p className="text-[10px] uppercase tracking-widest text-[#6B6B6B] mb-0.5">{label}</p>
-        )}
-        <p className="text-xs text-[#1A1A1A] leading-tight line-clamp-2 mb-1">
-          {product.name}
-        </p>
-        <p className="text-sm font-semibold text-[#1A1A1A]">
-          {formatPrice(Number(product.price), locale)}
-        </p>
-      </div>
-      <div
-        className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center border-2 transition-colors ${
-          selected
-            ? "bg-[#C4A882] border-[#C4A882] text-white"
-            : "border-[#E8E4DE] bg-white text-transparent"
-        }`}
-        aria-hidden
-      >
-        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-        </svg>
-      </div>
-    </button>
+      <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+      </svg>
+    </span>
   );
 }
 
-/* Desktop card layout: image on top, step + name + price below */
+/* Mobile step: [number + connector] [card: image | step + name + price; details | add/in set] */
+function BundleStep({
+  product,
+  label,
+  locale,
+  isMain,
+  selected,
+  detailsLabel,
+  detailsAria,
+  toggleText,
+  toggleLabel,
+  onToggle,
+  onPreview,
+  number,
+  isLast,
+}: ControlProps & { number: number; isLast: boolean }) {
+  const image = product.images?.[0] ?? "/placeholder-product.png";
+
+  return (
+    <li className="flex gap-2.5">
+      {/* The rail: steps in the set are filled in gold, and so is the line
+          leading on from them, so the chosen part of the routine reads at a glance. */}
+      <div aria-hidden className="flex w-7 flex-shrink-0 flex-col items-center gap-1">
+        <span
+          className={`flex h-7 w-7 items-center justify-center rounded-full text-[13px] font-semibold text-[#1A1A1A] ${
+            selected ? "bg-[#C4A882]" : "border-[1.5px] border-[#6B6B6B] bg-white"
+          }`}
+        >
+          {number}
+        </span>
+        {!isLast && (
+          <span className={`w-0.5 flex-1 ${selected ? "bg-[#C4A882]" : "bg-[#E8E4DE]"}`} />
+        )}
+      </div>
+
+      <div
+        className={`flex min-w-0 flex-1 flex-col gap-2.5 rounded border p-2.5 transition-colors ${
+          isLast ? "" : "mb-2.5"
+        } ${selected ? "border-[#C4A882] bg-[#FDF9F5]" : "border-[#E8E4DE] bg-white"}`}
+      >
+        <div className="flex items-center gap-2.5">
+          <div className="relative h-[52px] w-[52px] flex-shrink-0 overflow-hidden rounded bg-[#F0EDE8]">
+            <Image src={image} alt="" fill sizes="52px" className="object-cover" />
+          </div>
+          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+            {label && (
+              <p
+                className={`text-[11px] font-semibold uppercase tracking-widest ${
+                  selected ? "text-[#7A5C36]" : "text-[#6B6B6B]"
+                }`}
+              >
+                {label}
+              </p>
+            )}
+            <p className="text-[13px] leading-snug text-[#1A1A1A] line-clamp-2">{product.name}</p>
+            <p className="text-sm font-semibold text-[#1A1A1A]">
+              {formatPrice(Number(product.price), locale)}
+            </p>
+          </div>
+        </div>
+
+        {!isMain && (
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={onPreview}
+              aria-label={detailsAria}
+              className="h-11 flex-1 rounded border border-[#D9D4CC] bg-white text-[13px] font-medium text-[#1A1A1A] transition-colors hover:border-[#C4A882]"
+            >
+              {detailsLabel}
+            </button>
+            <button
+              type="button"
+              onClick={onToggle}
+              aria-pressed={selected}
+              aria-label={toggleLabel}
+              className={`flex h-11 flex-[1.3] items-center justify-center gap-1.5 rounded text-[13px] font-semibold transition-colors ${
+                selected ? "bg-[#C4A882] text-[#1A1A1A]" : "bg-[#1A1A1A] text-white"
+              }`}
+            >
+              {selected ? (
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 12.5l4.5 4.5L19 7.5" />
+                </svg>
+              ) : (
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" d="M12 5v14M5 12h14" />
+                </svg>
+              )}
+              {toggleText}
+            </button>
+          </div>
+        )}
+      </div>
+    </li>
+  );
+}
+
+/* Desktop card layout: image on top, step + name + price below; tick in the corner */
 function BundleCard({
   product,
   label,
   locale,
+  isMain,
   selected,
-  disabled,
+  detailsLabel,
+  detailsAria,
+  toggleLabel,
   onToggle,
-}: {
-  product: BundleProduct;
-  label: string;
-  locale: string;
-  selected: boolean;
-  disabled?: boolean;
-  onToggle?: () => void;
-}) {
+  onPreview,
+}: ControlProps) {
   const image = product.images?.[0] ?? "/placeholder-product.png";
-  const clickable = !disabled && !!onToggle;
-
-  return (
-    <button
-      type="button"
-      onClick={onToggle}
-      disabled={disabled}
-      aria-pressed={selected}
-      className={`relative flex flex-col items-start text-left w-40 md:w-44 rounded border transition-all ${
-        selected
-          ? "border-[#C4A882] bg-[#FAFAF8]"
-          : "border-[#E8E4DE] bg-white hover:border-[#C4A882]"
-      } ${clickable ? "cursor-pointer" : "cursor-default"}`}
-    >
+  const body = (
+    <>
       <div className="relative w-full aspect-square bg-[#F0EDE8] rounded-t overflow-hidden">
-        <Image
-          src={image}
-          alt={product.name}
-          fill
-          sizes="176px"
-          className="object-cover"
-        />
-        {selected && !disabled && (
-          <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-[#C4A882] text-white flex items-center justify-center shadow">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-        )}
+        <Image src={image} alt="" fill sizes="176px" className="object-cover" />
       </div>
       <div className="p-3 w-full">
         {label && (
           <p className="text-[10px] uppercase tracking-widest text-[#6B6B6B] mb-1">{label}</p>
         )}
-        <p className="text-xs text-[#1A1A1A] leading-tight line-clamp-2 mb-1">
-          {product.name}
-        </p>
-        <p className="text-sm font-semibold text-[#1A1A1A]">
+        <p className="text-xs text-[#1A1A1A] leading-tight line-clamp-2 mb-1">{product.name}</p>
+        <p className="flex items-baseline gap-2 text-sm font-semibold text-[#1A1A1A]">
           {formatPrice(Number(product.price), locale)}
+          {!isMain && (
+            <span className="text-xs font-medium text-[#C4A882] underline underline-offset-2">
+              {detailsLabel}
+            </span>
+          )}
         </p>
       </div>
-    </button>
+    </>
+  );
+  const frame = `relative w-40 md:w-44 rounded border transition-all ${
+    selected ? "border-[#C4A882] bg-[#FAFAF8]" : "border-[#E8E4DE] bg-white hover:border-[#C4A882]"
+  }`;
+
+  if (isMain) {
+    return <div className={`${frame} flex flex-col items-start text-left`}>{body}</div>;
+  }
+
+  return (
+    <div className={frame}>
+      <button
+        type="button"
+        onClick={onPreview}
+        aria-label={detailsAria}
+        className="flex h-full w-full flex-col items-start text-left"
+      >
+        {body}
+      </button>
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-pressed={selected}
+        aria-label={toggleLabel}
+        className="absolute right-1 top-1 flex h-10 w-10 items-center justify-center rounded-full"
+      >
+        <Tick selected={selected} className="shadow" />
+      </button>
+    </div>
   );
 }

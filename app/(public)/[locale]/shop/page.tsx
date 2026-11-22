@@ -10,6 +10,7 @@ import {
   priceFromText,
 } from "@/lib/category-facts";
 import CategoryLinks, { type CategoryLinkItem } from "@/components/shop/CategoryLinks";
+import CollapsibleIntro from "@/components/ui/CollapsibleIntro";
 import ShopContent from "./ShopContent";
 import type { Product } from "@/types";
 import type { Metadata } from "next";
@@ -132,18 +133,21 @@ export default async function ShopPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "shop" });
+  const tc = await getTranslations({ locale, namespace: "common" });
   const initialProducts = await getInitialProducts(locale);
   const categoryLinks = await getCategoryLinks(locale, initialProducts);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 md:py-8">
+      <div className="mb-4 md:mb-6">
         <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-3">
           {t("title")}
         </h1>
-        <p className="text-[#6B6B6B] max-w-2xl leading-relaxed">
-          {t("description")}
-        </p>
+        <CollapsibleIntro moreLabel={tc("readMore")} lessLabel={tc("showLess")} analyticsId="shop">
+          <p className="text-[#6B6B6B] max-w-2xl leading-relaxed">
+            {t("description")}
+          </p>
+        </CollapsibleIntro>
       </div>
 
       <ShopContent

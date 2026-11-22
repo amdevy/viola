@@ -25,13 +25,14 @@
     "learnMore": "Дізнатися більше",
     "aboutNaGolovy": "Про бренд На Голову (Na Golovy)",
     "readMore": "Читати далі",
+    "showLess": "Згорнути",
     "goToShop": "Перейти до магазину",
     "contact": "Зв'язатися",
     "followInstagram": "Підписатися в Instagram",
     "minReading": "{min} хв читання",
     "noArticles": "Статей поки немає",
     "currency": "грн",
-    "products": "{count} товарів",
+    "products": "{count, plural, one {# товар} few {# товари} many {# товарів} other {# товару}}",
     "newBadge": "Новинка",
     "comingSoonBadge": "Очікується",
     "bestsellerBadge": "Хіт",
@@ -50,8 +51,6 @@
     "fillFields": "Заповніть ім'я та телефон"
   },
   "header": {
-    "announcement": "Доставка Новою Поштою по всій Україні.",
-    "goToShop": "Перейти у магазин",
     "catalog": "Каталог товарів",
     "contacts": "Контакти",
     "about": "Бренд На Голову",
@@ -62,7 +61,8 @@
     "whereToConsult": "Де отримати консультацію та придбати",
     "logoAlt": "Viola — Салон краси",
     "cosmetics": "Косметика Na Gólov[y]",
-    "aboutUs": "Про нас"
+    "aboutUs": "Про нас",
+    "search": "Пошук"
   },
   "mobileMenu": {
     "menu": "Меню",
@@ -116,7 +116,10 @@
     "to": "До",
     "hairType": "Тип волосся",
     "resetFilters": "Скинути фільтри",
-    "filters": "Фільтри"
+    "filters": "Фільтри",
+    "filtersActive": "Фільтри, активних: {count}",
+    "showResults": "{count, plural, =0 {Товарів не знайдено} one {Показати # товар} few {Показати # товари} many {Показати # товарів} other {Показати # товару}}",
+    "showProducts": "Показати товари"
   },
   "home": {
     "greeting": "Вітаю, мене звати",
@@ -304,7 +307,11 @@
     "continueShopping": "Продовжити покупки",
     "remove": "Видалити",
     "increase": "Додати одиницю",
-    "decrease": "Зменшити на одиницю"
+    "decrease": "Зменшити на одиницю",
+    "open": "Відкрити кошик",
+    "openShort": "Відкрити",
+    "added": "Додано до кошика",
+    "close": "Закрити кошик"
   },
   "cartRecommendations": {
     "title": "Доповніть догляд",
@@ -320,7 +327,10 @@
     "addToCartFull": "Додати до кошика",
     "bestseller": "Хіт продажів",
     "like": "Подобається",
-    "unlike": "Прибрати з улюблених"
+    "unlike": "Прибрати з улюблених",
+    "inCart": "У кошику",
+    "inCartOpen": "У кошику — відкрити кошик",
+    "inCartCount": "У кошику: {count}"
   },
   "checkout": {
     "title": "Оформлення замовлення",
@@ -461,12 +471,22 @@
     "totalLabel": "Разом за комплект",
     "itemsCount": "{count} товар(и) у комплекті",
     "buyBundle": "Купити комплект",
-    "addedToast": "Комплект додано до кошика"
+    "addedToast": "Комплект додано до кошика",
+    "details": "Детальніше",
+    "detailsAria": "Детальніше: {name}",
+    "add": "Додати",
+    "inSet": "У комплекті",
+    "addToBundle": "Додати до комплекту",
+    "removeFromBundle": "Прибрати з комплекту",
+    "addAria": "Додати до комплекту: {name}",
+    "removeAria": "Прибрати з комплекту: {name}",
+    "openProduct": "Сторінка товару",
+    "close": "Закрити"
   },
   "googleReviews": {
     "basedOn": "На основі {count} відгуків",
     "topReviewsTitle": "Що пишуть про салон",
-    "viewAllOnGoogle": "Дивитися всі {count} відгуків на Google"
+    "viewAllOnGoogle": "Усі {count, plural, one {# відгук} few {# відгуки} many {# відгуків} other {# відгуку}} на Google"
   },
   "notFound": {
     "metaTitle": "Сторінку не знайдено",
@@ -477,5 +497,34 @@
     "popular": "Популярні розділи",
     "brand": "Бренд На Голову",
     "blog": "Блог"
+  },
+  "bottomNav": {
+    "label": "Швидка навігація",
+    "catalog": "Каталог",
+    "search": "Пошук",
+    "cart": "Кошик",
+    "cartWithSum": "Кошик, товарів: {count}, на суму {sum}",
+    "ask": "Запитати",
+    "askAria": "Запитати технолога в Telegram",
+    "menu": "Меню"
+  },
+  "search": {
+    "title": "Пошук товарів",
+    "placeholder": "Що шукаєте?",
+    "close": "Закрити",
+    "clear": "Очистити",
+    "results": "Знайдені товари",
+    "loadError": "Не вдалося завантажити товари.",
+    "retry": "Спробувати ще раз",
+    "noResults": "За запитом «{query}» нічого не знайдено",
+    "noResultsHint": "Спробуйте інше слово або запитайте технолога — підкажемо засіб.",
+    "askTelegram": "Написати в Telegram",
+    "allProducts": "Весь каталог",
+    "popular": "Популярне",
+    "categories": "Категорії",
+    "showAll": "Показати всі результати ({count})",
+    "resultsFor": "Результати пошуку: «{query}»",
+    "reset": "Скинути пошук",
+    "nothingFound": "За цим запитом нічого не знайдено. Спробуйте інше слово."
   }
 }

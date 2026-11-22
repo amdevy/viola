@@ -5,8 +5,9 @@ import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { useCart } from "@/hooks/useCart";
+import { useCartQuantity } from "@/hooks/useCartQuantity";
 import { formatPrice, formatVolume } from "@/lib/utils";
-import toast from "react-hot-toast";
+import { showAddedToCart } from "@/components/shop/addedToCartToast";
 import { sendGAEvent } from "@/lib/analytics";
 import StockNotifyModal from "@/components/shop/StockNotifyModal";
 import ProductLikeButton from "@/components/shop/ProductLikeButton";
@@ -19,20 +20,42 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const t = useTranslations("productCard");
   const tc = useTranslations("common");
+  const tcart = useTranslations("cart");
   const locale = useLocale();
   const [hovered, setHovered] = useState(false);
   const [notifyOpen, setNotifyOpen] = useState(false);
-  const { addItem, openCart } = useCart();
+  const { addItem, updateQuantity } = useCart();
+  const quantity = useCartQuantity(product.id);
 
   const primaryImage = product.images?.[0]?.trim() || "/placeholder-product.png";
   const secondaryImage = product.images?.[1]?.trim() || primaryImage;
 
   const canBuy = product.in_stock && !product.is_coming_soon;
+  const inCart = canBuy && quantity > 0;
   const productHref = `/shop/${product.slug}`;
 
-  const handleAddToCart = (e: React.MouseEvent) => {
+  // The actions sit above the stretched link, but a tap must still never
+  // bubble into it or let the browser follow it.
+  const stop = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+  };
+
+  const gaOneUnit = (event: "add_to_cart" | "remove_from_cart") => {
+    sendGAEvent("event", event, {
+      currency: "UAH",
+      value: product.price,
+      items: [{
+        item_id: product.id,
+        item_name: product.name,
+        price: product.price,
+        quantity: 1,
+      }],
+    });
+  };
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    stop(e);
     if (!canBuy) {
       setNotifyOpen(true);
       return;
@@ -45,18 +68,22 @@ export default function ProductCard({ product }: ProductCardProps) {
       quantity: 1,
       volume: product.volume ?? undefined,
     });
-    sendGAEvent("event", "add_to_cart", {
-      currency: "UAH",
-      value: product.price,
-      items: [{
-        item_id: product.id,
-        item_name: product.name,
-        price: product.price,
-        quantity: 1,
-      }],
+    gaOneUnit("add_to_cart");
+    // The shopper stays in the list; the cart is one tap away in the toast on
+    // wider screens and in the bottom bar on phones. See addedToCartToast.tsx.
+    showAddedToCart({
+      title: tcart("added"),
+      detail: product.name,
+      openLabel: tcart("openShort"),
     });
-    toast.success(`${product.name} ${t("addedToCart")}`);
-    openCart();
+  };
+
+  // The counter itself shows the change, so +/− stay quiet (no toast).
+  // Going below one removes the product and the card returns to "add".
+  const handleStep = (e: React.MouseEvent, delta: 1 | -1) => {
+    stop(e);
+    updateQuantity(product.id, quantity + delta);
+    gaOneUnit(delta > 0 ? "add_to_cart" : "remove_from_cart");
   };
 
   const handleSelect = () => {
@@ -98,7 +125,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           }
           fill
           className="object-cover transition-all duration-500 group-hover:scale-105"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
           onError={(e) => {
             e.currentTarget.src = "/placeholder-product.png";
           }}
@@ -141,31 +168,105 @@ export default function ProductCard({ product }: ProductCardProps) {
           variant="card"
         />
 
-        {/* Quick add buttons */}
-        <div className="absolute bottom-0 left-0 right-0 z-10 translate-y-0 sm:translate-y-full sm:group-hover:translate-y-0 transition-transform duration-300 flex">
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            className="flex-1 bg-[#1A1A1A] text-white text-[10px] sm:text-xs font-medium py-2.5 sm:py-3 px-1 hover:bg-[#C4A882] transition-colors uppercase tracking-normal sm:tracking-wider leading-tight text-center"
-          >
-            {canBuy ? t("addToCart") : tc("notifyMe")}
-          </button>
-          <a
-            href="https://t.me/violagegedosh"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => {
-              e.stopPropagation();
-              sendGAEvent("event", "telegram_consultation", {
-                source: "product_card",
-                product_id: product.id,
-                product_name: product.name,
-              });
-            }}
-            className="flex-1 bg-[#C4A882] text-white text-[10px] sm:text-xs font-medium py-2.5 sm:py-3 px-1 text-center hover:bg-[#b89970] transition-colors uppercase tracking-normal sm:tracking-wider leading-tight"
-          >
-            {tc("consultation")}
-          </a>
+        {/* Quick buttons: a strip over the bottom edge of the photo, dark "add"
+            and gold "consultation". z-10 lifts it over the name link's ::after,
+            which covers the whole card. 44px high on phones (a thumb target),
+            40px from sm up, the same in both states so nothing jumps.
+            From sm up it slides in on hover or keyboard focus — but only where
+            the device can hover, so touch screens of any width always show it —
+            and stays while the product is in the cart.
+            Inside, the layout follows the width of the card, not of the screen
+            (cards sit in grids of 2, 3 and 4 columns): this wrapper is a size
+            container and everything below 15rem of strip is the "narrow" layout.
+            The container sits here and not on the card or the image box: its
+            layout containment makes a stacking context, which on the image box
+            would drop the strip and the like button under the name link's
+            ::after, and on the card would capture the fixed StockNotifyModal. */}
+        <div
+          data-quick-strip
+          className={`@container absolute inset-x-0 bottom-0 z-10 h-11 sm:h-10 transition-transform duration-300 ${
+            inCart
+              ? ""
+              : "sm:[@media(hover:hover)]:translate-y-full sm:group-hover:translate-y-0 sm:group-focus-within:translate-y-0"
+          }`}
+        >
+          <div className="flex h-full">
+            {inCart ? (
+              // Counter styled to the strip: white − and + on the dark half, a
+              // gold tick and the number between them. No min-w-0: in the wide
+              // layout it keeps the width its content needs and the gold half
+              // gives way, so the buttons never spill over consultation.
+              <div className="flex grow basis-1/2 items-center justify-between bg-[#1A1A1A] text-white">
+                <button
+                  type="button"
+                  onClick={(e) => handleStep(e, -1)}
+                  aria-label={tcart("decrease")}
+                  className="flex h-full w-12 flex-shrink-0 items-center justify-center transition-colors hover:bg-[#333333] @min-[15rem]:w-10"
+                >
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" d="M5 12h14" />
+                  </svg>
+                </button>
+                <span className="flex min-w-0 items-center justify-center gap-1 text-sm font-semibold" aria-live="polite">
+                  <svg className="h-3.5 w-3.5 flex-shrink-0 text-[#C4A882]" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span aria-hidden="true">{quantity}</span>
+                  <span className="sr-only">{t("inCartCount", { count: quantity })}</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={(e) => handleStep(e, 1)}
+                  aria-label={tcart("increase")}
+                  className="flex h-full w-12 flex-shrink-0 items-center justify-center transition-colors hover:bg-[#333333] @min-[15rem]:w-10"
+                >
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" d="M12 5v14M5 12h14" />
+                  </svg>
+                </button>
+              </div>
+            ) : (
+              // A 50% basis on both halves (and on the counter) keeps the
+              // border in the middle whatever the padding, while a flex item
+              // never shrinks below its longest word: on a narrow card
+              // «КОНСУЛЬТАЦІЯ» takes the room it needs and the dark half the
+              // rest, instead of either label being cut. Below 12rem of strip
+              // (every phone card, the 4-column grid at 768) the split is
+              // 45/55, so the longer gold word gets some air around it too.
+              // Below 9.5rem of strip (a 320px phone) both labels drop to 9px
+              // with tight tracking so «СПОВІСТИТИ» and «КОНСУЛЬТАЦІЯ» still
+              // fit side by side.
+              <button
+                type="button"
+                onClick={handleAddToCart}
+                className="flex grow basis-1/2 @max-[12rem]:basis-[45%] items-center justify-center bg-[#1A1A1A] px-0.5 text-center text-[10px] font-medium uppercase leading-tight tracking-normal text-white transition-colors hover:bg-[#C4A882] @max-[9.5rem]:text-[9px] @max-[9.5rem]:tracking-tight @min-[15rem]:px-1 @min-[15rem]:text-xs @min-[15rem]:tracking-wider"
+              >
+                {canBuy ? t("addToCart") : tc("notifyMe")}
+              </button>
+            )}
+            {/* In the cart, a narrow card hides its consultation: half of it
+                (~80px) cannot hold two 48px buttons and a number, the owner
+                asked for consultation to step aside once the product is added,
+                and «Запитати» in the phone bottom bar stays one tap away. */}
+            <a
+              href="https://t.me/violagegedosh"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => {
+                e.stopPropagation();
+                sendGAEvent("event", "telegram_consultation", {
+                  source: "product_card",
+                  product_id: product.id,
+                  product_name: product.name,
+                });
+              }}
+              className={`${
+                inCart ? "hidden @min-[15rem]:flex" : "flex"
+              } grow basis-1/2 @max-[12rem]:basis-[55%] items-center justify-center bg-[#C4A882] px-0.5 text-center text-[10px] font-medium uppercase leading-tight tracking-normal text-white transition-colors hover:bg-[#b89970] @max-[9.5rem]:text-[9px] @max-[9.5rem]:tracking-tight @min-[15rem]:px-1 @min-[15rem]:text-xs @min-[15rem]:tracking-wider`}
+            >
+              {tc("consultation")}
+            </a>
+          </div>
         </div>
       </div>
 

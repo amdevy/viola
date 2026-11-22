@@ -179,8 +179,15 @@ export default async function HomePage({
         dangerouslySetInnerHTML={{ __html: safeJsonLd(faqLd) }}
       />
 
-      {/* Hero */}
-      <section className='relative min-h-[70vh] flex items-center overflow-hidden bg-[#E8E4DE]'>
+      {/* Hero. From lg the photo has the right half to itself and the text is
+          centred on the solid left half. Below lg the photo fills the hero and
+          the layout follows the content, since the text's height changes with
+          the width: the text container starts with a fixed clear zone for her
+          face (pt-60) and carries its own wash — clear at the top, fading in
+          over the last 5rem of that zone, solid #E8E4DE from the first line of
+          text down. The hero is anchored to the bottom, so if the min-h floor
+          makes it taller than its content the extra room goes to the photo. */}
+      <section className='relative min-h-[70vh] flex items-end lg:items-center overflow-hidden bg-[#E8E4DE]'>
         <div className='absolute inset-0 lg:left-1/2 lg:right-0'>
           <Image
             src='/viola.JPG'
@@ -191,36 +198,39 @@ export default async function HomePage({
             sizes='(max-width: 1024px) 100vw, 50vw'
           />
         </div>
-        <div className='absolute inset-0 bg-gradient-to-t from-[#E8E4DE] via-[#E8E4DE]/80 to-[#E8E4DE]/40 lg:hidden' />
         <div className='absolute inset-y-0 left-0 w-1/2 bg-[#E8E4DE] hidden lg:block' />
 
-        <div className='relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full'>
-          <div className='max-w-xl'>
-            <p className='font-serif text-lg sm:text-xl text-[#1A1A1A]/80 mb-2 tracking-wide'>
-              {t("greeting")}
-            </p>
-            <h1 className='font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1A1A1A] leading-[1.15] mb-2'>
-              {t("heroName")}
-            </h1>
-            <p className='font-serif text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#1A1A1A] mb-6 tracking-tight'>
-              {t("heroRole")}
-            </p>
-            <p className='text-lg text-[#1A1A1A]/75 mb-10 leading-relaxed max-w-md'>
-              {t("heroText")}
-            </p>
-            <div className='flex flex-wrap gap-4'>
-              <Link
-                href='/shop'
-                className='inline-flex items-center gap-2 bg-[#1A1A1A] text-white px-8 py-4 text-sm font-medium uppercase tracking-[0.2em] hover:bg-[#C4A882] transition-all duration-300 rounded-sm'
-              >
-                {tc("shopNow")}
-              </Link>
-              <Link
-                href='/contacts'
-                className='inline-flex items-center gap-2 border-2 border-[#1A1A1A] text-[#1A1A1A] px-8 py-4 text-sm font-medium uppercase tracking-[0.2em] hover:bg-[#1A1A1A] hover:text-white transition-all duration-300 rounded-sm'
-              >
-                {tc("consultation")}
-              </Link>
+        <div className='relative z-10 w-full bg-[linear-gradient(to_bottom,rgba(232,228,222,0)_0,rgba(232,228,222,0)_10rem,#E8E4DE_15rem)] lg:bg-none'>
+          <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-60 pb-6 sm:pb-10 lg:py-16'>
+            <div className='max-w-xl'>
+              <p className='font-serif text-lg sm:text-xl text-[#1A1A1A]/80 mb-1 sm:mb-2 tracking-wide'>
+                {t("greeting")}
+              </p>
+              <h1 className='font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1A1A1A] leading-[1.15] mb-1 sm:mb-2'>
+                {t("heroName")}
+              </h1>
+              <p className='font-serif text-xl sm:text-3xl lg:text-4xl font-semibold text-[#1A1A1A] mb-4 sm:mb-6 tracking-tight'>
+                {t("heroRole")}
+              </p>
+              <p className='text-[15px] sm:text-lg text-[#1A1A1A]/75 mb-6 sm:mb-10 leading-relaxed max-w-md'>
+                {t("heroText")}
+              </p>
+              {/* Phones from 360px: both buttons in one row, sharing it equally,
+                  so they stay on the first screen; narrower than that they stack. */}
+              <div className='grid grid-cols-1 min-[360px]:grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:gap-4'>
+                <Link
+                  href='/shop'
+                  className='inline-flex items-center justify-center gap-2 bg-[#1A1A1A] text-white px-3 sm:px-8 py-3.5 sm:py-4 text-[13px] sm:text-sm font-medium uppercase tracking-[0.08em] sm:tracking-[0.2em] whitespace-nowrap hover:bg-[#C4A882] transition-all duration-300 rounded-sm'
+                >
+                  {tc("shopNow")}
+                </Link>
+                <Link
+                  href='/contacts'
+                  className='inline-flex items-center justify-center gap-2 border-2 border-[#1A1A1A] text-[#1A1A1A] px-3 sm:px-8 py-3.5 sm:py-4 text-[13px] sm:text-sm font-medium uppercase tracking-[0.08em] sm:tracking-[0.2em] whitespace-nowrap hover:bg-[#1A1A1A] hover:text-white transition-all duration-300 rounded-sm'
+                >
+                  {tc("consultation")}
+                </Link>
+              </div>
             </div>
           </div>
         </div>

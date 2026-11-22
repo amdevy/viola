@@ -40,7 +40,9 @@ export default function OfferPage() {
         <p className="text-[#1A1A1A]">ФОП Гегедош Віолета Валеріївна</p>
         <p className="text-[#6B6B6B]">ЄДРПОУ: 2904009787</p>
         <p className="text-[#6B6B6B]">
-          IBAN: UA633052990000026003033609274 в АТ КБ &quot;ПРИВАТБАНК&quot;
+          {/* The 29-character number has no break point of its own and
+              spilled out of the box on a 320px screen. */}
+          IBAN: <span className="break-all">UA633052990000026003033609274</span> в АТ КБ &quot;ПРИВАТБАНК&quot;
         </p>
         <p className="text-[#6B6B6B]">Адреса: м. Мукачево, вул. Шевченка 13А/35</p>
         <p className="text-[#6B6B6B]">Салон краси VIOLA</p>

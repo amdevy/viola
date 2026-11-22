@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { sendGAEvent } from "@/lib/analytics";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice, formatVolume } from "@/lib/utils";
@@ -10,6 +10,7 @@ import type { CartItem as CartItemType } from "@/types";
 export default function CartItem({ item }: { item: CartItemType }) {
   const { updateQuantity, removeItem } = useCart();
   const locale = useLocale();
+  const t = useTranslations("cart");
 
   const handleRemove = () => {
     sendGAEvent("event", "remove_from_cart", {
@@ -48,31 +49,38 @@ export default function CartItem({ item }: { item: CartItemType }) {
           {formatPrice(item.price * item.quantity, locale)}
         </p>
 
-        {/* Quantity controls */}
-        <div className="flex items-center gap-2 mt-2">
+        {/* Quantity controls: 36px squares, a target a thumb hits on the
+            first try; the 24px ones they replace were often missed. */}
+        <div className="flex items-center gap-1 mt-1.5">
           <button
+            type="button"
             onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-            className="w-6 h-6 flex items-center justify-center border border-[#E8E4DE] rounded text-[#1A1A1A] hover:border-[#C4A882] transition-colors text-sm"
+            aria-label={t("decrease")}
+            className="w-9 h-9 flex items-center justify-center border border-[#E8E4DE] rounded text-[#1A1A1A] hover:border-[#C4A882] transition-colors text-base"
           >
             −
           </button>
-          <span className="text-sm w-6 text-center">{item.quantity}</span>
+          <span className="text-sm w-8 text-center" aria-live="polite">{item.quantity}</span>
           <button
+            type="button"
             onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-            className="w-6 h-6 flex items-center justify-center border border-[#E8E4DE] rounded text-[#1A1A1A] hover:border-[#C4A882] transition-colors text-sm"
+            aria-label={t("increase")}
+            className="w-9 h-9 flex items-center justify-center border border-[#E8E4DE] rounded text-[#1A1A1A] hover:border-[#C4A882] transition-colors text-base"
           >
             +
           </button>
         </div>
       </div>
 
-      {/* Remove */}
+      {/* Remove: a 36px target; the negative margins keep the cross where the
+          small icon used to sit, so the row does not grow. */}
       <button
+        type="button"
         onClick={handleRemove}
-        className="flex-shrink-0 p-1 text-[#A0A0A0] hover:text-[#E53E3E] transition-colors"
-        aria-label="Видалити"
+        className="flex-shrink-0 -mr-2 -mt-2 flex h-9 w-9 items-center justify-center text-[#A0A0A0] hover:text-[#E53E3E] transition-colors"
+        aria-label={t("remove")}
       >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>

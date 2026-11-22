@@ -1,5 +1,5 @@
 import "../../globals.css";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Cormorant_Garamond } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
@@ -20,6 +20,14 @@ export const revalidate = 3600;
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
+
+// viewport-fit=cover: without it iOS reports the home-indicator inset as 0, and
+// the phone's bottom bar (MobileBottomNav) could not pad itself clear of it.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",

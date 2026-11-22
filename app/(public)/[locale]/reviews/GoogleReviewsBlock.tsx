@@ -32,7 +32,7 @@ function Stars({ rating, size = "sm" }: { rating: number; size?: "sm" | "lg" }) 
 
 // Update these when the Google Business Profile numbers change.
 const GOOGLE_RATING = 4.9;
-const GOOGLE_REVIEWS_COUNT = 103;
+const GOOGLE_REVIEWS_COUNT = 114;
 const GOOGLE_PROFILE_URL =
   "https://www.google.com/search?q=viola+mukachevo#lrd=0x4739ac81d71e90c9:0x1abbd1e312a868e9,1";
 
@@ -92,7 +92,7 @@ export default async function GoogleReviewsBlock({ reviews, locale }: Props) {
         href={profileUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="block bg-[#1A1A1A] text-white text-center text-sm font-medium py-3 hover:bg-[#C4A882] transition-colors uppercase tracking-wider"
+        className="block bg-[#1A1A1A] text-white text-center text-sm font-medium px-4 py-3 hover:bg-[#C4A882] transition-colors uppercase tracking-wider"
       >
         {t("viewAllOnGoogle", { count })}
         <span className="ml-1">→</span>

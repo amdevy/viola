@@ -11,6 +11,14 @@
   --color-border: #E8E4DE;
   --font-sans: var(--font-inter);
   --font-serif: var(--font-cormorant);
+  --animate-cart-bump: cart-bump 0.4s ease-out;
+}
+
+/* The cart badge in the phone's bottom bar, when a product is added. */
+@keyframes cart-bump {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.45); }
+  100% { transform: scale(1); }
 }
 
 * {
@@ -57,4 +65,17 @@ body {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Search open on a phone: hide the page behind it. iOS 26 paints the document
+   under its floating toolbar and its translucent keyboard, where no
+   position:fixed layer reaches, so product photos showed through around the
+   search. The overlay is a direct child of <body> (rendered by Header, which
+   sits in <body> without a wrapper element); visibility keeps the layout, so
+   nothing jumps when the search closes, and the body's own background is what
+   remains behind. See components/search/SearchOverlay.tsx. */
+@media (max-width: 767px) {
+  html[data-search-open] body > :not([data-search-overlay]) {
+    visibility: hidden;
+  }
 }
