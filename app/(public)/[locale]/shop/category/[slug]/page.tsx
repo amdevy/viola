@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { createPublicClient } from "@/lib/supabase/server";
 import ProductCard from "@/components/shop/ProductCard";
 import ProductListGA from "@/components/shop/ProductListGA";
+import CollapsibleIntro from "@/components/ui/CollapsibleIntro";
 import { localize, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
 import { getCategorySeo } from "@/lib/category-seo";
 import { getCategoryContext } from "@/lib/categories-server";
@@ -209,7 +210,7 @@ export default async function CategoryPage({ params }: Props) {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(faqLd) }} />
       )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 md:py-8">
         <nav className="text-xs text-[#6B6B6B] mb-6 flex items-center gap-2">
           <Link href="/" className="hover:text-[#C4A882]">{tc("home")}</Link>
           <span>/</span>
@@ -229,19 +230,25 @@ export default async function CategoryPage({ params }: Props) {
           <span className="text-[#1A1A1A]">{category.name}</span>
         </nav>
 
-        <header className="mb-10 max-w-3xl">
+        <header className="mb-6 md:mb-10 max-w-3xl">
           <p className="text-[#C4A882] text-xs uppercase tracking-[0.3em] mb-3">{brand.eyebrow}</p>
           {/* У H1 бренд без наголосу і дужок: "na golovy шампунь" — 2 275
               показів за квартал, а "Gólov[y]" на цей запит не матчиться. */}
           <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1A1A1A] mb-4 leading-tight">
             {categoryHeading(category.name, brand, locale)}
           </h1>
-          <p className="text-[#6B6B6B] leading-relaxed">{introText}</p>
-          {factsInput && (
-            <p className="mt-3 text-sm font-medium text-[#1A1A1A]">
-              {categoryFactsLine(factsInput)}
-            </p>
-          )}
+          <CollapsibleIntro
+            moreLabel={tc("readMore")}
+            lessLabel={tc("showLess")}
+            analyticsId={category.slug}
+          >
+            <p className="text-[#6B6B6B] leading-relaxed">{introText}</p>
+            {factsInput && (
+              <p className="mt-3 text-sm font-medium text-[#1A1A1A]">
+                {categoryFactsLine(factsInput)}
+              </p>
+            )}
+          </CollapsibleIntro>
         </header>
 
         {/* Children as real crawlable links, above the grid. Gives the parent an

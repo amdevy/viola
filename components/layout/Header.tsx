@@ -1,24 +1,64 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { flushSync } from "react-dom";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/routing";
+import { Link, usePathname } from "@/i18n/routing";
 import { useCart } from "@/hooks/useCart";
+import { useHasMounted } from "@/hooks/useCartQuantity";
+import { showsBottomNav } from "@/lib/mobile-nav";
 import type { CategoryNode } from "@/lib/categories";
 import MobileMenu from "./MobileMenu";
+import MobileBottomNav from "./MobileBottomNav";
 import LanguageSwitcher from "./LanguageSwitcher";
 import CartDrawer from "@/components/shop/CartDrawer";
+import SearchOverlay from "@/components/search/SearchOverlay";
+import { readSearchMarker, type SearchMarker } from "@/lib/search-session";
 
 export default function Header({ categories }: { categories: CategoryNode[] }) {
   const { openCart } = useCart();
   const count = useCart((s) => s.itemCount());
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  // Set when Back reopened the search (see below); null when a tap opened it.
+  const [restoredSearch, setRestoredSearch] = useState<SearchMarker | null>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [scrolled, setScrolled] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useHasMounted();
   const t = useTranslations("header");
+  // On phones the cart and the menu live in the bottom bar. Where that bar is
+  // shown the header hides its own, so neither appears twice on one screen;
+  // on the order form, which has no bar, they stay here.
+  const inBottomBar = showsBottomNav(usePathname());
 
-  useEffect(() => setMounted(true), []);
+  // flushSync so the search field is in the page before this handler returns:
+  // iOS raises the keyboard only for a focus() made inside the tap itself, and
+  // a search that opens without the keyboard needs a second tap at the field.
+  const openSearch = () => {
+    flushSync(() => {
+      setRestoredSearch(null);
+      setSearchOpen(true);
+    });
+    searchInputRef.current?.focus();
+  };
+
+  // After Back/Forward the search is open exactly when the history entry
+  // carries the "return to the search" mark that leaving for a result put
+  // there (lib/search-session.ts). popstate rather than a pathname change:
+  // /shop → /shop?search=… → Back keeps the pathname, and at popstate time
+  // usePathname still reports the page being left. Read in the handler only,
+  // so the server HTML and the first render never depend on history.
+  useEffect(() => {
+    const onPopState = () => {
+      const marker = readSearchMarker();
+      setRestoredSearch(marker);
+      setSearchOpen(marker !== null);
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
@@ -27,17 +67,6 @@ export default function Header({ categories }: { categories: CategoryNode[] }) {
 
   return (
     <>
-      {/* Announcement Bar */}
-      <div className='bg-[#1A1A1A] text-white text-center py-2 px-4 text-xs tracking-wide'>
-        {t("announcement")}{' '}
-        <Link
-          href='/shop'
-          className='underline hover:text-[#C4A882] transition-colors'
-        >
-          {t("goToShop")}
-        </Link>
-      </div>
-
       <header
         className={`sticky top-0 z-40 bg-[#FAFAF8] transition-shadow duration-300 ${scrolled ? 'shadow-sm' : ''}`}
       >
@@ -47,6 +76,14 @@ export default function Header({ categories }: { categories: CategoryNode[] }) {
             <div className='flex items-center justify-between h-16 md:h-24'>
               {/* Left nav */}
               <div className='flex flex-1 justify-end'>
+                {/* Phones without the bottom bar (the order form): the header
+                    keeps its own cart and menu on the right, so the language
+                    switch moves here to balance them and keep the logo centred. */}
+                {!inBottomBar && (
+                  <div className='mr-auto md:hidden'>
+                    <LanguageSwitcher />
+                  </div>
+                )}
                 <nav className='hidden md:flex items-center gap-7 justify-end'>
                   {[
                     { href: '/shop' as const, label: t("catalog") },
@@ -77,7 +114,9 @@ export default function Header({ categories }: { categories: CategoryNode[] }) {
                   className='h-9 md:h-16 w-auto mix-blend-multiply'
                   priority
                 />
-                <span className='text-[9px] md:text-[10px] uppercase tracking-[0.2em] text-[#6B6B6B] font-light whitespace-nowrap'>
+                {/* Below 360px the tagline would push a full header row (switch,
+                    cart, menu) past the screen edge. */}
+                <span className={`text-[9px] md:text-[10px] uppercase tracking-[0.2em] text-[#6B6B6B] font-light whitespace-nowrap ${inBottomBar ? '' : 'max-[359px]:hidden'}`}>
                   {t("cosmetics")}
                 </span>
               </Link>
@@ -101,10 +140,12 @@ export default function Header({ categories }: { categories: CategoryNode[] }) {
                   ))}
                 </nav>
                 <div className='ml-auto flex items-center gap-1'>
-                  <LanguageSwitcher />
+                  <div className={inBottomBar ? undefined : 'hidden md:block'}>
+                    <LanguageSwitcher />
+                  </div>
                   <button
-                    onClick={openCart}
-                    className='relative p-2 text-[#1A1A1A] hover:text-[#C4A882] transition-colors'
+                    onClick={() => openCart("header")}
+                    className={`relative p-2 text-[#1A1A1A] hover:text-[#C4A882] transition-colors ${inBottomBar ? 'hidden md:block' : ''}`}
                     aria-label={t("cart")}
                   >
                     <svg
@@ -129,7 +170,7 @@ export default function Header({ categories }: { categories: CategoryNode[] }) {
 
                   <button
                     onClick={() => setMenuOpen(true)}
-                    className='md:hidden p-2 text-[#1A1A1A] hover:text-[#C4A882] transition-colors'
+                    className={`p-2 text-[#1A1A1A] hover:text-[#C4A882] transition-colors ${inBottomBar ? 'hidden' : 'md:hidden'}`}
                     aria-label={t("menu")}
                   >
                     <svg
@@ -159,7 +200,21 @@ export default function Header({ categories }: { categories: CategoryNode[] }) {
         {categories.length > 0 && (
           <div className='hidden md:block border-b border-[#E8E4DE] bg-white'>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-              <div className='flex items-center justify-center gap-8 h-10'>
+              <div className='relative flex items-center justify-center gap-8 h-10'>
+                {/* Search for tablets and desktops. It sits in this row because
+                    the row above has no room left at 1024px; on phones search
+                    is in the bottom bar, next to the thumb (MobileBottomNav). */}
+                <button
+                  type='button'
+                  onClick={openSearch}
+                  aria-label={t("search")}
+                  className='absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-1.5 p-2 text-xs uppercase tracking-widest font-medium text-[#1A1A1A] hover:text-[#C4A882] transition-colors'
+                >
+                  <svg className='w-4 h-4' fill='none' stroke='currentColor' strokeWidth={1.75} viewBox='0 0 24 24' aria-hidden='true'>
+                    <path strokeLinecap='round' strokeLinejoin='round' d='M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z' />
+                  </svg>
+                  <span className='hidden xl:inline'>{t("search")}</span>
+                </button>
                 {categories.map((cat) => (
                   <div key={cat.id} className='relative group h-full flex items-center'>
                     <Link
@@ -202,6 +257,15 @@ export default function Header({ categories }: { categories: CategoryNode[] }) {
         categories={categories}
       />
       <CartDrawer />
+      <MobileBottomNav onSearch={openSearch} onMenu={() => setMenuOpen(true)} />
+      {searchOpen && (
+        <SearchOverlay
+          onClose={() => setSearchOpen(false)}
+          categories={categories}
+          inputRef={searchInputRef}
+          restored={restoredSearch}
+        />
+      )}
     </>
   );
 }

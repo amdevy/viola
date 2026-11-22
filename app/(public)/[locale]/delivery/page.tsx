@@ -211,7 +211,8 @@ export default async function DeliveryPage({
             {t("carrierTitle")}
           </h2>
           <div className="flex items-start gap-4">
-            <div className="w-1 h-full bg-[#C4A882] self-stretch rounded" />
+            {/* self-stretch alone: h-full in an auto-height row collapsed it to 0. */}
+            <div className="w-1 shrink-0 bg-[#C4A882] self-stretch rounded" />
             <div className="text-[#6B6B6B] leading-relaxed">
               <p
                 className="mb-2"

@@ -175,12 +175,14 @@ export default async function BlogPostPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(articleLd) }}
       />
-      <nav className="text-xs text-[#6B6B6B] mb-8 flex items-center gap-2">
-        <Link href="/" className="hover:text-[#C4A882]">{tc("home")}</Link>
-        <span>/</span>
-        <Link href="/blog" className="hover:text-[#C4A882]">{t("blog")}</Link>
-        <span>/</span>
-        <span className="text-[#1A1A1A]">{post.title}</span>
+      {/* One line: the title takes what is left and ends in an ellipsis; the
+          H1 below shows it in full. */}
+      <nav className="text-xs text-[#6B6B6B] mb-8 flex items-center gap-2 whitespace-nowrap">
+        <Link href="/" className="shrink-0 hover:text-[#C4A882]">{tc("home")}</Link>
+        <span className="shrink-0">/</span>
+        <Link href="/blog" className="shrink-0 hover:text-[#C4A882]">{t("blog")}</Link>
+        <span className="shrink-0">/</span>
+        <span className="min-w-0 flex-1 truncate text-[#1A1A1A]">{post.title}</span>
       </nav>
 
       <article>

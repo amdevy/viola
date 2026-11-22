@@ -12,7 +12,7 @@ import ProductFAQ from "@/components/shop/ProductFAQ";
 import ProductTrustBadges from "@/components/shop/ProductTrustBadges";
 import MobileStickyBar from "@/components/shop/MobileStickyBar";
 import AddToCartButton from "./AddToCartButton";
-import { formatPrice, formatVolume, HAIR_TYPES, safeJsonLd } from "@/lib/utils";
+import { formatPrice, formatVolume, HAIR_TYPES, safeJsonLd, summarize } from "@/lib/utils";
 import { localize, hasEnTranslation, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
 import { pageTitle, productTitle } from "@/lib/seo-title";
 import { buildRitual } from "@/lib/ritual";
@@ -71,7 +71,9 @@ async function getRitualCatalogue(): Promise<Product[]> {
   const supabase = createPublicClient();
   const { data } = await supabase
     .from("products")
-    .select("id, slug, name, name_en, price, images, volume, in_stock, is_coming_soon, likes_count");
+    .select(
+      "id, slug, name, name_en, description, description_en, price, images, volume, in_stock, is_coming_soon, likes_count",
+    );
   return (data as Product[]) ?? [];
 }
 
@@ -212,13 +214,27 @@ export default async function ProductPage({ params }: Props) {
 
   // From the Ukrainian rows: steps and lines are read from the product names.
   const ritual = buildRitual(raw, ritualCatalogue);
-  const ritualItems = ritual.items.map((item) => ({
-    ...item,
-    product: item.isMain
+  const ritualItems = ritual.items.map((item) => {
+    const p = item.isMain
       ? product
       : (localize(item.product as unknown as Record<string, unknown>, locale, PRODUCT_I18N_FIELDS)
-          .row as unknown as Product),
-  }));
+          .row as unknown as Product);
+    return {
+      ...item,
+      // Only what the bundle shows. These objects are serialized into the page
+      // for a client component, so the whole product row has no business here —
+      // the description goes as a short opening for the bundle's quick look.
+      product: {
+        id: p.id,
+        slug: p.slug,
+        name: p.name,
+        price: p.price,
+        images: p.images?.slice(0, 1) ?? [],
+        volume: p.volume,
+        summary: summarize(p.description),
+      },
+    };
+  });
   const inRitual = new Set(ritual.items.map((item) => item.product.id));
 
   const related = relatedRaw.filter((p) => !inRitual.has(p.id)).slice(0, 4).map((p) => {
@@ -360,21 +376,23 @@ export default async function ProductPage({ params }: Props) {
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Breadcrumb */}
-        <nav className="text-xs text-[#6B6B6B] mb-8 flex items-center gap-2">
-          <Link href="/" className="hover:text-[#C4A882]">{tc("home")}</Link>
-          <span>/</span>
-          <Link href="/shop" className="hover:text-[#C4A882]">{ts("breadcrumbShop")}</Link>
+        {/* Breadcrumb: one line. The title takes what is left and ends in an
+            ellipsis (the H1 below shows it in full); the category gives way
+            only once the title has none left. */}
+        <nav className="text-xs text-[#6B6B6B] mb-8 flex items-center gap-2 whitespace-nowrap">
+          <Link href="/" className="shrink-0 hover:text-[#C4A882]">{tc("home")}</Link>
+          <span className="shrink-0">/</span>
+          <Link href="/shop" className="shrink-0 hover:text-[#C4A882]">{ts("breadcrumbShop")}</Link>
           {product.category && (
             <>
-              <span>/</span>
-              <Link href={`/shop/category/${product.category.slug}`} className="hover:text-[#C4A882]">
+              <span className="shrink-0">/</span>
+              <Link href={`/shop/category/${product.category.slug}`} className="min-w-0 truncate hover:text-[#C4A882]">
                 {product.category.name}
               </Link>
             </>
           )}
-          <span>/</span>
-          <span className="text-[#1A1A1A]">{product.name}</span>
+          <span className="shrink-0">/</span>
+          <span className="min-w-0 flex-1 truncate text-[#1A1A1A]">{product.name}</span>
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">

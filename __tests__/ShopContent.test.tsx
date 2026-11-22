@@ -10,11 +10,16 @@ const { sendGAEvent, nav } = vi.hoisted(() => ({
   nav: { searchParams: new URLSearchParams() },
 }));
 
-vi.mock("next-intl", () => ({
-  useTranslations: (ns: string) => (key: string) =>
-    ((uk as Record<string, Record<string, string>>)[ns] ?? {})[key] ?? `${ns}.${key}`,
-  useLocale: () => "uk",
-}));
+// Real next-intl formatting over the uk messages, so ICU plurals ("1 товар",
+// "Показати 2 товари") render as they do on the site.
+vi.mock("next-intl", async (importOriginal) => {
+  const { createTranslator } = await importOriginal<typeof import("next-intl")>();
+  return {
+    useTranslations: (namespace: string) =>
+      createTranslator({ locale: "uk", messages: uk, namespace: namespace as never }),
+    useLocale: () => "uk",
+  };
+});
 
 vi.mock("next/navigation", () => ({ useSearchParams: () => nav.searchParams }));
 
@@ -81,6 +86,9 @@ const SHAMPOO = product("p1", "kolahenovyy-shampun", "Колагеновий ш�
 const MASK = product("p2", "maska-diamond-gloss", "Маска Diamond Gloss", 900);
 const TONIC = product("p3", "tonik-multyvitaminnyy", "Тонік мультивітамінний", 480);
 const CATALOGUE = [SHAMPOO, MASK, TONIC];
+// The same catalogue with one product tagged, so the hair-type filter appears.
+const DRY_MASK: Product = { ...MASK, hair_type: ["dry"] };
+const TAGGED = [SHAMPOO, DRY_MASK, TONIC];
 
 const productHrefs = () =>
   Array.from(document.querySelectorAll('a[href^="/shop/"]')).map((a) => a.getAttribute("href"));
@@ -207,5 +215,157 @@ describe("ShopContent — каталог у розмітці", () => {
     expect(skeleton()).not.toBeNull();
     await waitFor(() => expect(productHrefs()).toEqual(hrefsOf(CATALOGUE)));
     expect(productsUrl()).toContain("order=is_bestseller.desc,created_at.desc");
+  });
+});
+
+describe("ShopContent — фільтри на телефоні", () => {
+  const filtersToggle = () => screen.getByRole("button", { name: /^Фільтри/ });
+  const resultsButton = () => screen.queryByRole("button", { name: /^Показати|^Товарів не знайдено/ });
+  const scrollIntoView = vi.fn();
+
+  beforeEach(() => {
+    nav.searchParams = new URLSearchParams();
+    sendGAEvent.mockClear();
+    scrollIntoView.mockClear();
+    Element.prototype.scrollIntoView = scrollIntoView;
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("кнопка «Фільтри» відкриває панель і смугу з кількістю товарів", async () => {
+    vi.stubGlobal("fetch", vi.fn());
+    render(<ShopContent initialProducts={TAGGED} />);
+    await flush();
+
+    const toggle = filtersToggle();
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(document.getElementById(toggle.getAttribute("aria-controls")!)).not.toBeNull();
+    expect(resultsButton()).toBeNull();
+    // Правильна множина і в лічильнику над сіткою.
+    expect(screen.getByText("3 товари")).toBeInTheDocument();
+
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+    expect(resultsButton()).toHaveTextContent("Показати 3 товари");
+  });
+
+  it("вибір фільтра у відкритій панелі оновлює число на смузі", async () => {
+    stubSupabase({ products: [DRY_MASK] });
+    render(<ShopContent initialProducts={TAGGED} />);
+    fireEvent.click(filtersToggle());
+
+    fireEvent.click(screen.getByRole("radio", { name: uk.hairTypes.dry }));
+    // Поки список вантажиться — нейтральний підпис, а не старе число.
+    expect(resultsButton()).toHaveTextContent(uk.filter.showProducts);
+    await waitFor(() => expect(resultsButton()).toHaveTextContent("Показати 1 товар"));
+  });
+
+  it("смуга закриває панель і повертає до списку", async () => {
+    vi.stubGlobal("fetch", vi.fn());
+    render(<ShopContent initialProducts={TAGGED} />);
+    fireEvent.click(filtersToggle());
+
+    fireEvent.click(resultsButton()!);
+
+    expect(filtersToggle()).toHaveAttribute("aria-expanded", "false");
+    expect(resultsButton()).toBeNull();
+    expect(scrollIntoView).toHaveBeenCalledTimes(1);
+  });
+
+  it("закрита панель з активними фільтрами показує, скільки їх", async () => {
+    stubSupabase({ products: [DRY_MASK] });
+    render(<ShopContent initialProducts={TAGGED} />);
+    fireEvent.click(filtersToggle());
+    fireEvent.click(screen.getByRole("radio", { name: uk.hairTypes.dry }));
+    // Сортування — не фільтр, його в лічильник не рахуємо.
+    fireEvent.change(screen.getByRole("combobox"), { target: { value: "price_asc" } });
+    await waitFor(() => expect(resultsButton()).toHaveTextContent("Показати 1 товар"));
+
+    fireEvent.click(resultsButton()!);
+
+    const toggle = screen.getByRole("button", { name: "Фільтри, активних: 1" });
+    expect(toggle).toHaveTextContent("1");
+  });
+});
+
+describe("ShopContent — фільтр за типом волосся", () => {
+  beforeEach(() => {
+    nav.searchParams = new URLSearchParams();
+    sendGAEvent.mockClear();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("жоден товар не має типу волосся — блоку немає зовсім", async () => {
+    vi.stubGlobal("fetch", vi.fn());
+    render(<ShopContent initialProducts={CATALOGUE} />);
+    await flush();
+
+    expect(screen.queryByText(uk.filter.hairType)).toBeNull();
+    expect(screen.queryAllByRole("radio")).toHaveLength(0);
+  });
+
+  it("пропонує лише ті типи, які є в товарів", async () => {
+    vi.stubGlobal("fetch", vi.fn());
+    render(<ShopContent initialProducts={TAGGED} />);
+    await flush();
+
+    expect(screen.getByText(uk.filter.hairType)).toBeInTheDocument();
+    const radios = screen.getAllByRole("radio");
+    expect(radios).toHaveLength(1);
+    expect(screen.getByRole("radio", { name: uk.hairTypes.dry })).toBeInTheDocument();
+  });
+
+  it("без серверного списку бере типи з першого нефільтрованого списку з клієнта", async () => {
+    stubSupabase({ products: TAGGED });
+    render(<ShopContent initialProducts={null} />);
+
+    expect(screen.queryByText(uk.filter.hairType)).toBeNull();
+    await waitFor(() => expect(screen.getByRole("radio", { name: uk.hairTypes.dry })).toBeInTheDocument());
+  });
+});
+
+describe("ShopContent — аналітика фільтрів на телефоні", () => {
+  const filtersToggle = () => screen.getByRole("button", { name: /^Фільтри/ });
+  const events = (name: string) =>
+    sendGAEvent.mock.calls.filter(([, event]) => event === name).map(([, , params]) => params);
+
+  beforeEach(() => {
+    nav.searchParams = new URLSearchParams();
+    sendGAEvent.mockClear();
+    Element.prototype.scrollIntoView = vi.fn();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("filter_panel_open — лише при відкритті панелі", async () => {
+    vi.stubGlobal("fetch", vi.fn());
+    render(<ShopContent initialProducts={TAGGED} />);
+
+    fireEvent.click(filtersToggle());
+    expect(events("filter_panel_open")).toEqual([{}]);
+
+    fireEvent.click(filtersToggle());
+    expect(events("filter_panel_open")).toHaveLength(1);
+  });
+
+  it("filter_show_results несе число з кнопки; поки список вантажиться — без числа", async () => {
+    stubSupabase({ products: [DRY_MASK] });
+    render(<ShopContent initialProducts={TAGGED} />);
+
+    fireEvent.click(filtersToggle());
+    fireEvent.click(screen.getByRole("button", { name: "Показати 3 товари" }));
+    expect(events("filter_show_results")).toEqual([{ results_count: 3 }]);
+
+    fireEvent.click(filtersToggle());
+    fireEvent.click(screen.getByRole("radio", { name: uk.hairTypes.dry }));
+    fireEvent.click(screen.getByRole("button", { name: uk.filter.showProducts }));
+    expect(events("filter_show_results")).toEqual([{ results_count: 3 }, {}]);
   });
 });

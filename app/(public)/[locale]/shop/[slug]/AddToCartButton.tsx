@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useCart } from "@/hooks/useCart";
-import toast from "react-hot-toast";
+import { useCartQuantity } from "@/hooks/useCartQuantity";
+import { showAddedToCart } from "@/components/shop/addedToCartToast";
 import { sendGAEvent } from "@/lib/analytics";
 import StockNotifyModal from "@/components/shop/StockNotifyModal";
 import type { Product } from "@/types";
@@ -11,9 +12,11 @@ import type { Product } from "@/types";
 export default function AddToCartButton({ product }: { product: Product }) {
   const t = useTranslations("productCard");
   const tc = useTranslations("common");
+  const tcart = useTranslations("cart");
   const [qty, setQty] = useState(1);
   const [notifyOpen, setNotifyOpen] = useState(false);
   const { addItem, openCart } = useCart();
+  const inCartQty = useCartQuantity(product.id);
 
   useEffect(() => {
     sendGAEvent("event", "view_item", {
@@ -54,8 +57,13 @@ export default function AddToCartButton({ product }: { product: Product }) {
         quantity: qty,
       }],
     });
-    toast.success(`${product.name} ${t("addedToCart")}`);
-    openCart();
+    // No cart sliding over the product: the line under the buttons and the
+    // toast both lead to it. See addedToCartToast.tsx.
+    showAddedToCart({
+      title: tcart("added"),
+      detail: product.name,
+      openLabel: tcart("openShort"),
+    });
   };
 
   return (
@@ -80,10 +88,13 @@ export default function AddToCartButton({ product }: { product: Product }) {
         </div>
       </div>
 
-      <div className="flex gap-3">
+      {/* Stacked on phones: side by side, the main button got ~134px and
+          broke its label in two, and the out-of-stock label overflowed. */}
+      <div className="flex flex-col gap-3 sm:flex-row">
         <button
+          type="button"
           onClick={handleAdd}
-          className="flex-1 bg-[#1A1A1A] text-white py-4 text-sm font-medium rounded hover:bg-[#C4A882] transition-colors uppercase tracking-wider"
+          className="w-full sm:flex-1 px-4 bg-[#1A1A1A] text-white py-4 text-sm font-medium rounded hover:bg-[#C4A882] transition-colors uppercase tracking-wider"
         >
           {canBuy ? t("addToCartFull") : tc("notifyMe")}
         </button>
@@ -106,6 +117,30 @@ export default function AddToCartButton({ product }: { product: Product }) {
           {tc("consultation")}
         </a>
       </div>
+
+      {/* Here the main button keeps adding (there is a quantity picker), so the
+          way to the cart is a line of its own, shown once the product is in it. */}
+      {canBuy && inCartQty > 0 && (
+        <button
+          type="button"
+          onClick={() => openCart("product_page")}
+          className="flex w-full items-center justify-center gap-2 rounded border border-[#C4A882] bg-[#FDF9F5] px-4 py-3 text-sm font-medium text-[#1A1A1A] transition-colors hover:bg-[#F5EDE2]"
+        >
+          <svg
+            className="h-4 w-4 flex-shrink-0 text-[#C4A882]"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2.5}
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+          <span>{t("inCartCount", { count: inCartQty })}</span>
+          <span className="text-[#C4A882]">·</span>
+          <span className="underline underline-offset-2">{tcart("open")}</span>
+        </button>
+      )}
 
       <StockNotifyModal
         isOpen={notifyOpen}

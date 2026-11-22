@@ -9,10 +9,13 @@ vi.mock("next-intl", () => ({
     ((uk as Record<string, Record<string, string>>)[ns] ?? {})[key] ?? `${ns}.${key}`,
 }));
 
+const nav = vi.hoisted(() => ({ pathname: "/" }));
+
 vi.mock("@/i18n/routing", () => ({
   Link: ({ href, children, ...rest }: { href: string; children: React.ReactNode }) => (
     <a href={href} {...rest}>{children}</a>
   ),
+  usePathname: () => nav.pathname,
 }));
 
 vi.mock("next/image", () => ({
@@ -21,6 +24,8 @@ vi.mock("next/image", () => ({
 
 vi.mock("@/components/layout/LanguageSwitcher", () => ({ default: () => null }));
 vi.mock("@/components/shop/CartDrawer", () => ({ default: () => null }));
+vi.mock("@/components/layout/MobileBottomNav", () => ({ default: () => null }));
+vi.mock("@/components/search/SearchOverlay", () => ({ default: () => null }));
 
 const node = (
   id: string,
@@ -89,5 +94,30 @@ describe("Header — категорії в розмітці", () => {
     render(<Header categories={[]} />);
     expect(screen.getByAltText(uk.header.logoAlt)).toBeInTheDocument();
     expect(categoryHrefs()).toHaveLength(0);
+  });
+});
+
+describe("Header — кошик і меню на телефоні", () => {
+  const phoneHidden = (name: string) =>
+    screen.getByRole("button", { name }).className.split(" ").includes("hidden");
+
+  it("ховає свої кошик і меню там, де вони є в нижній панелі", () => {
+    // Інакше на одному екрані телефона два кошики й два меню: вгорі й унизу.
+    nav.pathname = "/shop";
+    render(<Header categories={TREE} />);
+
+    expect(phoneHidden(uk.header.cart)).toBe(true);
+    expect(phoneHidden(uk.header.menu)).toBe(true);
+    // На ширших екранах кошик у шапці лишається.
+    expect(screen.getByRole("button", { name: uk.header.cart }).className).toContain("md:block");
+  });
+
+  it("лишає їх на оформленні замовлення, де нижньої панелі немає", () => {
+    nav.pathname = "/checkout";
+    render(<Header categories={TREE} />);
+
+    expect(phoneHidden(uk.header.cart)).toBe(false);
+    expect(phoneHidden(uk.header.menu)).toBe(false);
+    nav.pathname = "/";
   });
 });
