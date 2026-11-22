@@ -79,3 +79,17 @@ body {
     visibility: hidden;
   }
 }
+
+/* iOS Safari zooms the page in when a text field smaller than 16px gets
+   focus, and does not zoom back out: the page is left wider than the screen,
+   prices are cut off on the right and it scrolls sideways. The site's fields
+   are text-sm (14px) — checkout, search, filters, reviews, contacts — so on
+   touch screens every typing field gets 16px. Unlayered on purpose: it has to
+   beat the text-sm utility. */
+@media (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]),
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}

@@ -335,6 +335,7 @@
   "checkout": {
     "title": "Оформлення замовлення",
     "yourOrder": "Ваше замовлення",
+    "goToForm": "Перейти до оформлення",
     "contactInfo": "Контактні дані",
     "firstName": "Ім'я",
     "firstNamePlaceholder": "Олена",

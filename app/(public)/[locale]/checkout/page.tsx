@@ -36,7 +36,10 @@ export default async function CheckoutPage({
           <OrderForm />
           <CartRecommendations variant="checkout" limit={6} />
         </div>
-        <div className="lg:col-span-2">
+        {/* In one column (phones, tablets) the order comes first: the shopper
+            sees what they are buying before the form, not after the
+            recommendations. From lg it is the right-hand column again. */}
+        <div className="lg:col-span-2 order-first lg:order-none">
           <CheckoutSummary />
         </div>
       </div>

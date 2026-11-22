@@ -326,7 +326,13 @@ export default function OrderForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit, onValidationError)} className="space-y-6">
+    // id + scroll-mt: "Continue to checkout" under the order summary scrolls
+    // here and must clear the sticky header (65px). See CheckoutSummary.
+    <form
+      id="checkout-form"
+      onSubmit={handleSubmit(onSubmit, onValidationError)}
+      className="space-y-6 scroll-mt-20"
+    >
       {/* Contact info */}
       <div>
         <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-4">{t("contactInfo")}</h2>
