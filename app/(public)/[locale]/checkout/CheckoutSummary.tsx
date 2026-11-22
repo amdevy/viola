@@ -36,7 +36,7 @@ export default function CheckoutSummary() {
   };
 
   return (
-    <div className="bg-white rounded border border-[#E8E4DE] p-6 sticky top-24">
+    <div className="bg-white rounded border border-[#E8E4DE] p-6 lg:sticky lg:top-24">
       <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-4">
         {t("yourOrder")}
       </h2>
