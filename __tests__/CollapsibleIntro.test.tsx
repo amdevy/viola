@@ -97,6 +97,30 @@ describe("CollapsibleIntro — аналітика", () => {
     expect(sendGAEvent).toHaveBeenCalledTimes(1);
   });
 
+  it("на сторінці товару шле власну подію з типом блоку", () => {
+    stubHeights(400, 176);
+    render(
+      <CollapsibleIntro
+        moreLabel={uk.common.readMore}
+        lessLabel={uk.common.showLess}
+        analyticsId="maska-dlya-volossya-5-lipidiv"
+        analyticsEvent="product_text_expand"
+        analyticsContentType="ingredients"
+        collapsedClassName="max-md:max-h-[11rem] max-md:overflow-hidden"
+      >
+        <p>{INTRO}</p>
+      </CollapsibleIntro>,
+    );
+
+    const toggle = screen.getByRole("button", { name: uk.common.readMore });
+    expect(document.getElementById(toggle.getAttribute("aria-controls")!)).toHaveClass("max-md:max-h-[11rem]");
+
+    fireEvent.click(toggle);
+    expect(sendGAEvent.mock.calls).toEqual([
+      ["event", "product_text_expand", { content_type: "ingredients", content_id: "maska-dlya-volossya-5-lipidiv" }],
+    ]);
+  });
+
   it("без analyticsId нічого не шле", () => {
     stubHeights(120, 48);
     renderIntro();

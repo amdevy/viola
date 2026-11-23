@@ -15,7 +15,24 @@ interface Props {
    * the text sends `intro_expand`; without it the component sends nothing.
    */
   analyticsId?: string;
+  /** GA event sent on expanding (default `intro_expand`). */
+  analyticsEvent?: string;
+  /** `content_type` of that event (default `catalog_intro`). */
+  analyticsContentType?: string;
+  /**
+   * How far it is clipped below md while collapsed. Default: the two intro
+   * lines described below. Must keep the `max-md:` prefix.
+   */
+  collapsedClassName?: string;
+  /**
+   * Size, place and gradient of the fade over the cut. Default: the end of
+   * the second line. It is always absolute, below md only.
+   */
+  fadeClassName?: string;
 }
+
+const DEFAULT_COLLAPSED = "max-md:max-h-[3.25rem] max-md:overflow-hidden";
+const DEFAULT_FADE = "right-0 h-[1.625rem] w-1/3 bg-linear-to-r from-[#FAFAF8]/0 to-[#FAFAF8]";
 
 /**
  * An intro that takes two lines on phones, so the products start higher, and
@@ -40,6 +57,10 @@ export default function CollapsibleIntro({
   lessLabel,
   className = "",
   analyticsId,
+  analyticsEvent = "intro_expand",
+  analyticsContentType = "catalog_intro",
+  collapsedClassName = DEFAULT_COLLAPSED,
+  fadeClassName = DEFAULT_FADE,
 }: Props) {
   const id = useId();
   const textRef = useRef<HTMLDivElement>(null);
@@ -67,14 +88,14 @@ export default function CollapsibleIntro({
           id={id}
           ref={textRef}
           data-collapsed={!expanded}
-          className={expanded ? undefined : "max-md:max-h-[3.25rem] max-md:overflow-hidden"}
+          className={expanded ? undefined : collapsedClassName}
         >
           {children}
         </div>
         {!expanded && isCut && (
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute bottom-0 right-0 h-[1.625rem] w-1/3 bg-linear-to-r from-[#FAFAF8]/0 to-[#FAFAF8] md:hidden"
+            className={`pointer-events-none absolute bottom-0 md:hidden ${fadeClassName}`}
           />
         )}
       </div>
@@ -86,8 +107,8 @@ export default function CollapsibleIntro({
           onClick={() => {
             // Only expanding is counted: it shows whether shoppers read on.
             if (!expanded && analyticsId) {
-              sendGAEvent("event", "intro_expand", {
-                content_type: "catalog_intro",
+              sendGAEvent("event", analyticsEvent, {
+                content_type: analyticsContentType,
                 content_id: analyticsId,
               });
             }
