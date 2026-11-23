@@ -12,6 +12,7 @@ import ProductFAQ from "@/components/shop/ProductFAQ";
 import ProductTrustBadges from "@/components/shop/ProductTrustBadges";
 import MobileStickyBar from "@/components/shop/MobileStickyBar";
 import ProductText from "@/components/shop/ProductText";
+import MasterAdviceNote from "@/components/shop/MasterAdviceNote";
 import CollapsibleIntro from "@/components/ui/CollapsibleIntro";
 import AddToCartButton from "./AddToCartButton";
 import { formatPrice, formatVolume, HAIR_TYPES, safeJsonLd, summarize } from "@/lib/utils";
@@ -474,6 +475,9 @@ export default async function ProductPage({ params }: Props) {
 
             {/* Add to cart */}
             <AddToCartButton product={product} />
+
+            {/* Required by the brand's rules for salon sites */}
+            <MasterAdviceNote text={tc("masterAdvice")} className="mt-4" />
 
             {/* Benefits */}
             <ProductBenefits benefits={product.benefits ?? []} locale={locale} />
