@@ -11,6 +11,8 @@ import ProductBundle from "@/components/shop/ProductBundle";
 import ProductFAQ from "@/components/shop/ProductFAQ";
 import ProductTrustBadges from "@/components/shop/ProductTrustBadges";
 import MobileStickyBar from "@/components/shop/MobileStickyBar";
+import ProductText from "@/components/shop/ProductText";
+import CollapsibleIntro from "@/components/ui/CollapsibleIntro";
 import AddToCartButton from "./AddToCartButton";
 import { formatPrice, formatVolume, HAIR_TYPES, safeJsonLd, summarize } from "@/lib/utils";
 import { localize, hasEnTranslation, PRODUCT_I18N_FIELDS, CATEGORY_I18N_FIELDS } from "@/lib/i18n/localize";
@@ -481,9 +483,14 @@ export default async function ProductPage({ params }: Props) {
           </div>
         </div>
 
-        {/* Tabs */}
+        {/* Description, ingredients, how to use */}
         <div className="mt-16">
-          <ProductTabs product={product} t={t} />
+          <ProductTabs
+            product={product}
+            t={t}
+            moreLabel={tc("readMore")}
+            lessLabel={tc("showLess")}
+          />
         </div>
 
         {/* Bundle / cross-sell */}
@@ -531,7 +538,24 @@ export default async function ProductPage({ params }: Props) {
   );
 }
 
-function ProductTabs({ product, t }: { product: Product; t: (key: string) => string }) {
+/**
+ * Description, ingredients and how-to-use, one section each. On md and up the
+ * heading sits in a narrow left column and the text in a readable column on
+ * the right. On phones the description is shown in full and the other two
+ * start clipped to a few lines with «Читати далі» — clipped by CSS only, so
+ * the whole text stays in the HTML these pages are indexed on.
+ */
+function ProductTabs({
+  product,
+  t,
+  moreLabel,
+  lessLabel,
+}: {
+  product: Product;
+  t: (key: string) => string;
+  moreLabel: string;
+  lessLabel: string;
+}) {
   const tabs = [
     { id: "description", label: t("tabDescription"), content: product.description },
     { id: "ingredients", label: t("tabIngredients"), content: product.ingredients },
@@ -541,18 +565,36 @@ function ProductTabs({ product, t }: { product: Product; t: (key: string) => str
   if (tabs.length === 0) return null;
 
   return (
-    <div>
+    <div className="border-t border-[#E8E4DE]">
       {tabs.map((tab) => (
-        <div key={tab.id} id={`tab-${tab.id}`} className="border-b border-[#E8E4DE] last:border-b-0">
-          <h3 className="text-sm font-medium py-3 text-[#1A1A1A]">
+        <section
+          key={tab.id}
+          id={`tab-${tab.id}`}
+          aria-labelledby={`tab-${tab.id}-title`}
+          className="border-b border-[#E8E4DE] py-8 md:grid md:grid-cols-[180px_minmax(0,1fr)] md:gap-10 lg:grid-cols-[220px_minmax(0,1fr)]"
+        >
+          <h2
+            id={`tab-${tab.id}-title`}
+            className="mb-4 font-serif text-xl font-bold text-[#1A1A1A] sm:text-2xl md:mb-0"
+          >
             {tab.label}
-          </h3>
-          <div className="pb-6 prose prose-sm max-w-none">
-            <p className="text-[#6B6B6B] leading-relaxed whitespace-pre-line">
-              {tab.content}
-            </p>
-          </div>
-        </div>
+          </h2>
+          {tab.id === "description" ? (
+            <ProductText text={tab.content} />
+          ) : (
+            <CollapsibleIntro
+              moreLabel={moreLabel}
+              lessLabel={lessLabel}
+              analyticsId={product.slug}
+              analyticsEvent="product_text_expand"
+              analyticsContentType={tab.id}
+              collapsedClassName="max-md:max-h-[14rem] max-md:overflow-hidden"
+              fadeClassName="left-0 h-16 w-full bg-linear-to-b from-[#FAFAF8]/0 to-[#FAFAF8]"
+            >
+              <ProductText text={tab.content} />
+            </CollapsibleIntro>
+          )}
+        </section>
       ))}
     </div>
   );
