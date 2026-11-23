@@ -104,6 +104,21 @@ describe("CartDrawer — кошик збоку", () => {
     expect(useCart.getState().items.map((i) => i.productId)).toEqual(["b", "c", "d"]);
     expect(sendGAEvent).toHaveBeenCalledWith("event", "remove_from_cart", expect.anything());
   });
+
+  it("над «Оформити замовлення» — обов’язкова за правилами бренду порада звернутися до майстра", async () => {
+    render(<CartDrawer />);
+    await screen.findByText(uk.cartRecommendations.title);
+
+    const note = screen.getByText(
+      "Перед покупкою рекомендуємо отримати рекомендацію кваліфікованого майстра.",
+    );
+    const placeOrder = screen.getByRole("link", { name: uk.cart.placeOrder });
+    // Поруч із кнопкою, у футері, а не загублена в прокрутці.
+    expect(note.closest("[data-cart-scroll]")).toBeNull();
+    expect(
+      note.compareDocumentPosition(placeOrder) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
 });
 
 describe("CartDrawer — тінь", () => {

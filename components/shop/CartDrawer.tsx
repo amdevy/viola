@@ -8,10 +8,12 @@ import { useCart } from "@/hooks/useCart";
 import { useHasMounted } from "@/hooks/useCartQuantity";
 import CartItem from "./CartItem";
 import CartRecommendations from "./CartRecommendations";
+import MasterAdviceNote from "./MasterAdviceNote";
 import { formatPrice } from "@/lib/utils";
 
 export default function CartDrawer() {
   const t = useTranslations("cart");
+  const tc = useTranslations("common");
   const locale = useLocale();
   const { items, isOpen, closeCart } = useCart();
   const cartTotal = useCart((s) => s.total());
@@ -123,6 +125,7 @@ export default function CartDrawer() {
               <span className="text-sm text-[#6B6B6B]">{t("total")}</span>
               <span className="text-lg font-semibold text-[#1A1A1A]">{formatPrice(cartTotal, locale)}</span>
             </div>
+            <MasterAdviceNote text={tc("masterAdvice")} />
             <Link
               href="/checkout"
               onClick={closeCart}

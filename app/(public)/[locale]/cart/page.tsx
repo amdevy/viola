@@ -4,6 +4,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { useCart } from "@/hooks/useCart";
 import CartItem from "@/components/shop/CartItem";
+import MasterAdviceNote from "@/components/shop/MasterAdviceNote";
 import { formatPrice } from "@/lib/utils";
 
 export default function CartPage() {
@@ -66,12 +67,13 @@ export default function CartPage() {
                   <span>{t("deliveryRate")}</span>
                 </div>
               </div>
-              <div className="border-t border-[#E8E4DE] pt-4 mb-6">
+              <div className="border-t border-[#E8E4DE] pt-4 mb-4">
                 <div className="flex justify-between font-semibold text-[#1A1A1A]">
                   <span>{t("total")}</span>
                   <span>{formatPrice(cartTotal, locale)}</span>
                 </div>
               </div>
+              <MasterAdviceNote text={tc("masterAdvice")} className="mb-4" />
               <Link
                 href="/checkout"
                 className="block w-full bg-[#1A1A1A] text-white text-center text-sm font-medium py-3 rounded hover:bg-[#C4A882] transition-colors uppercase tracking-wider"
