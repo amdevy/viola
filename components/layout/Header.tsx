@@ -123,17 +123,24 @@ export default function Header({ categories }: { categories: CategoryNode[] }) {
 
               {/* Right: right nav + cart + mobile menu */}
               <div className='flex items-center flex-1'>
+                {/* This side, with the language switch and the cart, must fit
+                    in half of what the logo leaves, or the logo slides off
+                    centre and the page scrolls sideways. So links join as the
+                    row widens: one at 768px, three at 1024px, and the long
+                    consultation link (the same page as «Контакти» on the left)
+                    at 1280px, wrapped onto two lines; on one line it does not
+                    fit even there. Every link stays in the footer. */}
                 <nav className='hidden md:flex items-center gap-5 mr-3'>
                   {[
-                    { href: '/na-golovy' as const, label: t("about") },
-                    { href: '/reviews' as const, label: t("reviews") },
-                    { href: '/blog' as const, label: t("blog") },
-                    { href: '/contacts' as const, label: t("whereToConsult") },
+                    { href: '/na-golovy' as const, label: t("about"), show: '' },
+                    { href: '/reviews' as const, label: t("reviews"), show: 'hidden lg:block' },
+                    { href: '/blog' as const, label: t("blog"), show: 'hidden lg:block' },
+                    { href: '/contacts' as const, label: t("whereToConsult"), show: 'hidden xl:block xl:whitespace-normal xl:text-balance' },
                   ].map((link) => (
                     <Link
                       key={link.label}
                       href={link.href}
-                      className='text-xs text-[#1A1A1A] hover:text-[#C4A882] transition-colors font-medium whitespace-nowrap'
+                      className={`text-xs text-[#1A1A1A] hover:text-[#C4A882] transition-colors font-medium whitespace-nowrap ${link.show}`}
                     >
                       {link.label}
                     </Link>
