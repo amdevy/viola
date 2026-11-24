@@ -41,12 +41,12 @@ export default function MobileMenu({
         className="absolute inset-0 bg-black/50"
         onClick={onClose}
       />
-      <div className="relative w-80 max-w-[85vw] bg-white h-full flex flex-col shadow-xl">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E8E4DE]">
-          <span className="font-serif text-xl font-bold text-[#1A1A1A]">{t("menu")}</span>
+      <div className="relative w-80 max-w-[85vw] bg-surface h-full flex flex-col shadow-xl">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+          <span className="font-serif text-xl font-bold text-foreground">{t("menu")}</span>
           <button
             onClick={onClose}
-            className="p-2 text-[#6B6B6B] hover:text-[#1A1A1A]"
+            className="p-2 text-muted hover:text-foreground"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -59,17 +59,17 @@ export default function MobileMenu({
             <Link
               href="/na-golovy"
               onClick={onClose}
-              className="block py-2.5 text-sm font-medium text-[#C4A882] hover:text-[#1A1A1A] transition-colors mb-4"
+              className="block py-2.5 text-sm font-medium text-accent hover:text-foreground transition-colors mb-4"
             >
               {th("about")}
             </Link>
-            <p className="text-xs uppercase tracking-widest text-[#6B6B6B] mb-3">{t("navigation")}</p>
+            <p className="text-xs uppercase tracking-widest text-muted mb-3">{t("navigation")}</p>
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={onClose}
-                className="block py-2.5 text-[#1A1A1A] hover:text-[#C4A882] transition-colors font-medium"
+                className="block py-2.5 text-foreground hover:text-accent transition-colors font-medium"
               >
                 {link.label}
               </Link>
@@ -78,13 +78,13 @@ export default function MobileMenu({
 
           {categories.length > 0 && (
             <div>
-              <p className="text-xs uppercase tracking-widest text-[#6B6B6B] mb-3">{t("categories")}</p>
+              <p className="text-xs uppercase tracking-widest text-muted mb-3">{t("categories")}</p>
               {categories.map((cat) => (
                 <div key={cat.id}>
                   <Link
                     href={`/shop/category/${cat.slug}`}
                     onClick={onClose}
-                    className="block py-2.5 text-[#1A1A1A] hover:text-[#C4A882] transition-colors"
+                    className="block py-2.5 text-foreground hover:text-accent transition-colors"
                   >
                     {cat.name}
                   </Link>
@@ -93,7 +93,7 @@ export default function MobileMenu({
                       key={child.id}
                       href={`/shop/category/${child.slug}`}
                       onClick={onClose}
-                      className="block py-2 pl-4 text-sm text-[#6B6B6B] hover:text-[#C4A882] transition-colors"
+                      className="block py-2 pl-4 text-sm text-muted hover:text-accent transition-colors"
                     >
                       {child.name}
                     </Link>
@@ -104,8 +104,8 @@ export default function MobileMenu({
           )}
         </nav>
 
-        <div className="px-6 py-4 border-t border-[#E8E4DE]">
-          <p className="text-sm text-[#6B6B6B]">@viola.mukachevo</p>
+        <div className="px-6 py-4 border-t border-border">
+          <p className="text-sm text-muted">@viola.mukachevo</p>
         </div>
       </div>
     </div>

@@ -78,7 +78,7 @@ export default async function AboutPage({
   return (
     <>
       {/* Hero */}
-      <section className='bg-[#E8E4DE] py-20'>
+      <section className='bg-border py-20'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
             <div className='relative aspect-[3/4] w-full max-w-sm mx-auto lg:mx-0 lg:order-last rounded overflow-hidden'>
@@ -91,19 +91,19 @@ export default async function AboutPage({
               />
             </div>
             <div>
-              <p className='text-[#C4A882] text-xs uppercase tracking-[0.3em] mb-3'>
+              <p className='text-accent text-xs uppercase tracking-[0.3em] mb-3'>
                 {t("brandLabel")}
               </p>
-              <h1 className='font-serif text-4xl sm:text-5xl font-bold text-[#1A1A1A] leading-tight mb-6'>
+              <h1 className='font-serif text-4xl sm:text-5xl font-bold text-foreground leading-tight mb-6'>
                 {t("brandTitle")}
               </h1>
-              <p className='text-[#1A1A1A]/70 text-lg leading-relaxed mb-8'>
-                <a href="https://www.nagolovy.pro/" target="_blank" rel="noopener noreferrer" className="text-[#C4A882] hover:underline">Na Golov[y]</a>{" "}
+              <p className='text-foreground/70 text-lg leading-relaxed mb-8'>
+                <a href="https://www.nagolovy.pro/" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">Na Golov[y]</a>{" "}
                 — {t("brandText")}
               </p>
               <Link
                 href='/shop'
-                className='inline-flex items-center gap-2 bg-[#1A1A1A] text-white px-8 py-4 text-sm font-medium uppercase tracking-[0.2em] hover:bg-[#C4A882] transition-all duration-300 rounded-sm'
+                className='inline-flex items-center gap-2 bg-ink text-on-ink px-8 py-4 text-sm font-medium uppercase tracking-[0.2em] hover:bg-accent transition-all duration-300 rounded-sm'
               >
                 {tc("goToShop")}
               </Link>
@@ -113,7 +113,7 @@ export default async function AboutPage({
       </section>
 
       {/* Owner intro */}
-      <section className='py-16 bg-white'>
+      <section className='py-16 bg-surface'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
             <div className='relative aspect-[3/4] w-full max-w-sm mx-auto lg:mx-0 rounded overflow-hidden'>
@@ -126,24 +126,24 @@ export default async function AboutPage({
               />
             </div>
             <div>
-              <p className='text-[#C4A882] text-xs uppercase tracking-[0.3em] mb-3'>
+              <p className='text-accent text-xs uppercase tracking-[0.3em] mb-3'>
                 {t("ownerLabel")}
               </p>
-              <h2 className='font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-4 leading-tight'>
+              <h2 className='font-serif text-3xl sm:text-4xl font-bold text-foreground mb-4 leading-tight'>
                 {t("ownerName")}
               </h2>
-              <p className='text-[#6B6B6B] mb-4 leading-relaxed'>
+              <p className='text-muted mb-4 leading-relaxed'>
                 {t("ownerP1")}
               </p>
-              <p className='text-[#6B6B6B] mb-4 leading-relaxed'>
+              <p className='text-muted mb-4 leading-relaxed'>
                 {t("ownerP2")}
               </p>
-              <p className='text-[#6B6B6B] mb-8 leading-relaxed'>
+              <p className='text-muted mb-8 leading-relaxed'>
                 {t("ownerP3")}
               </p>
               <Link
                 href='/contacts'
-                className='inline-flex items-center gap-2 text-sm font-medium text-[#1A1A1A] border-b border-[#1A1A1A] pb-0.5 hover:text-[#C4A882] hover:border-[#C4A882] transition-colors'
+                className='inline-flex items-center gap-2 text-sm font-medium text-foreground border-b border-foreground pb-0.5 hover:text-accent hover:border-accent transition-colors'
               >
                 {t("bookConsultation")}
               </Link>
@@ -153,13 +153,13 @@ export default async function AboutPage({
       </section>
 
       {/* Values */}
-      <section className='py-16 bg-[#FAFAF8]'>
+      <section className='py-16 bg-background'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-12'>
-            <p className='text-[#C4A882] text-xs uppercase tracking-[0.3em] mb-3'>
+            <p className='text-accent text-xs uppercase tracking-[0.3em] mb-3'>
               {t("valuesLabel")}
             </p>
-            <h2 className='font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A]'>
+            <h2 className='font-serif text-3xl sm:text-4xl font-bold text-foreground'>
               {t("valuesTitle")}
             </h2>
           </div>
@@ -167,13 +167,13 @@ export default async function AboutPage({
             {VALUES.map((v) => (
               <div
                 key={v.title}
-                className='bg-white rounded p-6 border border-[#E8E4DE]'
+                className='bg-surface rounded p-6 border border-border'
               >
-                <div className='w-8 h-0.5 bg-[#C4A882] mb-4' />
-                <h3 className='font-serif text-lg font-semibold text-[#1A1A1A] mb-2'>
+                <div className='w-8 h-0.5 bg-accent mb-4' />
+                <h3 className='font-serif text-lg font-semibold text-foreground mb-2'>
                   {v.title}
                 </h3>
-                <p className='text-sm text-[#6B6B6B] leading-relaxed'>
+                <p className='text-sm text-muted leading-relaxed'>
                   {v.desc}
                 </p>
               </div>
@@ -183,27 +183,27 @@ export default async function AboutPage({
       </section>
 
       {/* Product lines */}
-      <section className='py-16 bg-white'>
+      <section className='py-16 bg-surface'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-12'>
-            <p className='text-[#C4A882] text-xs uppercase tracking-[0.3em] mb-3'>
+            <p className='text-accent text-xs uppercase tracking-[0.3em] mb-3'>
               {t("assortmentLabel")}
             </p>
-            <h2 className='font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A]'>
+            <h2 className='font-serif text-3xl sm:text-4xl font-bold text-foreground'>
               {t("productLinesTitle")}
             </h2>
           </div>
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
             {PRODUCT_LINES.map((line, i) => (
               <div key={line.name} className='flex gap-4'>
-                <span className='font-serif text-3xl text-[#C4A882]/30 font-bold leading-none mt-1 select-none'>
+                <span className='font-serif text-3xl text-accent/30 font-bold leading-none mt-1 select-none'>
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <div>
-                  <h3 className='font-semibold text-[#1A1A1A] mb-1'>
+                  <h3 className='font-semibold text-foreground mb-1'>
                     {line.name}
                   </h3>
-                  <p className='text-sm text-[#6B6B6B] leading-relaxed'>
+                  <p className='text-sm text-muted leading-relaxed'>
                     {line.desc}
                   </p>
                 </div>
@@ -214,7 +214,7 @@ export default async function AboutPage({
       </section>
 
       {/* Dark CTA */}
-      <section className='py-16 bg-[#1A1A1A]'>
+      <section className='py-16 bg-band'>
         <div className='max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
           <h2 className='font-serif text-3xl sm:text-4xl font-bold text-white mb-4'>
             {t("ctaTitle")}
@@ -225,7 +225,7 @@ export default async function AboutPage({
           <div className='flex flex-wrap justify-center gap-4'>
             <Link
               href='/contacts'
-              className='inline-flex items-center gap-2 bg-[#C4A882] text-white px-8 py-4 text-sm font-medium uppercase tracking-[0.2em] hover:bg-[#B8976E] transition-all duration-300 rounded-sm'
+              className='inline-flex items-center gap-2 bg-accent text-white px-8 py-4 text-sm font-medium uppercase tracking-[0.2em] hover:bg-[#B8976E] transition-all duration-300 rounded-sm'
             >
               {tc("consultation")}
             </Link>

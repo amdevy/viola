@@ -51,9 +51,9 @@ export default function PaymentFailed({ orderId }: { orderId: string }) {
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-4">
       <div className="text-center max-w-md">
-        <div className="w-16 h-16 bg-[#FED7D7] rounded-full flex items-center justify-center mx-auto mb-6">
+        <div className="w-16 h-16 bg-[#FED7D7] dark:bg-error/15 rounded-full flex items-center justify-center mx-auto mb-6">
           <svg
-            className="w-8 h-8 text-[#E53E3E]"
+            className="w-8 h-8 text-error"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -66,28 +66,28 @@ export default function PaymentFailed({ orderId }: { orderId: string }) {
             />
           </svg>
         </div>
-        <h1 className="font-serif text-3xl font-bold text-[#1A1A1A] mb-3">
+        <h1 className="font-serif text-3xl font-bold text-foreground mb-3">
           {t("failedTitle")}
         </h1>
-        <p className="text-[#6B6B6B] mb-2">{t("failedMessage")}</p>
-        <p className="text-sm text-[#A0A0A0] mb-6">
+        <p className="text-muted mb-2">{t("failedMessage")}</p>
+        <p className="text-sm text-subtle mb-6">
           {t("orderNumber")}{" "}
-          <span className="font-mono font-medium text-[#1A1A1A]">
+          <span className="font-mono font-medium text-foreground">
             {orderId.slice(0, 8).toUpperCase()}
           </span>
         </p>
-        <p className="text-sm text-[#6B6B6B] mb-8">{t("failedSupport")}</p>
+        <p className="text-sm text-muted mb-8">{t("failedSupport")}</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button
             onClick={handleRetry}
             disabled={loading}
-            className="inline-flex items-center justify-center bg-[#1A1A1A] text-white px-8 py-3 text-sm font-medium rounded hover:bg-[#C4A882] transition-colors disabled:opacity-50"
+            className="inline-flex items-center justify-center bg-ink text-on-ink px-8 py-3 text-sm font-medium rounded hover:bg-accent transition-colors disabled:opacity-50"
           >
             {loading ? t("retrying") : t("failedRetry")}
           </button>
           <Link
             href="/cart"
-            className="inline-flex items-center justify-center border border-[#E8E4DE] text-[#1A1A1A] px-8 py-3 text-sm font-medium rounded hover:border-[#C4A882] transition-colors"
+            className="inline-flex items-center justify-center border border-border text-foreground px-8 py-3 text-sm font-medium rounded hover:border-accent transition-colors"
           >
             {t("goHome")}
           </Link>

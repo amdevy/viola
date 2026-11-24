@@ -69,7 +69,7 @@ function renderContent(content: string) {
   const paragraphs = content.split(/\n{2,}/).filter(Boolean);
 
   return (
-    <div className="space-y-5 text-[#1A1A1A] leading-relaxed text-base">
+    <div className="space-y-5 text-foreground leading-relaxed text-base">
       {paragraphs.map((para, i) => {
         const lines = para.split(/\n/).filter(Boolean);
 
@@ -99,7 +99,7 @@ function renderContent(content: string) {
               <ul className="space-y-1.5 my-2">
                 {bulletItems.map((item, j) => (
                   <li key={j} className="flex items-start gap-2">
-                    <span className="text-[#C4A882] shrink-0 mt-0.5">•</span>
+                    <span className="text-accent shrink-0 mt-0.5">•</span>
                     <span>{item}</span>
                   </li>
                 ))}
@@ -177,22 +177,22 @@ export default async function BlogPostPage({ params }: Props) {
       />
       {/* One line: the title takes what is left and ends in an ellipsis; the
           H1 below shows it in full. */}
-      <nav className="text-xs text-[#6B6B6B] mb-8 flex items-center gap-2 whitespace-nowrap">
-        <Link href="/" className="shrink-0 hover:text-[#C4A882]">{tc("home")}</Link>
+      <nav className="text-xs text-muted mb-8 flex items-center gap-2 whitespace-nowrap">
+        <Link href="/" className="shrink-0 hover:text-accent">{tc("home")}</Link>
         <span className="shrink-0">/</span>
-        <Link href="/blog" className="shrink-0 hover:text-[#C4A882]">{t("blog")}</Link>
+        <Link href="/blog" className="shrink-0 hover:text-accent">{t("blog")}</Link>
         <span className="shrink-0">/</span>
-        <span className="min-w-0 flex-1 truncate text-[#1A1A1A]">{post.title}</span>
+        <span className="min-w-0 flex-1 truncate text-foreground">{post.title}</span>
       </nav>
 
       <article>
         <header className="mb-8">
-          <p className="text-[#C4A882] text-xs uppercase tracking-widest mb-3">{t("blog")}</p>
-          <h1 className="font-serif text-4xl font-bold text-[#1A1A1A] mb-4 leading-tight">
+          <p className="text-accent text-xs uppercase tracking-widest mb-3">{t("blog")}</p>
+          <h1 className="font-serif text-4xl font-bold text-foreground mb-4 leading-tight">
             {post.title}
           </h1>
-          <div className="flex items-center gap-3 text-sm text-[#6B6B6B]">
-            <Link href="/about" className="font-medium text-[#1A1A1A] hover:text-[#C4A882] transition-colors">
+          <div className="flex items-center gap-3 text-sm text-muted">
+            <Link href="/about" className="font-medium text-foreground hover:text-accent transition-colors">
               {t("authorName")}
             </Link>
             <span>·</span>
@@ -233,7 +233,7 @@ export default async function BlogPostPage({ params }: Props) {
       </article>
 
       {/* Author card */}
-      <div className="mt-12 pt-8 border-t border-[#E8E4DE]">
+      <div className="mt-12 pt-8 border-t border-border">
         <Link href="/about" className="flex items-center gap-4 group">
           <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
             <Image
@@ -245,10 +245,10 @@ export default async function BlogPostPage({ params }: Props) {
             />
           </div>
           <div>
-            <p className="text-sm font-semibold text-[#1A1A1A] group-hover:text-[#C4A882] transition-colors">
+            <p className="text-sm font-semibold text-foreground group-hover:text-accent transition-colors">
               {t("authorName")}
             </p>
-            <p className="text-xs text-[#6B6B6B]">
+            <p className="text-xs text-muted">
               {t("authorRole")}
             </p>
           </div>
@@ -258,8 +258,8 @@ export default async function BlogPostPage({ params }: Props) {
       {/* Стаття "де купити На Голову" — брендовий інтент, але сторінка була
           глухим кутом: жодного посилання на хаб бренду чи категорії. Тепер
           вага йде далі, а стаття отримує зворотне посилання з /na-golovy. */}
-      <nav aria-label={t("relatedTitle")} className="mt-8 pt-8 border-t border-[#E8E4DE]">
-        <p className="text-xs uppercase tracking-widest text-[#6B6B6B] mb-3">{t("relatedTitle")}</p>
+      <nav aria-label={t("relatedTitle")} className="mt-8 pt-8 border-t border-border">
+        <p className="text-xs uppercase tracking-widest text-muted mb-3">{t("relatedTitle")}</p>
         <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
           {[
             { href: "/na-golovy" as const, label: t("relatedBrand") },
@@ -267,7 +267,7 @@ export default async function BlogPostPage({ params }: Props) {
             { href: "/shop/category/shampoos" as const, label: t("relatedShampoos") },
           ].map((l) => (
             <li key={l.href}>
-              <Link href={l.href} className="text-[#1A1A1A] hover:text-[#C4A882] transition-colors underline-offset-4 hover:underline">
+              <Link href={l.href} className="text-foreground hover:text-accent transition-colors underline-offset-4 hover:underline">
                 {l.label}
               </Link>
             </li>
@@ -275,10 +275,10 @@ export default async function BlogPostPage({ params }: Props) {
         </ul>
       </nav>
 
-      <div className="mt-8 pt-8 border-t border-[#E8E4DE]">
+      <div className="mt-8 pt-8 border-t border-border">
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 text-sm text-[#C4A882] hover:text-[#A8875E] font-medium transition-colors"
+          className="inline-flex items-center gap-2 text-sm text-accent hover:text-accent-dark font-medium transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />

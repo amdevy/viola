@@ -61,20 +61,20 @@ export default async function BlogPage({
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="text-center mb-12">
-        <h1 className="font-serif text-4xl font-bold text-[#1A1A1A] mb-3">{t("title")}</h1>
-        <p className="text-[#6B6B6B] max-w-xl mx-auto">
+        <h1 className="font-serif text-4xl font-bold text-foreground mb-3">{t("title")}</h1>
+        <p className="text-muted max-w-xl mx-auto">
           {t("subtitle")}
         </p>
       </div>
 
       {posts.length === 0 ? (
-        <p className="text-center text-[#6B6B6B] py-16">{tc("noArticles")}</p>
+        <p className="text-center text-muted py-16">{tc("noArticles")}</p>
       ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {posts.map((post) => (
           <article key={post.id} className="group">
             <Link href={`/blog/${post.slug}`}>
-              <div className="relative aspect-video rounded overflow-hidden bg-gradient-to-br from-[#E8E4DE] to-[#D4C5B0] mb-4 group-hover:opacity-90 transition-opacity">
+              <div className="relative aspect-video rounded overflow-hidden bg-gradient-to-br from-border to-[#D4C5B0] dark:to-panel mb-4 group-hover:opacity-90 transition-opacity">
                 {post.cover_image && (
                   <Image
                     src={post.cover_image}
@@ -90,7 +90,7 @@ export default async function BlogPage({
                 )}
               </div>
               <div>
-                <div className="flex items-center gap-3 text-xs text-[#6B6B6B] mb-2">
+                <div className="flex items-center gap-3 text-xs text-muted mb-2">
                   <time dateTime={post.published_at}>
                     {new Date(post.published_at).toLocaleDateString(locale === "en" ? "en-US" : "uk-UA", {
                       day: "numeric",
@@ -105,15 +105,15 @@ export default async function BlogPage({
                     </>
                   )}
                 </div>
-                <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-2 group-hover:text-[#C4A882] transition-colors line-clamp-2">
+                <h2 className="font-serif text-xl font-semibold text-foreground mb-2 group-hover:text-accent transition-colors line-clamp-2">
                   {post.title}
                 </h2>
                 {post.excerpt && (
-                  <p className="text-sm text-[#6B6B6B] line-clamp-3 leading-relaxed">
+                  <p className="text-sm text-muted line-clamp-3 leading-relaxed">
                     {post.excerpt}
                   </p>
                 )}
-                <span className="inline-flex items-center gap-1 text-sm text-[#C4A882] mt-3 font-medium">
+                <span className="inline-flex items-center gap-1 text-sm text-accent mt-3 font-medium">
                   {tc("readMore")}
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

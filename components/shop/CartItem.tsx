@@ -27,9 +27,9 @@ export default function CartItem({ item }: { item: CartItemType }) {
   };
 
   return (
-    <div className="flex gap-3 py-3 border-b border-[#E8E4DE] last:border-0">
+    <div className="flex gap-3 py-3 border-b border-border last:border-0">
       {/* Image */}
-      <div className="relative w-16 h-20 flex-shrink-0 rounded overflow-hidden bg-[#F0EDE8]">
+      <div className="relative w-16 h-20 flex-shrink-0 rounded overflow-hidden bg-panel">
         <Image
           src={item.image || "/placeholder-product.png"}
           alt={item.name}
@@ -41,11 +41,11 @@ export default function CartItem({ item }: { item: CartItemType }) {
 
       {/* Info */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-[#1A1A1A] line-clamp-2">{item.name}</p>
+        <p className="text-sm font-medium text-foreground line-clamp-2">{item.name}</p>
         {item.volume && (
-          <p className="text-xs text-[#6B6B6B] mt-0.5">{formatVolume(item.volume, locale)}</p>
+          <p className="text-xs text-muted mt-0.5">{formatVolume(item.volume, locale)}</p>
         )}
-        <p className="text-sm font-semibold text-[#C4A882] mt-1">
+        <p className="text-sm font-semibold text-accent mt-1">
           {formatPrice(item.price * item.quantity, locale)}
         </p>
 
@@ -56,7 +56,7 @@ export default function CartItem({ item }: { item: CartItemType }) {
             type="button"
             onClick={() => updateQuantity(item.productId, item.quantity - 1)}
             aria-label={t("decrease")}
-            className="w-9 h-9 flex items-center justify-center border border-[#E8E4DE] rounded text-[#1A1A1A] hover:border-[#C4A882] transition-colors text-base"
+            className="w-9 h-9 flex items-center justify-center border border-border rounded text-foreground hover:border-accent transition-colors text-base"
           >
             −
           </button>
@@ -65,7 +65,7 @@ export default function CartItem({ item }: { item: CartItemType }) {
             type="button"
             onClick={() => updateQuantity(item.productId, item.quantity + 1)}
             aria-label={t("increase")}
-            className="w-9 h-9 flex items-center justify-center border border-[#E8E4DE] rounded text-[#1A1A1A] hover:border-[#C4A882] transition-colors text-base"
+            className="w-9 h-9 flex items-center justify-center border border-border rounded text-foreground hover:border-accent transition-colors text-base"
           >
             +
           </button>
@@ -77,7 +77,7 @@ export default function CartItem({ item }: { item: CartItemType }) {
       <button
         type="button"
         onClick={handleRemove}
-        className="flex-shrink-0 -mr-2 -mt-2 flex h-9 w-9 items-center justify-center text-[#A0A0A0] hover:text-[#E53E3E] transition-colors"
+        className="flex-shrink-0 -mr-2 -mt-2 flex h-9 w-9 items-center justify-center text-subtle hover:text-error transition-colors"
         aria-label={t("remove")}
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">

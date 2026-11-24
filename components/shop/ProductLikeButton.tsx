@@ -47,9 +47,9 @@ export default function ProductLikeButton({
         disabled={pending}
         aria-pressed={liked}
         aria-label={liked ? t("unlike") : t("like")}
-        className={`absolute top-3 right-3 z-10 inline-flex items-center justify-center gap-1.5 bg-white/95 backdrop-blur-sm rounded-full shadow-md transition-all ${
+        className={`absolute top-3 right-3 z-10 inline-flex items-center justify-center gap-1.5 bg-surface/95 backdrop-blur-sm rounded-full shadow-md transition-all ${
           showCount ? "px-3 py-2" : "w-10 h-10 p-0"
-        } ${liked ? "text-[#C75B6D]" : "text-[#1A1A1A] hover:text-[#C75B6D]"}`}
+        } ${liked ? "text-[#C75B6D]" : "text-foreground hover:text-[#C75B6D]"}`}
       >
         <Heart filled={liked} className="w-5 h-5" />
         {showCount && (
@@ -66,8 +66,8 @@ export default function ProductLikeButton({
       disabled={pending}
       aria-pressed={liked}
       aria-label={liked ? t("unlike") : t("like")}
-      className={`absolute top-2 right-2 z-10 inline-flex items-center gap-1 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 shadow-sm transition-all ${
-        liked ? "text-[#C75B6D]" : "text-[#6B6B6B] hover:text-[#C75B6D]"
+      className={`absolute top-2 right-2 z-10 inline-flex items-center gap-1 bg-surface/90 backdrop-blur-sm rounded-full px-2 py-1 shadow-sm transition-all ${
+        liked ? "text-[#C75B6D]" : "text-muted hover:text-[#C75B6D]"
       }`}
     >
       <Heart filled={liked} className={iconSize} />

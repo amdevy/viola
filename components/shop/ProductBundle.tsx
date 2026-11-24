@@ -148,15 +148,15 @@ export default function ProductBundle({ kind, items }: Props) {
   return (
     <section className="mt-16">
       <div className="mb-6">
-        <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#1A1A1A] mb-2">
+        <h2 className="font-serif text-2xl sm:text-3xl font-bold text-foreground mb-2">
           {t("title")}
         </h2>
-        <p className="text-sm text-[#6B6B6B] max-w-2xl">{t(SUBTITLE[kind])}</p>
+        <p className="text-sm text-muted max-w-2xl">{t(SUBTITLE[kind])}</p>
       </div>
 
       <div className="grid lg:grid-cols-[1fr_320px] gap-4 lg:gap-6">
         {/* Products */}
-        <div className="bg-white border border-[#E8E4DE] rounded p-3 sm:p-6">
+        <div className="bg-surface border border-border rounded p-3 sm:p-6">
           {/* Mobile: the routine as numbered steps, in the order they are used */}
           <ol className="flex flex-col sm:hidden">
             {items.map((item, i) => (
@@ -174,7 +174,7 @@ export default function ProductBundle({ kind, items }: Props) {
             {items.map((item, i) => (
               <div key={item.product.id} className="flex items-stretch gap-4">
                 {i > 0 && (
-                  <div className="flex items-center text-[#C4A882] text-xl font-light select-none">
+                  <div className="flex items-center text-accent text-xl font-light select-none">
                     +
                   </div>
                 )}
@@ -185,17 +185,17 @@ export default function ProductBundle({ kind, items }: Props) {
         </div>
 
         {/* Summary — inline on mobile, sidebar on desktop */}
-        <aside className="bg-white border border-[#E8E4DE] rounded p-4 sm:p-6 flex flex-row lg:flex-col items-center lg:items-stretch justify-between gap-4 lg:justify-between">
+        <aside className="bg-surface border border-border rounded p-4 sm:p-6 flex flex-row lg:flex-col items-center lg:items-stretch justify-between gap-4 lg:justify-between">
           <div className="flex-1 lg:flex-none">
-            <p className="text-[10px] sm:text-xs uppercase tracking-widest text-[#6B6B6B] mb-1 lg:mb-2">
+            <p className="text-[10px] sm:text-xs uppercase tracking-widest text-muted mb-1 lg:mb-2">
               {t("totalLabel")}
             </p>
-            <p className="font-serif text-2xl lg:text-3xl font-bold text-[#1A1A1A]">
+            <p className="font-serif text-2xl lg:text-3xl font-bold text-foreground">
               {formatPrice(total, locale)}
             </p>
             {/* On phones this sits right under the total, so it is clear how
                 many products that price covers. */}
-            <p className="text-xs sm:text-sm text-[#6B6B6B] mt-0.5 sm:mt-3">
+            <p className="text-xs sm:text-sm text-muted mt-0.5 sm:mt-3">
               {t("itemsCount", { count: bundleProducts.length })}
             </p>
           </div>
@@ -203,7 +203,7 @@ export default function ProductBundle({ kind, items }: Props) {
             type="button"
             onClick={addBundle}
             disabled={!canBuy}
-            className="flex-shrink-0 lg:mt-6 lg:w-full bg-[#1A1A1A] text-white px-5 py-3 text-xs sm:text-sm font-medium rounded uppercase tracking-wider hover:bg-[#C4A882] transition-colors disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
+            className="flex-shrink-0 lg:mt-6 lg:w-full bg-ink text-on-ink px-5 py-3 text-xs sm:text-sm font-medium rounded uppercase tracking-wider hover:bg-accent transition-colors disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
           >
             {t("buyBundle")}
           </button>
@@ -244,8 +244,8 @@ function Tick({ selected, className = "" }: { selected: boolean; className?: str
       aria-hidden
       className={`flex h-6 w-6 items-center justify-center rounded-full border-2 transition-colors ${
         selected
-          ? "border-[#C4A882] bg-[#C4A882] text-white"
-          : "border-[#D9D4CC] bg-white text-transparent"
+          ? "border-accent bg-accent text-white"
+          : "border-border-strong bg-surface text-transparent"
       } ${className}`}
     >
       <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
@@ -279,38 +279,38 @@ function BundleStep({
           leading on from them, so the chosen part of the routine reads at a glance. */}
       <div aria-hidden className="flex w-7 flex-shrink-0 flex-col items-center gap-1">
         <span
-          className={`flex h-7 w-7 items-center justify-center rounded-full text-[13px] font-semibold text-[#1A1A1A] ${
-            selected ? "bg-[#C4A882]" : "border-[1.5px] border-[#6B6B6B] bg-white"
+          className={`flex h-7 w-7 items-center justify-center rounded-full text-[13px] font-semibold text-foreground ${
+            selected ? "bg-accent" : "border-[1.5px] border-muted bg-surface"
           }`}
         >
           {number}
         </span>
         {!isLast && (
-          <span className={`w-0.5 flex-1 ${selected ? "bg-[#C4A882]" : "bg-[#E8E4DE]"}`} />
+          <span className={`w-0.5 flex-1 ${selected ? "bg-accent" : "bg-border"}`} />
         )}
       </div>
 
       <div
         className={`flex min-w-0 flex-1 flex-col gap-2.5 rounded border p-2.5 transition-colors ${
           isLast ? "" : "mb-2.5"
-        } ${selected ? "border-[#C4A882] bg-[#FDF9F5]" : "border-[#E8E4DE] bg-white"}`}
+        } ${selected ? "border-accent bg-cream" : "border-border bg-surface"}`}
       >
         <div className="flex items-center gap-2.5">
-          <div className="relative h-[52px] w-[52px] flex-shrink-0 overflow-hidden rounded bg-[#F0EDE8]">
+          <div className="relative h-[52px] w-[52px] flex-shrink-0 overflow-hidden rounded bg-panel">
             <Image src={image} alt="" fill sizes="52px" className="object-cover" />
           </div>
           <div className="flex min-w-0 flex-1 flex-col gap-0.5">
             {label && (
               <p
                 className={`text-[11px] font-semibold uppercase tracking-widest ${
-                  selected ? "text-[#7A5C36]" : "text-[#6B6B6B]"
+                  selected ? "text-accent-deep" : "text-muted"
                 }`}
               >
                 {label}
               </p>
             )}
-            <p className="text-[13px] leading-snug text-[#1A1A1A] line-clamp-2">{product.name}</p>
-            <p className="text-sm font-semibold text-[#1A1A1A]">
+            <p className="text-[13px] leading-snug text-foreground line-clamp-2">{product.name}</p>
+            <p className="text-sm font-semibold text-foreground">
               {formatPrice(Number(product.price), locale)}
             </p>
           </div>
@@ -322,7 +322,7 @@ function BundleStep({
               type="button"
               onClick={onPreview}
               aria-label={detailsAria}
-              className="h-11 flex-1 rounded border border-[#D9D4CC] bg-white text-[13px] font-medium text-[#1A1A1A] transition-colors hover:border-[#C4A882]"
+              className="h-11 flex-1 rounded border border-border-strong bg-surface text-[13px] font-medium text-foreground transition-colors hover:border-accent"
             >
               {detailsLabel}
             </button>
@@ -332,7 +332,7 @@ function BundleStep({
               aria-pressed={selected}
               aria-label={toggleLabel}
               className={`flex h-11 flex-[1.3] items-center justify-center gap-1.5 rounded text-[13px] font-semibold transition-colors ${
-                selected ? "bg-[#C4A882] text-[#1A1A1A]" : "bg-[#1A1A1A] text-white"
+                selected ? "bg-accent text-[#1A1A1A]" : "bg-ink text-on-ink"
               }`}
             >
               {selected ? (
@@ -369,18 +369,18 @@ function BundleCard({
   const image = product.images?.[0] ?? "/placeholder-product.png";
   const body = (
     <>
-      <div className="relative w-full aspect-square bg-[#F0EDE8] rounded-t overflow-hidden">
+      <div className="relative w-full aspect-square bg-panel rounded-t overflow-hidden">
         <Image src={image} alt="" fill sizes="176px" className="object-cover" />
       </div>
       <div className="p-3 w-full">
         {label && (
-          <p className="text-[10px] uppercase tracking-widest text-[#6B6B6B] mb-1">{label}</p>
+          <p className="text-[10px] uppercase tracking-widest text-muted mb-1">{label}</p>
         )}
-        <p className="text-xs text-[#1A1A1A] leading-tight line-clamp-2 mb-1">{product.name}</p>
-        <p className="flex items-baseline gap-2 text-sm font-semibold text-[#1A1A1A]">
+        <p className="text-xs text-foreground leading-tight line-clamp-2 mb-1">{product.name}</p>
+        <p className="flex items-baseline gap-2 text-sm font-semibold text-foreground">
           {formatPrice(Number(product.price), locale)}
           {!isMain && (
-            <span className="text-xs font-medium text-[#C4A882] underline underline-offset-2">
+            <span className="text-xs font-medium text-accent underline underline-offset-2">
               {detailsLabel}
             </span>
           )}
@@ -389,7 +389,7 @@ function BundleCard({
     </>
   );
   const frame = `relative w-40 md:w-44 rounded border transition-all ${
-    selected ? "border-[#C4A882] bg-[#FAFAF8]" : "border-[#E8E4DE] bg-white hover:border-[#C4A882]"
+    selected ? "border-accent bg-background" : "border-border bg-surface hover:border-accent"
   }`;
 
   if (isMain) {

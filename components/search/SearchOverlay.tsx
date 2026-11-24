@@ -307,14 +307,14 @@ export default function SearchOverlay({ onClose, categories, inputRef, restored 
     return (
       <li
         key={p.id}
-        className="flex items-center gap-3 rounded border border-[#E8E4DE] bg-white p-2"
+        className="flex items-center gap-3 rounded border border-border bg-surface p-2"
       >
         <Link
           href={`/shop/${p.slug}`}
           onClick={() => select(p, position, list)}
           className="group flex min-w-0 flex-1 items-center gap-3"
         >
-          <div className="relative h-14 w-12 flex-shrink-0 overflow-hidden rounded bg-[#F0EDE8]">
+          <div className="relative h-14 w-12 flex-shrink-0 overflow-hidden rounded bg-panel">
             <Image
               src={p.image ?? "/placeholder-product.png"}
               alt=""
@@ -324,15 +324,15 @@ export default function SearchOverlay({ onClose, categories, inputRef, restored 
             />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="line-clamp-2 text-sm leading-snug text-[#1A1A1A] transition-colors group-hover:text-[#C4A882]">
+            <p className="line-clamp-2 text-sm leading-snug text-foreground transition-colors group-hover:text-accent">
               {name}
             </p>
-            <p className="mt-0.5 text-xs text-[#6B6B6B]">
-              <span className="font-semibold text-[#1A1A1A]">{formatPrice(p.price, locale)}</span>
+            <p className="mt-0.5 text-xs text-muted">
+              <span className="font-semibold text-foreground">{formatPrice(p.price, locale)}</span>
               {p.volume && <> · {formatVolume(p.volume, locale)}</>}
               {/* In words too, so the tick on the button is not the only sign. */}
               {buyable && added && (
-                <> · <span className="font-medium text-[#7A5C36]">{tp("inCart")}</span></>
+                <> · <span className="font-medium text-accent-deep">{tp("inCart")}</span></>
               )}
               {!buyable && (
                 <> · {p.is_coming_soon ? tc("comingSoonBadge") : tp("outOfStock")}</>
@@ -347,8 +347,8 @@ export default function SearchOverlay({ onClose, categories, inputRef, restored 
             aria-label={added ? tp("inCartOpen") : `${tp("addToCartFull")}: ${name}`}
             className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full transition-colors ${
               added
-                ? "border border-[#C4A882] bg-[#FDF9F5] text-[#C4A882]"
-                : "bg-[#1A1A1A] text-white hover:bg-[#C4A882]"
+                ? "border border-accent bg-cream text-accent"
+                : "bg-ink text-on-ink hover:bg-accent"
             }`}
           >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
@@ -364,20 +364,20 @@ export default function SearchOverlay({ onClose, categories, inputRef, restored 
     );
   };
 
-  const heading = "mb-2 text-[10px] uppercase tracking-widest text-[#6B6B6B]";
+  const heading = "mb-2 text-[10px] uppercase tracking-widest text-muted";
 
   let body: React.ReactNode;
   if (failed) {
     body = (
-      <div className="rounded border border-[#E8E4DE] bg-white p-4 text-center">
-        <p className="text-sm text-[#6B6B6B]">{t("loadError")}</p>
+      <div className="rounded border border-border bg-surface p-4 text-center">
+        <p className="text-sm text-muted">{t("loadError")}</p>
         <button
           type="button"
           onClick={() => {
             setFailed(false);
             setAttempt((n) => n + 1);
           }}
-          className="mt-3 rounded bg-[#1A1A1A] px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-white"
+          className="mt-3 rounded bg-ink px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-on-ink"
         >
           {t("retry")}
         </button>
@@ -387,15 +387,15 @@ export default function SearchOverlay({ onClose, categories, inputRef, restored 
     body = (
       <div className="flex flex-col gap-2" aria-busy="true">
         {[0, 1, 2].map((i) => (
-          <div key={i} className="h-[74px] animate-pulse rounded bg-[#F0EDE8]" />
+          <div key={i} className="h-[74px] animate-pulse rounded bg-panel" />
         ))}
       </div>
     );
   } else if (longEnough && results.length === 0) {
     body = (
-      <div className="rounded border border-[#E8E4DE] bg-white p-4 text-center">
-        <p className="text-sm font-medium text-[#1A1A1A]">{t("noResults", { query: term })}</p>
-        <p className="mt-1 text-xs text-[#6B6B6B]">{t("noResultsHint")}</p>
+      <div className="rounded border border-border bg-surface p-4 text-center">
+        <p className="text-sm font-medium text-foreground">{t("noResults", { query: term })}</p>
+        <p className="mt-1 text-xs text-muted">{t("noResultsHint")}</p>
         {/* Each button as wide as its label (flex-auto), so both fit one row
             on a phone; when they don't (320px) the second wraps under the
             first and both take the full width. Labels centred both ways. */}
@@ -410,7 +410,7 @@ export default function SearchOverlay({ onClose, categories, inputRef, restored 
                 search_term: searchTerm,
               })
             }
-            className="flex min-h-11 flex-auto items-center justify-center rounded bg-[#C4A882] px-2.5 py-2 text-center text-xs font-medium uppercase leading-tight tracking-wide text-white"
+            className="flex min-h-11 flex-auto items-center justify-center rounded bg-accent px-2.5 py-2 text-center text-xs font-medium uppercase leading-tight tracking-wide text-white"
           >
             {t("askTelegram")}
           </a>
@@ -424,7 +424,7 @@ export default function SearchOverlay({ onClose, categories, inputRef, restored 
               });
               dismiss();
             }}
-            className="flex min-h-11 flex-auto items-center justify-center rounded border border-[#1A1A1A] px-2.5 py-2 text-center text-xs font-medium uppercase leading-tight tracking-wide text-[#1A1A1A]"
+            className="flex min-h-11 flex-auto items-center justify-center rounded border border-foreground px-2.5 py-2 text-center text-xs font-medium uppercase leading-tight tracking-wide text-foreground"
           >
             {t("allProducts")}
           </Link>
@@ -440,7 +440,7 @@ export default function SearchOverlay({ onClose, categories, inputRef, restored 
         {matches.length > results.length && (
           <button
             type="submit"
-            className="rounded border border-[#E8E4DE] bg-white py-3 text-center text-xs font-medium uppercase tracking-wider text-[#1A1A1A]"
+            className="rounded border border-border bg-surface py-3 text-center text-xs font-medium uppercase tracking-wider text-foreground"
           >
             {t("showAll", { count: matches.length })}
           </button>
@@ -461,7 +461,7 @@ export default function SearchOverlay({ onClose, categories, inputRef, restored 
                   key={cat.id}
                   href={`/shop/category/${cat.slug}`}
                   onClick={dismiss}
-                  className="shrink-0 whitespace-nowrap rounded-full border border-[#E8E4DE] bg-white px-4 py-2.5 text-sm text-[#1A1A1A] transition-colors hover:border-[#C4A882]"
+                  className="shrink-0 whitespace-nowrap rounded-full border border-border bg-surface px-4 py-2.5 text-sm text-foreground transition-colors hover:border-accent"
                 >
                   {cat.name}
                 </Link>
@@ -485,25 +485,25 @@ export default function SearchOverlay({ onClose, categories, inputRef, restored 
       aria-modal="true"
       aria-label={t("title")}
       data-search-overlay
-      className="fixed inset-0 z-[60] bg-[#FAFAF8] md:flex md:items-start md:justify-center md:bg-black/50 md:px-4 md:pt-[12vh]"
+      className="fixed inset-0 z-[60] bg-background md:flex md:items-start md:justify-center md:bg-black/50 md:px-4 md:pt-[12vh]"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) dismiss();
       }}
     >
       <div
         ref={panelRef}
-        className="fixed inset-x-0 top-0 flex h-dvh flex-col bg-[#FAFAF8] md:relative md:h-auto md:max-h-[70vh] md:w-full md:max-w-xl md:overflow-hidden md:rounded md:shadow-2xl"
+        className="fixed inset-x-0 top-0 flex h-dvh flex-col bg-background md:relative md:h-auto md:max-h-[70vh] md:w-full md:max-w-xl md:overflow-hidden md:rounded md:shadow-2xl"
       >
         {/* One form around everything, so the keyboard's "search" key and the
             "show all" button under the results both submit it. */}
         <form onSubmit={submit} role="search" className="flex min-h-0 flex-1 flex-col">
-          <div className="flex shrink-0 items-center gap-1 border-b border-[#E8E4DE] bg-white px-2 pb-2.5 pt-[calc(0.625rem+env(safe-area-inset-top))] md:gap-2 md:px-3 md:pt-2.5">
+          <div className="flex shrink-0 items-center gap-1 border-b border-border bg-surface px-2 pb-2.5 pt-[calc(0.625rem+env(safe-area-inset-top))] md:gap-2 md:px-3 md:pt-2.5">
             {/* Phones: a back arrow on the left, where a full-screen page has it. */}
             <button
               type="button"
               onClick={dismiss}
               aria-label={t("close")}
-              className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded text-[#1A1A1A] md:hidden"
+              className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded text-foreground md:hidden"
             >
               <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
@@ -511,7 +511,7 @@ export default function SearchOverlay({ onClose, categories, inputRef, restored 
             </button>
             <div className="relative min-w-0 flex-1">
               <svg
-                className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#A0A0A0]"
+                className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-subtle"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={1.5}
@@ -535,7 +535,7 @@ export default function SearchOverlay({ onClose, categories, inputRef, restored 
                 onChange={(e) => changeQuery(e.target.value)}
                 placeholder={t("placeholder")}
                 aria-label={t("title")}
-                className="h-12 w-full appearance-none rounded border border-[#E8E4DE] bg-[#FAFAF8] pl-10 pr-10 text-base text-[#1A1A1A] placeholder:text-[#A0A0A0] focus:border-[#C4A882] focus:outline-none [&::-webkit-search-cancel-button]:hidden"
+                className="h-12 w-full appearance-none rounded border border-border bg-background pl-10 pr-10 text-base text-foreground placeholder:text-subtle focus:border-accent focus:outline-none [&::-webkit-search-cancel-button]:hidden"
               />
               {query && (
                 <button
@@ -549,7 +549,7 @@ export default function SearchOverlay({ onClose, categories, inputRef, restored 
                     inputRef.current?.focus();
                   }}
                   aria-label={t("clear")}
-                  className="absolute right-0 top-0 flex h-12 w-10 items-center justify-center text-[#6B6B6B]"
+                  className="absolute right-0 top-0 flex h-12 w-10 items-center justify-center text-muted"
                 >
                   <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -560,7 +560,7 @@ export default function SearchOverlay({ onClose, categories, inputRef, restored 
             <button
               type="button"
               onClick={dismiss}
-              className="hidden h-12 flex-shrink-0 rounded px-3 text-sm font-medium text-[#1A1A1A] transition-colors hover:text-[#C4A882] md:block"
+              className="hidden h-12 flex-shrink-0 rounded px-3 text-sm font-medium text-foreground transition-colors hover:text-accent md:block"
             >
               {t("close")}
             </button>

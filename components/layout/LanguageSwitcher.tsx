@@ -19,19 +19,19 @@ export default function LanguageSwitcher() {
         onClick={() => switchLocale("uk")}
         className={`px-1.5 py-0.5 rounded transition-colors ${
           locale === "uk"
-            ? "text-[#1A1A1A] font-semibold"
-            : "text-[#6B6B6B] hover:text-[#C4A882]"
+            ? "text-foreground font-semibold"
+            : "text-muted hover:text-accent"
         }`}
       >
         UA
       </button>
-      <span className="text-[#E8E4DE]">|</span>
+      <span className="text-border">|</span>
       <button
         onClick={() => switchLocale("en")}
         className={`px-1.5 py-0.5 rounded transition-colors ${
           locale === "en"
-            ? "text-[#1A1A1A] font-semibold"
-            : "text-[#6B6B6B] hover:text-[#C4A882]"
+            ? "text-foreground font-semibold"
+            : "text-muted hover:text-accent"
         }`}
       >
         EN

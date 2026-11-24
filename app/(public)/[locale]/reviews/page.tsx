@@ -113,15 +113,15 @@ export default async function ReviewsPage({
       )}
 
       {/* Breadcrumb */}
-      <nav className="text-xs text-[#6B6B6B] mb-8">
-        <Link href="/" className="hover:text-[#C4A882]">{tc("home")}</Link>
+      <nav className="text-xs text-muted mb-8">
+        <Link href="/" className="hover:text-accent">{tc("home")}</Link>
         <span className="mx-2">/</span>
-        <span className="text-[#1A1A1A]">{t("title")}</span>
+        <span className="text-foreground">{t("title")}</span>
       </nav>
 
       <div className="text-center mb-12">
-        <h1 className="font-serif text-4xl font-bold text-[#1A1A1A] mb-3">{t("title")}</h1>
-        <p className="text-[#6B6B6B] max-w-xl mx-auto">
+        <h1 className="font-serif text-4xl font-bold text-foreground mb-3">{t("title")}</h1>
+        <p className="text-muted max-w-xl mx-auto">
           {t("subtitle")}
         </p>
       </div>
