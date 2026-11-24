@@ -385,6 +385,7 @@
     "orderAccepted": "Your order has been accepted and will be processed shortly.",
     "orderNumber": "Order number:",
     "willContact": "We will contact you to confirm the order.",
+    "willShip": "Payment received. We'll ship via Nova Poshta within 1–3 business days — the tracking number will arrive by SMS.",
     "reviewPrompt": "If you enjoyed our service, we'd appreciate a",
     "googleReview": "review on our site",
     "reviewTime": "— it only takes 30 seconds.",
