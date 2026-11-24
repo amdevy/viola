@@ -112,7 +112,7 @@ export default function NovaPoshtaSelect({
     <div className="space-y-4">
       {/* City */}
       <div className="flex flex-col gap-1" ref={cityRef}>
-        <label className="text-sm font-medium text-[#1A1A1A]">{t("city")}</label>
+        <label className="text-sm font-medium text-foreground">{t("city")}</label>
         <div className="relative">
           <input
             type="text"
@@ -128,40 +128,40 @@ export default function NovaPoshtaSelect({
             }}
             onFocus={() => cities.length > 0 && setShowCityDropdown(true)}
             onBlur={() => commitCityRef.current()}
-            className={`w-full px-4 py-3 text-sm border rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#C4A882] transition-colors ${
-              cityError ? "border-[#E53E3E]" : "border-[#E8E4DE]"
+            className={`w-full px-4 py-3 text-sm border rounded bg-surface focus:outline-none focus:ring-2 focus:ring-accent transition-colors ${
+              cityError ? "border-error" : "border-border"
             }`}
           />
           {cityLoading && (
             <div className="absolute right-3 top-1/2 -translate-y-1/2">
-              <div className="w-4 h-4 border-2 border-[#C4A882] border-t-transparent rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
             </div>
           )}
 
           {showCityDropdown && cities.length > 0 && (
-            <div className="absolute top-full left-0 right-0 bg-white border border-[#E8E4DE] rounded shadow-lg z-20 max-h-48 overflow-y-auto">
+            <div className="absolute top-full left-0 right-0 bg-surface border border-border rounded shadow-lg z-20 max-h-48 overflow-y-auto">
               {cities.map((city) => (
                 <button
                   key={city.Ref}
                   type="button"
                   onClick={() => selectCity(city)}
-                  className="w-full text-left px-4 py-2.5 text-sm text-[#1A1A1A] hover:bg-[#F0EDE8] transition-colors"
+                  className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-panel transition-colors"
                 >
                   {city.Description}
                   {city.AreaDescription && (
-                    <span className="text-[#6B6B6B] ml-1">({city.AreaDescription})</span>
+                    <span className="text-muted ml-1">({city.AreaDescription})</span>
                   )}
                 </button>
               ))}
             </div>
           )}
         </div>
-        {cityError && <p className="text-xs text-[#E53E3E]">{cityError}</p>}
+        {cityError && <p className="text-xs text-error">{cityError}</p>}
       </div>
 
       {/* Warehouse — видиме завжди, щоб юзер бачив другий крок доставки */}
       <div className="flex flex-col gap-1" ref={warehouseRef}>
-        <label className="text-sm font-medium text-[#1A1A1A]">{t("warehouse")}</label>
+        <label className="text-sm font-medium text-foreground">{t("warehouse")}</label>
         <div className="relative">
           <input
             type="text"
@@ -185,13 +185,13 @@ export default function NovaPoshtaSelect({
               }}
               onFocus={() => !selectedWarehouse && setShowWarehouseDropdown(true)}
               readOnly={warehouseLoading}
-              className={`w-full px-4 py-3 text-sm border rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#C4A882] transition-colors disabled:bg-[#F7F5F2] disabled:cursor-not-allowed ${
-                warehouseError ? "border-[#E53E3E]" : "border-[#E8E4DE]"
+              className={`w-full px-4 py-3 text-sm border rounded bg-surface focus:outline-none focus:ring-2 focus:ring-accent transition-colors disabled:bg-[#F7F5F2] dark:disabled:bg-panel disabled:cursor-not-allowed ${
+                warehouseError ? "border-error" : "border-border"
               }`}
             />
             {warehouseLoading && (
               <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                <div className="w-4 h-4 border-2 border-[#C4A882] border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
               </div>
             )}
             {selectedWarehouse && (
@@ -202,14 +202,14 @@ export default function NovaPoshtaSelect({
                   setWarehouseQuery("");
                   onWarehouseChange(null);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B6B6B] hover:text-[#1A1A1A]"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-foreground"
               >
                 ✕
               </button>
             )}
 
             {showWarehouseDropdown && !selectedWarehouse && warehouses.length > 0 && (
-              <div className="absolute top-full left-0 right-0 bg-white border border-[#E8E4DE] rounded shadow-lg z-20 max-h-60 overflow-y-auto">
+              <div className="absolute top-full left-0 right-0 bg-surface border border-border rounded shadow-lg z-20 max-h-60 overflow-y-auto">
                 {warehouses
                   .filter((wh) =>
                     warehouseQuery.length === 0 ||
@@ -224,7 +224,7 @@ export default function NovaPoshtaSelect({
                         setWarehouseQuery("");
                         setShowWarehouseDropdown(false);
                       }}
-                      className="w-full text-left px-4 py-2.5 text-sm text-[#1A1A1A] hover:bg-[#F0EDE8] transition-colors"
+                      className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-panel transition-colors"
                     >
                       {wh.Description}
                     </button>
@@ -232,7 +232,7 @@ export default function NovaPoshtaSelect({
               </div>
             )}
           </div>
-          {warehouseError && <p className="text-xs text-[#E53E3E]">{warehouseError}</p>}
+          {warehouseError && <p className="text-xs text-error">{warehouseError}</p>}
         </div>
     </div>
   );

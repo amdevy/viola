@@ -78,42 +78,42 @@ export default async function PoslugyPage({
         ]) }}
       />
 
-      <nav className="text-xs text-[#6B6B6B] mb-8">
-        <Link href="/" className="hover:text-[#C4A882]">{tc("home")}</Link>
+      <nav className="text-xs text-muted mb-8">
+        <Link href="/" className="hover:text-accent">{tc("home")}</Link>
         <span className="mx-2">/</span>
-        <span className="text-[#1A1A1A]">{t("breadcrumb")}</span>
+        <span className="text-foreground">{t("breadcrumb")}</span>
       </nav>
 
-      <h1 className="font-serif text-4xl font-bold text-[#1A1A1A] mb-4">
+      <h1 className="font-serif text-4xl font-bold text-foreground mb-4">
         {t("title")}
       </h1>
 
       <p
-        className="text-lg text-[#6B6B6B] mb-10 leading-relaxed max-w-2xl"
+        className="text-lg text-muted mb-10 leading-relaxed max-w-2xl"
         dangerouslySetInnerHTML={{ __html: t.raw("intro") }}
       />
 
       <div className="space-y-8">
         {SERVICES.map((s) => (
-          <section key={s.title} className="border-b border-[#E8E4DE] pb-8 last:border-b-0">
-            <h2 className="font-serif text-xl font-bold text-[#1A1A1A] mb-3">
+          <section key={s.title} className="border-b border-border pb-8 last:border-b-0">
+            <h2 className="font-serif text-xl font-bold text-foreground mb-3">
               {s.title}
             </h2>
-            <p className="text-[#6B6B6B] leading-relaxed">
+            <p className="text-muted leading-relaxed">
               {s.desc}
             </p>
           </section>
         ))}
       </div>
 
-      <div className="mt-12 bg-[#F5F2EE] border border-[#E8E4DE] rounded p-6 text-center">
-        <p className="text-[#6B6B6B] mb-4">
+      <div className="mt-12 bg-[#F5F2EE] dark:bg-panel border border-border rounded p-6 text-center">
+        <p className="text-muted mb-4">
           {t("ctaText")}
         </p>
         <div className="flex flex-wrap justify-center gap-4">
           <Link
             href="/contacts"
-            className="inline-flex items-center gap-2 bg-[#1A1A1A] text-white px-6 py-3 text-sm font-medium uppercase tracking-[0.15em] hover:bg-[#C4A882] transition-colors rounded-sm"
+            className="inline-flex items-center gap-2 bg-ink text-on-ink px-6 py-3 text-sm font-medium uppercase tracking-[0.15em] hover:bg-accent transition-colors rounded-sm"
           >
             {tc("contact")}
           </Link>
@@ -121,7 +121,7 @@ export default async function PoslugyPage({
             href="https://www.instagram.com/viola.mukachevo"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 border-2 border-[#1A1A1A] text-[#1A1A1A] px-6 py-3 text-sm font-medium uppercase tracking-[0.15em] hover:bg-[#1A1A1A] hover:text-white transition-colors rounded-sm"
+            className="inline-flex items-center gap-2 border-2 border-foreground text-foreground px-6 py-3 text-sm font-medium uppercase tracking-[0.15em] hover:bg-ink hover:text-on-ink transition-colors rounded-sm"
           >
             Instagram
           </a>

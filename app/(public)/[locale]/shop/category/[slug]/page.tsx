@@ -211,30 +211,30 @@ export default async function CategoryPage({ params }: Props) {
       )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 md:py-8">
-        <nav className="text-xs text-[#6B6B6B] mb-6 flex items-center gap-2">
-          <Link href="/" className="hover:text-[#C4A882]">{tc("home")}</Link>
+        <nav className="text-xs text-muted mb-6 flex items-center gap-2">
+          <Link href="/" className="hover:text-accent">{tc("home")}</Link>
           <span>/</span>
-          <Link href="/shop" className="hover:text-[#C4A882]">{ts("breadcrumbShop")}</Link>
+          <Link href="/shop" className="hover:text-accent">{ts("breadcrumbShop")}</Link>
           {parent && (
             <>
               <span>/</span>
               <Link
                 href={`/shop/category/${parent.slug}`}
-                className="hover:text-[#C4A882]"
+                className="hover:text-accent"
               >
                 {parent.name}
               </Link>
             </>
           )}
           <span>/</span>
-          <span className="text-[#1A1A1A]">{category.name}</span>
+          <span className="text-foreground">{category.name}</span>
         </nav>
 
         <header className="mb-6 md:mb-10 max-w-3xl">
-          <p className="text-[#C4A882] text-xs uppercase tracking-[0.3em] mb-3">{brand.eyebrow}</p>
+          <p className="text-accent text-xs uppercase tracking-[0.3em] mb-3">{brand.eyebrow}</p>
           {/* У H1 бренд без наголосу і дужок: "na golovy шампунь" — 2 275
               показів за квартал, а "Gólov[y]" на цей запит не матчиться. */}
-          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1A1A1A] mb-4 leading-tight">
+          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4 leading-tight">
             {categoryHeading(category.name, brand, locale)}
           </h1>
           <CollapsibleIntro
@@ -242,9 +242,9 @@ export default async function CategoryPage({ params }: Props) {
             lessLabel={tc("showLess")}
             analyticsId={category.slug}
           >
-            <p className="text-[#6B6B6B] leading-relaxed">{introText}</p>
+            <p className="text-muted leading-relaxed">{introText}</p>
             {factsInput && (
-              <p className="mt-3 text-sm font-medium text-[#1A1A1A]">
+              <p className="mt-3 text-sm font-medium text-foreground">
                 {categoryFactsLine(factsInput)}
               </p>
             )}
@@ -260,7 +260,7 @@ export default async function CategoryPage({ params }: Props) {
               <Link
                 key={child.id}
                 href={`/shop/category/${child.slug}`}
-                className="px-4 py-2 text-sm rounded border border-[#E8E4DE] bg-white text-[#1A1A1A] hover:border-[#C4A882] hover:text-[#C4A882] transition-colors"
+                className="px-4 py-2 text-sm rounded border border-border bg-surface text-foreground hover:border-accent hover:text-accent transition-colors"
               >
                 {child.name}
               </Link>
@@ -278,24 +278,24 @@ export default async function CategoryPage({ params }: Props) {
             </div>
           </>
         ) : (
-          <p className="text-[#6B6B6B] text-center py-16">
+          <p className="text-muted text-center py-16">
             {locale === "en" ? "No products in this category yet." : "У цій категорії поки немає товарів."}
           </p>
         )}
 
         {/* Long-form SEO content: technologist guidance + FAQ */}
         {(seo || faq.length > 0) && (
-          <section className="mt-16 pt-12 border-t border-[#E8E4DE] max-w-3xl">
+          <section className="mt-16 pt-12 border-t border-border max-w-3xl">
             {seo && (
               <div className="space-y-10 mb-12">
                 {seo.sections.map((s) => (
                   <div key={s.heading}>
-                    <h2 className="font-serif text-2xl font-semibold text-[#1A1A1A] mb-4">
+                    <h2 className="font-serif text-2xl font-semibold text-foreground mb-4">
                       {s.heading}
                     </h2>
                     <div className="space-y-3">
                       {s.body.map((p, i) => (
-                        <p key={i} className="text-[#6B6B6B] leading-relaxed">
+                        <p key={i} className="text-muted leading-relaxed">
                           {p}
                         </p>
                       ))}
@@ -307,14 +307,14 @@ export default async function CategoryPage({ params }: Props) {
 
             {faq.length > 0 && (
               <div>
-                <h2 className="font-serif text-2xl font-semibold text-[#1A1A1A] mb-6">
+                <h2 className="font-serif text-2xl font-semibold text-foreground mb-6">
                   {locale === "en" ? "Frequently asked questions" : "Часті запитання"}
                 </h2>
                 <div className="space-y-6">
                   {faq.map((f) => (
-                    <div key={f.q} className="border-b border-[#E8E4DE] pb-6">
-                      <h3 className="font-medium text-[#1A1A1A] mb-2">{f.q}</h3>
-                      <p className="text-[#6B6B6B] leading-relaxed">{f.a}</p>
+                    <div key={f.q} className="border-b border-border pb-6">
+                      <h3 className="font-medium text-foreground mb-2">{f.q}</h3>
+                      <p className="text-muted leading-relaxed">{f.a}</p>
                     </div>
                   ))}
                 </div>
@@ -328,7 +328,7 @@ export default async function CategoryPage({ params }: Props) {
         <div className="mt-10">
           <Link
             href="/na-golovy"
-            className="text-sm text-[#C4A882] hover:text-[#1A1A1A] transition-colors"
+            className="text-sm text-accent hover:text-foreground transition-colors"
           >
             {locale === "en"
               ? "Learn more about the Na Golovy brand →"
@@ -337,8 +337,8 @@ export default async function CategoryPage({ params }: Props) {
         </div>
 
         {/* Internal linking: other categories */}
-        <aside className="mt-16 pt-12 border-t border-[#E8E4DE]">
-          <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-6">
+        <aside className="mt-16 pt-12 border-t border-border">
+          <h2 className="font-serif text-xl font-semibold text-foreground mb-6">
             {locale === "en" ? "Other categories" : "Інші категорії"}
           </h2>
           <OtherCategoriesList currentSlug={slug} locale={locale} />
@@ -375,7 +375,7 @@ async function OtherCategoriesList({
         <Link
           key={c.id}
           href={`/shop/category/${c.slug}`}
-          className="text-sm border border-[#E8E4DE] px-4 py-2 rounded hover:border-[#C4A882] hover:text-[#C4A882] transition-colors"
+          className="text-sm border border-border px-4 py-2 rounded hover:border-accent hover:text-accent transition-colors"
         >
           {c.name}
         </Link>

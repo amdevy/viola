@@ -12,7 +12,7 @@ import type { Review } from "./page";
 
 function GoogleBadge({ url }: { url?: string | null }) {
   const Content = (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#F5F6F7] border border-[#E8E4DE] text-[10px] font-medium text-[#5F6368]">
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#F5F6F7] border border-border text-[10px] font-medium text-[#5F6368] dark:bg-panel dark:text-muted">
       <svg viewBox="0 0 24 24" className="w-3 h-3" aria-hidden>
         <path
           fill="#4285F4"
@@ -69,7 +69,7 @@ function StarRating({
           className={`${interactive ? "cursor-pointer hover:scale-110" : "cursor-default"} transition-transform`}
         >
           <svg
-            className={`w-5 h-5 ${star <= rating ? "text-[#C4A882]" : "text-[#E8E4DE]"}`}
+            className={`w-5 h-5 ${star <= rating ? "text-accent" : "text-border"}`}
             fill="currentColor"
             viewBox="0 0 20 20"
           >
@@ -134,17 +134,17 @@ export default function ReviewsList({
   return (
     <>
       {/* Summary + Write button */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-10 pb-8 border-b border-[#E8E4DE]">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-10 pb-8 border-b border-border">
         {reviews.length > 0 ? (
           <div className="flex items-center gap-4">
             <div className="text-center">
-              <p className="text-4xl font-bold text-[#1A1A1A]">{avgRating}</p>
+              <p className="text-4xl font-bold text-foreground">{avgRating}</p>
               <StarRating rating={Math.round(Number(avgRating))} />
-              <p className="text-xs text-[#6B6B6B] mt-1">{t("reviewCount", { count: reviews.length })}</p>
+              <p className="text-xs text-muted mt-1">{t("reviewCount", { count: reviews.length })}</p>
             </div>
           </div>
         ) : (
-          <p className="text-[#6B6B6B]">{t("noReviews")}</p>
+          <p className="text-muted">{t("noReviews")}</p>
         )}
         <Button onClick={() => setShowForm(true)}>{t("writeReview")}</Button>
       </div>
@@ -156,21 +156,21 @@ export default function ReviewsList({
             {slot && slotAfter !== undefined && i === slotAfter && (
               <div>{slot}</div>
             )}
-            <div className="bg-white rounded border border-[#E8E4DE] p-6">
+            <div className="bg-surface rounded border border-border p-6">
             <div className="flex items-start justify-between mb-3">
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <div className="w-8 h-8 bg-[#C4A882] rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                  <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center text-white text-sm font-semibold">
                     {review.author_name.charAt(0).toUpperCase()}
                   </div>
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <p className="font-medium text-[#1A1A1A] text-sm">
+                      <p className="font-medium text-foreground text-sm">
                         {review.author_name}
                       </p>
                       {review.source === "google" && <GoogleBadge url={review.source_url} />}
                     </div>
-                    <p className="text-xs text-[#6B6B6B]">
+                    <p className="text-xs text-muted">
                       {new Date(review.created_at).toLocaleDateString("uk-UA", {
                         day: "numeric",
                         month: "long",
@@ -183,13 +183,13 @@ export default function ReviewsList({
               <StarRating rating={review.rating} />
             </div>
 
-            <p className="text-sm text-[#1A1A1A] leading-relaxed">{review.text}</p>
+            <p className="text-sm text-foreground leading-relaxed">{review.text}</p>
 
             {review.product && (
-              <div className="mt-3 pt-3 border-t border-[#E8E4DE]">
+              <div className="mt-3 pt-3 border-t border-border">
                 <Link
                   href={`/shop/${review.product.slug}`}
-                  className="text-xs text-[#C4A882] hover:underline"
+                  className="text-xs text-accent hover:underline"
                 >
                   {review.product.name}
                 </Link>
@@ -220,7 +220,7 @@ export default function ReviewsList({
           />
 
           <div>
-            <label className="text-sm font-medium text-[#1A1A1A] block mb-2">
+            <label className="text-sm font-medium text-foreground block mb-2">
               {t("rating")}
             </label>
             <StarRating
@@ -231,7 +231,7 @@ export default function ReviewsList({
           </div>
 
           <div>
-            <label className="text-sm font-medium text-[#1A1A1A] block mb-1">
+            <label className="text-sm font-medium text-foreground block mb-1">
               {t("yourReview")}
             </label>
             <textarea
@@ -242,7 +242,7 @@ export default function ReviewsList({
               onChange={(e) =>
                 setFormData((f) => ({ ...f, text: e.target.value }))
               }
-              className="w-full px-4 py-3 text-sm border border-[#E8E4DE] rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#C4A882] resize-none"
+              className="w-full px-4 py-3 text-sm border border-border rounded bg-surface focus:outline-none focus:ring-2 focus:ring-accent resize-none"
             />
           </div>
 

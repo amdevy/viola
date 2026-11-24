@@ -27,15 +27,15 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variants = {
       primary:
-        "bg-[#1A1A1A] text-white hover:bg-[#333333] focus:ring-[#1A1A1A]",
+        "bg-ink text-on-ink hover:bg-ink-hover focus:ring-foreground",
       secondary:
-        "bg-[#C4A882] text-white hover:bg-[#A8875E] focus:ring-[#C4A882]",
+        "bg-accent text-white hover:bg-accent-dark focus:ring-accent",
       outline:
-        "border border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white focus:ring-[#1A1A1A]",
+        "border border-foreground text-foreground hover:bg-ink hover:text-on-ink focus:ring-foreground",
       ghost:
-        "text-[#1A1A1A] hover:bg-[#F0EDE8] focus:ring-[#C4A882]",
+        "text-foreground hover:bg-panel focus:ring-accent",
       danger:
-        "bg-[#E53E3E] text-white hover:bg-[#C53030] focus:ring-[#E53E3E]",
+        "bg-[#E53E3E] text-white hover:bg-[#C53030] focus:ring-error",
     };
 
     const sizes = {

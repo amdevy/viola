@@ -71,7 +71,7 @@ export default function ContactsForm() {
         onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
       />
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-[#1A1A1A]">
+        <label className="text-sm font-medium text-foreground">
           {t("messageLabel")}
         </label>
         <textarea
@@ -79,7 +79,7 @@ export default function ContactsForm() {
           value={form.message}
           onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
           rows={4}
-          className="w-full px-4 py-3 text-sm border border-[#E8E4DE] rounded bg-white text-[#1A1A1A] placeholder:text-[#A0A0A0] focus:outline-none focus:ring-2 focus:ring-[#C4A882] focus:border-transparent resize-none"
+          className="w-full px-4 py-3 text-sm border border-border rounded bg-surface text-foreground placeholder:text-subtle focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-none"
         />
       </div>
       <div className="flex justify-end">

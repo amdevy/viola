@@ -12,6 +12,7 @@ import type { CategoryNode } from "@/lib/categories";
 import MobileMenu from "./MobileMenu";
 import MobileBottomNav from "./MobileBottomNav";
 import LanguageSwitcher from "./LanguageSwitcher";
+import ThemeToggle from "./ThemeToggle";
 import CartDrawer from "@/components/shop/CartDrawer";
 import SearchOverlay from "@/components/search/SearchOverlay";
 import { readSearchMarker, type SearchMarker } from "@/lib/search-session";
@@ -68,22 +69,23 @@ export default function Header({ categories }: { categories: CategoryNode[] }) {
   return (
     <>
       <header
-        className={`sticky top-0 z-40 bg-[#FAFAF8] transition-shadow duration-300 ${scrolled ? 'shadow-sm' : ''}`}
+        className={`sticky top-0 z-40 bg-background transition-shadow duration-300 ${scrolled ? 'shadow-sm' : ''}`}
       >
         {/* Main header row */}
-        <div className='border-b border-[#E8E4DE]'>
+        <div className='border-b border-border'>
           <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
             <div className='flex items-center justify-between h-16 md:h-24'>
               {/* Left nav */}
               <div className='flex flex-1 justify-end'>
-                {/* Phones without the bottom bar (the order form): the header
-                    keeps its own cart and menu on the right, so the language
-                    switch moves here to balance them and keep the logo centred. */}
-                {!inBottomBar && (
-                  <div className='mr-auto md:hidden'>
-                    <LanguageSwitcher />
-                  </div>
-                )}
+                {/* Phones: the theme switch sits on the left, across the logo
+                    from the language switch. Without the bottom bar (the order
+                    form) the header keeps its own cart and menu on the right,
+                    so the language switch moves here too, to balance them and
+                    keep the logo centred. */}
+                <div className='mr-auto flex items-center gap-1 md:hidden'>
+                  {!inBottomBar && <LanguageSwitcher />}
+                  <ThemeToggle />
+                </div>
                 <nav className='hidden md:flex items-center gap-7 justify-end'>
                   {[
                     { href: '/shop' as const, label: t("catalog") },
@@ -93,7 +95,7 @@ export default function Header({ categories }: { categories: CategoryNode[] }) {
                     <Link
                       key={link.label}
                       href={link.href}
-                      className='text-xs text-[#1A1A1A] hover:text-[#C4A882] transition-colors font-medium whitespace-nowrap'
+                      className='text-xs text-foreground hover:text-accent transition-colors font-medium whitespace-nowrap'
                     >
                       {link.label}
                     </Link>
@@ -111,12 +113,12 @@ export default function Header({ categories }: { categories: CategoryNode[] }) {
                   alt={t("logoAlt")}
                   width={200}
                   height={80}
-                  className='h-9 md:h-16 w-auto mix-blend-multiply'
+                  className='h-9 md:h-16 w-auto mix-blend-multiply dark:invert dark:mix-blend-screen'
                   priority
                 />
                 {/* Below 360px the tagline would push a full header row (switch,
                     cart, menu) past the screen edge. */}
-                <span className={`text-[9px] md:text-[10px] uppercase tracking-[0.2em] text-[#6B6B6B] font-light whitespace-nowrap ${inBottomBar ? '' : 'max-[359px]:hidden'}`}>
+                <span className={`text-[9px] md:text-[10px] uppercase tracking-[0.2em] text-muted font-light whitespace-nowrap ${inBottomBar ? '' : 'max-[359px]:hidden'}`}>
                   {t("cosmetics")}
                 </span>
               </Link>
@@ -140,7 +142,7 @@ export default function Header({ categories }: { categories: CategoryNode[] }) {
                     <Link
                       key={link.label}
                       href={link.href}
-                      className={`text-xs text-[#1A1A1A] hover:text-[#C4A882] transition-colors font-medium whitespace-nowrap ${link.show}`}
+                      className={`text-xs text-foreground hover:text-accent transition-colors font-medium whitespace-nowrap ${link.show}`}
                     >
                       {link.label}
                     </Link>
@@ -152,7 +154,7 @@ export default function Header({ categories }: { categories: CategoryNode[] }) {
                   </div>
                   <button
                     onClick={() => openCart("header")}
-                    className={`relative p-2 text-[#1A1A1A] hover:text-[#C4A882] transition-colors ${inBottomBar ? 'hidden md:block' : ''}`}
+                    className={`relative p-2 text-foreground hover:text-accent transition-colors ${inBottomBar ? 'hidden md:block' : ''}`}
                     aria-label={t("cart")}
                   >
                     <svg
@@ -169,7 +171,7 @@ export default function Header({ categories }: { categories: CategoryNode[] }) {
                       />
                     </svg>
                     {mounted && count > 0 && (
-                      <span className='absolute -top-0.5 -right-0.5 bg-[#C4A882] text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center'>
+                      <span className='absolute -top-0.5 -right-0.5 bg-accent text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center'>
                         {count > 9 ? '9+' : count}
                       </span>
                     )}
@@ -177,7 +179,7 @@ export default function Header({ categories }: { categories: CategoryNode[] }) {
 
                   <button
                     onClick={() => setMenuOpen(true)}
-                    className={`p-2 text-[#1A1A1A] hover:text-[#C4A882] transition-colors ${inBottomBar ? 'hidden' : 'md:hidden'}`}
+                    className={`p-2 text-foreground hover:text-accent transition-colors ${inBottomBar ? 'hidden' : 'md:hidden'}`}
                     aria-label={t("menu")}
                   >
                     <svg
@@ -205,9 +207,14 @@ export default function Header({ categories }: { categories: CategoryNode[] }) {
             the former is the canonical, content-bearing page, and sitewide nav
             is the strongest internal link a page can get. */}
         {categories.length > 0 && (
-          <div className='hidden md:block border-b border-[#E8E4DE] bg-white'>
+          <div className='hidden md:block border-b border-border bg-surface'>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
               <div className='relative flex items-center justify-center gap-8 h-10'>
+                {/* Theme switch for tablets and desktops, across the row from
+                    the search: the row above is full at 1024px. */}
+                <div className='absolute left-0 top-1/2 -translate-y-1/2'>
+                  <ThemeToggle />
+                </div>
                 {/* Search for tablets and desktops. It sits in this row because
                     the row above has no room left at 1024px; on phones search
                     is in the bottom bar, next to the thumb (MobileBottomNav). */}
@@ -215,7 +222,7 @@ export default function Header({ categories }: { categories: CategoryNode[] }) {
                   type='button'
                   onClick={openSearch}
                   aria-label={t("search")}
-                  className='absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-1.5 p-2 text-xs uppercase tracking-widest font-medium text-[#1A1A1A] hover:text-[#C4A882] transition-colors'
+                  className='absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-1.5 p-2 text-xs uppercase tracking-widest font-medium text-foreground hover:text-accent transition-colors'
                 >
                   <svg className='w-4 h-4' fill='none' stroke='currentColor' strokeWidth={1.75} viewBox='0 0 24 24' aria-hidden='true'>
                     <path strokeLinecap='round' strokeLinejoin='round' d='M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z' />
@@ -226,7 +233,7 @@ export default function Header({ categories }: { categories: CategoryNode[] }) {
                   <div key={cat.id} className='relative group h-full flex items-center'>
                     <Link
                       href={`/shop/category/${cat.slug}`}
-                      className='text-xs uppercase tracking-widest text-[#1A1A1A] hover:text-[#C4A882] transition-colors whitespace-nowrap font-medium py-2 flex items-center gap-1'
+                      className='text-xs uppercase tracking-widest text-foreground hover:text-accent transition-colors whitespace-nowrap font-medium py-2 flex items-center gap-1'
                     >
                       {cat.name}
                       {cat.children.length > 0 && (
@@ -237,12 +244,12 @@ export default function Header({ categories }: { categories: CategoryNode[] }) {
                     </Link>
                     {cat.children.length > 0 && (
                       <div className='absolute top-full left-1/2 -translate-x-1/2 pt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50'>
-                        <div className='bg-white border border-[#E8E4DE] rounded shadow-sm py-2 min-w-[220px]'>
+                        <div className='bg-surface border border-border rounded shadow-sm py-2 min-w-[220px]'>
                           {cat.children.map((child) => (
                             <Link
                               key={child.id}
                               href={`/shop/category/${child.slug}`}
-                              className='block px-4 py-2 text-xs text-[#1A1A1A] hover:text-[#C4A882] hover:bg-[#FAFAF8] transition-colors whitespace-nowrap'
+                              className='block px-4 py-2 text-xs text-foreground hover:text-accent hover:bg-background transition-colors whitespace-nowrap'
                             >
                               {child.name}
                             </Link>

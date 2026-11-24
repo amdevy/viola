@@ -39,7 +39,7 @@ function StarRow({
           className={interactive ? "cursor-pointer hover:scale-110 transition-transform" : "cursor-default"}
         >
           <svg
-            className={`${px} ${star <= rating ? "text-[#C4A882]" : "text-[#E8E4DE]"}`}
+            className={`${px} ${star <= rating ? "text-accent" : "text-border"}`}
             fill="currentColor"
             viewBox="0 0 20 20"
           >
@@ -100,29 +100,29 @@ export default function ProductReviews({
   };
 
   return (
-    <section className="mt-16 pt-12 border-t border-[#E8E4DE]">
+    <section className="mt-16 pt-12 border-t border-border">
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
         <div>
-          <h2 className="font-serif text-2xl font-bold text-[#1A1A1A] mb-2">
+          <h2 className="font-serif text-2xl font-bold text-foreground mb-2">
             {t("title")}
           </h2>
           {reviews.length > 0 ? (
             <div className="flex items-center gap-3">
               <StarRow rating={Math.round(avg)} />
-              <span className="text-sm font-semibold text-[#1A1A1A]">
+              <span className="text-sm font-semibold text-foreground">
                 {avg.toFixed(1)}
               </span>
-              <span className="text-sm text-[#6B6B6B]">
+              <span className="text-sm text-muted">
                 · {tf("reviewCount", { count: reviews.length })}
               </span>
             </div>
           ) : (
-            <p className="text-sm text-[#6B6B6B]">{t("emptyHint")}</p>
+            <p className="text-sm text-muted">{t("emptyHint")}</p>
           )}
         </div>
         <button
           onClick={() => setShowForm(true)}
-          className="text-sm font-medium text-[#1A1A1A] border-b border-[#1A1A1A] pb-0.5 hover:text-[#C4A882] hover:border-[#C4A882] transition-colors self-start sm:self-auto"
+          className="text-sm font-medium text-foreground border-b border-foreground pb-0.5 hover:text-accent hover:border-accent transition-colors self-start sm:self-auto"
         >
           {tf("writeReview")}
         </button>
@@ -133,18 +133,18 @@ export default function ProductReviews({
           {visible.map((r) => (
             <article
               key={r.id}
-              className="bg-white border border-[#E8E4DE] rounded p-5"
+              className="bg-surface border border-border rounded p-5"
             >
               <header className="flex items-start justify-between gap-4 mb-2">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-[#C4A882] text-white flex items-center justify-center text-sm font-semibold">
+                  <div className="w-9 h-9 rounded-full bg-accent text-white flex items-center justify-center text-sm font-semibold">
                     {r.author_name.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-[#1A1A1A]">
+                    <p className="text-sm font-medium text-foreground">
                       {r.author_name}
                     </p>
-                    <p className="text-xs text-[#6B6B6B]">
+                    <p className="text-xs text-muted">
                       {new Date(r.created_at).toLocaleDateString(dateLocale, {
                         day: "numeric",
                         month: "long",
@@ -155,7 +155,7 @@ export default function ProductReviews({
                 </div>
                 <StarRow rating={r.rating} size="sm" />
               </header>
-              <p className="text-sm text-[#1A1A1A] leading-relaxed whitespace-pre-line">
+              <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">
                 {r.text}
               </p>
             </article>
@@ -164,7 +164,7 @@ export default function ProductReviews({
           {reviews.length > 3 && (
             <button
               onClick={() => setExpanded((v) => !v)}
-              className="block mx-auto text-sm font-medium text-[#C4A882] hover:text-[#1A1A1A] transition-colors pt-2"
+              className="block mx-auto text-sm font-medium text-accent hover:text-foreground transition-colors pt-2"
             >
               {expanded ? t("showLess") : t("showMore", { count: reviews.length - 3 })}
             </button>
@@ -188,7 +188,7 @@ export default function ProductReviews({
             onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
           />
           <div>
-            <label className="text-sm font-medium text-[#1A1A1A] block mb-2">
+            <label className="text-sm font-medium text-foreground block mb-2">
               {tf("rating")}
             </label>
             <StarRow
@@ -199,7 +199,7 @@ export default function ProductReviews({
             />
           </div>
           <div>
-            <label className="text-sm font-medium text-[#1A1A1A] block mb-1">
+            <label className="text-sm font-medium text-foreground block mb-1">
               {tf("yourReview")}
             </label>
             <textarea
@@ -208,7 +208,7 @@ export default function ProductReviews({
               placeholder={tf("reviewPlaceholder")}
               value={form.text}
               onChange={(e) => setForm((f) => ({ ...f, text: e.target.value }))}
-              className="w-full px-4 py-3 text-sm border border-[#E8E4DE] rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#C4A882] resize-none"
+              className="w-full px-4 py-3 text-sm border border-border rounded bg-surface focus:outline-none focus:ring-2 focus:ring-accent resize-none"
             />
           </div>
           <div className="flex gap-3 pt-2">

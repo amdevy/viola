@@ -33,19 +33,19 @@ export default async function NotFound() {
     <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 text-center">
       <p
         aria-hidden="true"
-        className="font-serif text-8xl sm:text-9xl font-bold leading-none text-[#C4A882] mb-6"
+        className="font-serif text-8xl sm:text-9xl font-bold leading-none text-accent mb-6"
       >
         404
       </p>
-      <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-4 text-balance">
+      <h1 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-4 text-balance">
         {t("title")}
       </h1>
-      <p className="text-[#6B6B6B] leading-relaxed max-w-xl mx-auto mb-10">{t("text")}</p>
+      <p className="text-muted leading-relaxed max-w-xl mx-auto mb-10">{t("text")}</p>
 
       <div className="flex flex-wrap justify-center gap-3 mb-14">
         <Link
           href="/shop"
-          className="inline-flex items-center gap-2 bg-[#1A1A1A] text-white px-8 py-4 text-sm font-medium uppercase tracking-[0.2em] hover:bg-[#C4A882] transition-colors rounded-sm"
+          className="inline-flex items-center gap-2 bg-ink text-on-ink px-8 py-4 text-sm font-medium uppercase tracking-[0.2em] hover:bg-accent transition-colors rounded-sm"
         >
           {t("toCatalog")}
         </Link>
@@ -55,19 +55,19 @@ export default async function NotFound() {
           rel="noopener noreferrer"
           eventName="telegram_consultation"
           eventParams={{ source: "not_found" }}
-          className="inline-flex items-center gap-2 border border-[#1A1A1A] text-[#1A1A1A] px-8 py-4 text-sm font-medium uppercase tracking-[0.2em] hover:bg-[#1A1A1A] hover:text-white transition-colors rounded-sm"
+          className="inline-flex items-center gap-2 border border-foreground text-foreground px-8 py-4 text-sm font-medium uppercase tracking-[0.2em] hover:bg-ink hover:text-on-ink transition-colors rounded-sm"
         >
           {t("askTechnologist")}
         </TrackedLink>
       </div>
 
-      <p className="text-xs uppercase tracking-[0.3em] text-[#6B6B6B] mb-4">{t("popular")}</p>
+      <p className="text-xs uppercase tracking-[0.3em] text-muted mb-4">{t("popular")}</p>
       <nav aria-label={t("popular")} className="flex flex-wrap justify-center gap-2">
         {sections.map((s) => (
           <Link
             key={s.href}
             href={s.href}
-            className="px-4 py-2 text-sm rounded border border-[#E8E4DE] bg-white text-[#1A1A1A] hover:border-[#C4A882] hover:text-[#C4A882] transition-colors"
+            className="px-4 py-2 text-sm rounded border border-border bg-surface text-foreground hover:border-accent hover:text-accent transition-colors"
           >
             {s.label}
           </Link>

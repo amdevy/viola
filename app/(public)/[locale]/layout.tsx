@@ -13,6 +13,7 @@ import { routing } from "@/i18n/routing";
 import { getCategoryTree } from "@/lib/categories-server";
 import { safeJsonLd } from "@/lib/utils";
 import { gaInitScript } from "@/lib/analytics";
+import { themeInitScript } from "@/lib/theme";
 import { SITE, SAME_AS } from "@/lib/site";
 
 export const revalidate = 3600;
@@ -120,8 +121,16 @@ export default async function LocaleLayout({
       : "Офіційний магазин косметики Na Gólov[y]. Технолог бренду — Віола Гегедош.";
 
   return (
-    <html lang={locale} className={`${inter.variable} ${cormorant.variable}`}>
+    <html
+      lang={locale}
+      className={`${inter.variable} ${cormorant.variable}`}
+      // The theme script below sets data-theme before React starts.
+      suppressHydrationWarning
+    >
       <head>
+        {/* First in <head>: a visitor who picked the dark theme gets it
+            before the first paint, with no flash of the light one. */}
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         {/* Google's gtag snippet, in <head> so it runs before any React code:
             events sent from mount effects (view_item, purchase…) need the
             dataLayer and `config` to exist already. See lib/analytics.ts. */}
@@ -214,7 +223,7 @@ export default async function LocaleLayout({
           }}
         />
       </head>
-      <body className="bg-[#FAFAF8] text-[#1A1A1A] antialiased flex flex-col min-h-screen">
+      <body className="bg-background text-foreground antialiased flex flex-col min-h-screen">
         <NextIntlClientProvider messages={messages}>
           <Header categories={categories} />
           <main className="flex-1">{children}</main>
@@ -227,7 +236,7 @@ export default async function LocaleLayout({
           toastOptions={{
             duration: 3000,
             style: {
-              background: "#1A1A1A",
+              background: "var(--toast)",
               color: "#fff",
               borderRadius: "4px",
               fontSize: "14px",

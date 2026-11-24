@@ -84,13 +84,13 @@ export default function ProductFilter({ filters, onChange, availableHairTypes }:
     <div className="space-y-6">
       {/* Sort */}
       <div>
-        <label className="text-xs uppercase tracking-widest text-[#6B6B6B] block mb-2">
+        <label className="text-xs uppercase tracking-widest text-muted block mb-2">
           {t("sorting")}
         </label>
         <select
           value={filters.sort}
           onChange={(e) => update("sort", e.target.value)}
-          className="w-full border border-[#E8E4DE] rounded px-3 py-2 text-base md:text-sm text-[#1A1A1A] bg-white focus:outline-none focus:ring-2 focus:ring-[#C4A882]"
+          className="w-full border border-border rounded px-3 py-2 text-base md:text-sm text-foreground bg-surface focus:outline-none focus:ring-2 focus:ring-accent"
         >
           <option value="popular">{t("popular")}</option>
           <option value="newest">{t("newest")}</option>
@@ -102,7 +102,7 @@ export default function ProductFilter({ filters, onChange, availableHairTypes }:
       {/* Categories */}
       {tree.length > 0 && (
         <div>
-          <label className="text-xs uppercase tracking-widest text-[#6B6B6B] block mb-2">
+          <label className="text-xs uppercase tracking-widest text-muted block mb-2">
             {t("category")}
           </label>
           <div className="space-y-1">
@@ -111,8 +111,8 @@ export default function ProductFilter({ filters, onChange, availableHairTypes }:
               onClick={() => update("category", "")}
               className={`w-full text-left text-sm px-2 py-2.5 md:py-1.5 rounded transition-colors ${
                 !filters.category
-                  ? "bg-[#1A1A1A] text-white"
-                  : "text-[#1A1A1A] hover:bg-[#F0EDE8]"
+                  ? "bg-ink text-on-ink"
+                  : "text-foreground hover:bg-panel"
               }`}
             >
               {tc("allCategories")}
@@ -123,7 +123,7 @@ export default function ProductFilter({ filters, onChange, availableHairTypes }:
               // children become the options.
               cat.children.length > 0 ? (
                 <div key={cat.id} className="pt-2">
-                  <p className="text-[11px] uppercase tracking-wider text-[#6B6B6B] px-2 pb-1">
+                  <p className="text-[11px] uppercase tracking-wider text-muted px-2 pb-1">
                     {cat.name}
                   </p>
                   {cat.children.map((child) => (
@@ -133,8 +133,8 @@ export default function ProductFilter({ filters, onChange, availableHairTypes }:
                       onClick={() => update("category", child.slug)}
                       className={`w-full text-left text-sm px-2 py-2.5 md:py-1.5 pl-4 rounded transition-colors ${
                         filters.category === child.slug
-                          ? "bg-[#1A1A1A] text-white"
-                          : "text-[#1A1A1A] hover:bg-[#F0EDE8]"
+                          ? "bg-ink text-on-ink"
+                          : "text-foreground hover:bg-panel"
                       }`}
                     >
                       {child.name}
@@ -148,8 +148,8 @@ export default function ProductFilter({ filters, onChange, availableHairTypes }:
                   onClick={() => update("category", cat.slug)}
                   className={`w-full text-left text-sm px-2 py-2.5 md:py-1.5 rounded transition-colors ${
                     filters.category === cat.slug
-                      ? "bg-[#1A1A1A] text-white"
-                      : "text-[#1A1A1A] hover:bg-[#F0EDE8]"
+                      ? "bg-ink text-on-ink"
+                      : "text-foreground hover:bg-panel"
                   }`}
                 >
                   {cat.name}
@@ -162,7 +162,7 @@ export default function ProductFilter({ filters, onChange, availableHairTypes }:
 
       {/* Price range */}
       <div>
-        <label className="text-xs uppercase tracking-widest text-[#6B6B6B] block mb-2">
+        <label className="text-xs uppercase tracking-widest text-muted block mb-2">
           {t("priceRange")}
         </label>
         {/* text-base on phones: iOS Safari zooms the page into any field set
@@ -174,7 +174,7 @@ export default function ProductFilter({ filters, onChange, availableHairTypes }:
             placeholder={t("from")}
             value={localMin}
             onChange={(e) => updatePrice("minPrice", e.target.value)}
-            className="w-full border border-[#E8E4DE] rounded px-3 py-2 text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-[#C4A882]"
+            className="w-full border border-border rounded px-3 py-2 text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-accent"
           />
           <input
             type="number"
@@ -182,7 +182,7 @@ export default function ProductFilter({ filters, onChange, availableHairTypes }:
             placeholder={t("to")}
             value={localMax}
             onChange={(e) => updatePrice("maxPrice", e.target.value)}
-            className="w-full border border-[#E8E4DE] rounded px-3 py-2 text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-[#C4A882]"
+            className="w-full border border-border rounded px-3 py-2 text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-accent"
           />
         </div>
       </div>
@@ -190,7 +190,7 @@ export default function ProductFilter({ filters, onChange, availableHairTypes }:
       {/* Hair type — hidden while no product has one, back once some do */}
       {hairTypes.length > 0 && (
         <div>
-          <label className="text-xs uppercase tracking-widest text-[#6B6B6B] block mb-2">
+          <label className="text-xs uppercase tracking-widest text-muted block mb-2">
             {t("hairType")}
           </label>
           <div className="space-y-1">
@@ -204,9 +204,9 @@ export default function ProductFilter({ filters, onChange, availableHairTypes }:
                   onChange={() =>
                     update("hairType", filters.hairType === ht.value ? "" : ht.value)
                   }
-                  className="accent-[#C4A882]"
+                  className="accent-accent"
                 />
-                <span className="text-sm text-[#1A1A1A] group-hover:text-[#C4A882] transition-colors">
+                <span className="text-sm text-foreground group-hover:text-accent transition-colors">
                   {th(ht.value as "oily" | "dry" | "normal" | "colored" | "damaged" | "curly")}
                 </span>
               </label>
@@ -219,7 +219,7 @@ export default function ProductFilter({ filters, onChange, availableHairTypes }:
         <button
           type="button"
           onClick={reset}
-          className="w-full text-sm text-[#C4A882] hover:text-[#A8875E] underline transition-colors text-center"
+          className="w-full text-sm text-accent hover:text-accent-dark underline transition-colors text-center"
         >
           {t("resetFilters")}
         </button>

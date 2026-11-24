@@ -24,13 +24,13 @@ export async function generateMetadata({
 export default function PrivacyPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-16">
-      <h1 className="font-serif text-3xl font-semibold text-[#1A1A1A] mb-8">
+      <h1 className="font-serif text-3xl font-semibold text-foreground mb-8">
         Політика конфіденційності
       </h1>
 
-      <div className="prose prose-sm max-w-none text-[#4A4A4A] space-y-6">
+      <div className="prose prose-sm max-w-none text-[#4A4A4A] dark:text-foreground/80 space-y-6">
         <section>
-          <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-3">1. Загальні положення</h2>
+          <h2 className="font-serif text-xl font-semibold text-foreground mb-3">1. Загальні положення</h2>
           <p>
             Ця Політика конфіденційності регулює порядок збору, використання та захисту персональних даних
             користувачів сайту violamukachevo.com (далі — Сайт), що належить ФОП Гегедош Віолета Валеріївна
@@ -42,7 +42,7 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-3">2. Які дані ми збираємо</h2>
+          <h2 className="font-serif text-xl font-semibold text-foreground mb-3">2. Які дані ми збираємо</h2>
           <p>При оформленні замовлення ми збираємо:</p>
           <ul className="list-disc list-inside space-y-1 ml-2">
             <li>Ім&apos;я та прізвище</li>
@@ -53,7 +53,7 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-3">3. Мета збору даних</h2>
+          <h2 className="font-serif text-xl font-semibold text-foreground mb-3">3. Мета збору даних</h2>
           <p>Персональні дані використовуються виключно для:</p>
           <ul className="list-disc list-inside space-y-1 ml-2">
             <li>Оформлення та доставки замовлень</li>
@@ -63,7 +63,7 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-3">4. Передача даних третім особам</h2>
+          <h2 className="font-serif text-xl font-semibold text-foreground mb-3">4. Передача даних третім особам</h2>
           <p>
             Ми не передаємо ваші персональні дані третім особам, за винятком:
           </p>
@@ -79,7 +79,7 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-3">5. Захист даних</h2>
+          <h2 className="font-serif text-xl font-semibold text-foreground mb-3">5. Захист даних</h2>
           <p>
             Ми вживаємо технічних та організаційних заходів для захисту ваших персональних даних від
             несанкціонованого доступу, втрати або знищення. Доступ до даних мають лише уповноважені
@@ -88,7 +88,7 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-3">6. Права користувача</h2>
+          <h2 className="font-serif text-xl font-semibold text-foreground mb-3">6. Права користувача</h2>
           <p>Ви маєте право:</p>
           <ul className="list-disc list-inside space-y-1 ml-2">
             <li>Отримати інформацію про збережені дані</li>
@@ -96,19 +96,19 @@ export default function PrivacyPage() {
             <li>Відкликати згоду на обробку даних</li>
           </ul>
           <p>
-            Для реалізації своїх прав зверніться до нас: <a href="tel:+380500582175" className="text-[#C4A882] hover:underline">+38 050 058 21 75</a>
+            Для реалізації своїх прав зверніться до нас: <a href="tel:+380500582175" className="text-accent hover:underline">+38 050 058 21 75</a>
           </p>
         </section>
 
         <section>
-          <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-3">7. Зміни до Політики</h2>
+          <h2 className="font-serif text-xl font-semibold text-foreground mb-3">7. Зміни до Політики</h2>
           <p>
             Ми залишаємо за собою право вносити зміни до цієї Політики. Актуальна версія завжди
             доступна на цій сторінці.
           </p>
         </section>
 
-        <p className="text-sm text-[#6B6B6B] pt-4 border-t border-[#E8E4DE]">
+        <p className="text-sm text-muted pt-4 border-t border-border">
           Дата останнього оновлення: березень 2026 р.
         </p>
       </div>

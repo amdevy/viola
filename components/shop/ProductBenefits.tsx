@@ -12,15 +12,15 @@ export default async function ProductBenefits({
   const t = await getTranslations({ locale, namespace: "product" });
 
   return (
-    <div className="mt-6 pt-6 border-t border-[#E8E4DE]">
-      <p className="text-xs uppercase tracking-widest text-[#6B6B6B] mb-3">
+    <div className="mt-6 pt-6 border-t border-border">
+      <p className="text-xs uppercase tracking-widest text-muted mb-3">
         {t("benefitsTitle")}
       </p>
       <ul className="space-y-2">
         {benefits.map((b, i) => (
-          <li key={i} className="flex items-start gap-2 text-sm text-[#1A1A1A] leading-relaxed">
+          <li key={i} className="flex items-start gap-2 text-sm text-foreground leading-relaxed">
             <svg
-              className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#C4A882]"
+              className="w-4 h-4 mt-0.5 flex-shrink-0 text-accent"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

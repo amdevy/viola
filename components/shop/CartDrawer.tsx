@@ -61,22 +61,22 @@ export default function CartDrawer() {
         data-cart-drawer
         // The shadow only while open: parked off-screen, its blur fell back
         // onto the page as a grey band down the right edge.
-        className={`fixed right-0 top-0 h-full w-full max-w-md bg-white z-50 flex flex-col transition-transform duration-300 ${
+        className={`fixed right-0 top-0 h-full w-full max-w-md bg-surface z-50 flex flex-col transition-transform duration-300 ${
           isOpen ? "translate-x-0 shadow-2xl" : "translate-x-full"
         }`}
       >
         {/* Header */}
-        <div className="flex shrink-0 items-center justify-between px-6 py-4 border-b border-[#E8E4DE]">
-          <h2 className="font-serif text-xl font-bold text-[#1A1A1A]">
+        <div className="flex shrink-0 items-center justify-between px-6 py-4 border-b border-border">
+          <h2 className="font-serif text-xl font-bold text-foreground">
             {t("title")}
             {mounted && count > 0 && (
-              <span className="ml-2 text-sm font-normal text-[#6B6B6B]">({count})</span>
+              <span className="ml-2 text-sm font-normal text-muted">({count})</span>
             )}
           </h2>
           <button
             type="button"
             onClick={closeCart}
-            className="p-2 text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors"
+            className="p-2 text-muted hover:text-foreground transition-colors"
             aria-label={t("close")}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -92,16 +92,16 @@ export default function CartDrawer() {
         <div data-cart-scroll className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
           {!mounted || items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center px-6 py-12">
-              <svg className="w-16 h-16 text-[#E8E4DE] mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-16 h-16 text-border mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1}
                   d="M2.25 3h1.386c.51 0 .955.343 1.087.836l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
                 />
               </svg>
-              <p className="font-medium text-[#1A1A1A]">{t("emptyTitle")}</p>
-              <p className="text-sm text-[#6B6B6B] mt-1 mb-6">{t("emptyText")}</p>
+              <p className="font-medium text-foreground">{t("emptyTitle")}</p>
+              <p className="text-sm text-muted mt-1 mb-6">{t("emptyText")}</p>
               <button
                 onClick={closeCart}
-                className="text-sm text-[#C4A882] underline hover:text-[#A8875E] transition-colors"
+                className="text-sm text-accent underline hover:text-accent-dark transition-colors"
               >
                 {t("continueShopping")}
               </button>
@@ -120,16 +120,16 @@ export default function CartDrawer() {
 
         {/* Footer */}
         {mounted && items.length > 0 && (
-          <div className="shrink-0 border-t border-[#E8E4DE] px-6 py-4 space-y-3">
+          <div className="shrink-0 border-t border-border px-6 py-4 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-[#6B6B6B]">{t("total")}</span>
-              <span className="text-lg font-semibold text-[#1A1A1A]">{formatPrice(cartTotal, locale)}</span>
+              <span className="text-sm text-muted">{t("total")}</span>
+              <span className="text-lg font-semibold text-foreground">{formatPrice(cartTotal, locale)}</span>
             </div>
             <MasterAdviceNote text={tc("masterAdvice")} />
             <Link
               href="/checkout"
               onClick={closeCart}
-              className="block w-full bg-[#1A1A1A] text-white text-center text-sm font-medium py-3 rounded hover:bg-[#C4A882] transition-colors uppercase tracking-wider"
+              className="block w-full bg-ink text-on-ink text-center text-sm font-medium py-3 rounded hover:bg-accent transition-colors uppercase tracking-wider"
             >
               {t("placeOrder")}
             </Link>
@@ -138,7 +138,7 @@ export default function CartDrawer() {
                 icon is in the far top corner. */}
             <button
               onClick={closeCart}
-              className="block w-full rounded border border-[#E8E4DE] py-3 text-center text-sm font-medium text-[#1A1A1A] transition-colors hover:border-[#C4A882]"
+              className="block w-full rounded border border-border py-3 text-center text-sm font-medium text-foreground transition-colors hover:border-accent"
             >
               {t("continueShopping")}
             </button>

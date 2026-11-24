@@ -45,13 +45,13 @@ export default async function ProductTrustBadges({ locale }: { locale: string })
   ];
 
   return (
-    <div className="mt-6 pt-6 border-t border-[#E8E4DE] grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div className="mt-6 pt-6 border-t border-border grid grid-cols-2 sm:grid-cols-4 gap-4">
       {items.map((item) => (
         <div key={item.title} className="flex sm:flex-col items-start sm:items-center gap-3 sm:gap-2 sm:text-center">
-          <div className="text-[#C4A882] flex-shrink-0">{item.icon}</div>
+          <div className="text-accent flex-shrink-0">{item.icon}</div>
           <div>
-            <p className="text-xs font-semibold text-[#1A1A1A] leading-tight">{item.title}</p>
-            <p className="text-xs text-[#6B6B6B] mt-0.5 leading-tight">{item.desc}</p>
+            <p className="text-xs font-semibold text-foreground leading-tight">{item.title}</p>
+            <p className="text-xs text-muted mt-0.5 leading-tight">{item.desc}</p>
           </div>
         </div>
       ))}

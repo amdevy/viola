@@ -31,7 +31,7 @@ export default function ProductGallery({ images, name, productId, likesCount }: 
     <div className="flex flex-col gap-3">
       {/* Main image */}
       <div
-        className="relative aspect-square rounded overflow-hidden bg-[#F0EDE8] cursor-zoom-in"
+        className="relative aspect-square rounded overflow-hidden bg-panel cursor-zoom-in"
         onClick={() => setZoomed(!zoomed)}
       >
         <Image
@@ -65,8 +65,8 @@ export default function ProductGallery({ images, name, productId, likesCount }: 
               }}
               className={`relative flex-shrink-0 w-16 h-16 rounded overflow-hidden border-2 transition-colors ${
                 activeIdx === i
-                  ? "border-[#C4A882]"
-                  : "border-transparent hover:border-[#E8E4DE]"
+                  ? "border-accent"
+                  : "border-transparent hover:border-border"
               }`}
             >
               <Image

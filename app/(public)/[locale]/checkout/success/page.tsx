@@ -142,30 +142,30 @@ export default async function SuccessPage({
     <div className="min-h-[60vh] flex items-center justify-center px-4">
       {shouldClearCart && <ClearCartOnSuccess orderId={orderId} isPaid={orderState.isPaid} />}
       <div className="text-center max-w-md">
-        <div className="w-16 h-16 bg-[#C6F6D5] rounded-full flex items-center justify-center mx-auto mb-6">
-          <svg className="w-8 h-8 text-[#38A169]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="w-16 h-16 bg-[#C6F6D5] dark:bg-success/15 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg className="w-8 h-8 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h1 className="font-serif text-3xl font-bold text-[#1A1A1A] mb-3">
+        <h1 className="font-serif text-3xl font-bold text-foreground mb-3">
           {t("title")}
         </h1>
-        <p className="text-[#6B6B6B] mb-2">
+        <p className="text-muted mb-2">
           {t("orderAccepted")}
         </p>
         {orderId && (
-          <p className="text-sm text-[#A0A0A0] mb-6">
-            {t("orderNumber")} <span className="font-mono font-medium text-[#1A1A1A]">{orderId.slice(0, 8).toUpperCase()}</span>
+          <p className="text-sm text-subtle mb-6">
+            {t("orderNumber")} <span className="font-mono font-medium text-foreground">{orderId.slice(0, 8).toUpperCase()}</span>
           </p>
         )}
-        <p className="text-sm text-[#6B6B6B] mb-6">
+        <p className="text-sm text-muted mb-6">
           {t("willContact")}
         </p>
-        <p className="text-sm text-[#6B6B6B] mb-8">
+        <p className="text-sm text-muted mb-8">
           {t("reviewPrompt")}{" "}
           <Link
             href="/reviews"
-            className="text-[#C4A882] hover:underline font-medium"
+            className="text-accent hover:underline font-medium"
           >
             {t("googleReview")}
           </Link>
@@ -174,13 +174,13 @@ export default async function SuccessPage({
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
             href="/shop"
-            className="inline-flex items-center justify-center bg-[#1A1A1A] text-white px-8 py-3 text-sm font-medium rounded hover:bg-[#C4A882] transition-colors"
+            className="inline-flex items-center justify-center bg-ink text-on-ink px-8 py-3 text-sm font-medium rounded hover:bg-accent transition-colors"
           >
             {t("continueShopping")}
           </Link>
           <Link
             href="/"
-            className="inline-flex items-center justify-center border border-[#E8E4DE] text-[#1A1A1A] px-8 py-3 text-sm font-medium rounded hover:border-[#C4A882] transition-colors"
+            className="inline-flex items-center justify-center border border-border text-foreground px-8 py-3 text-sm font-medium rounded hover:border-accent transition-colors"
           >
             {t("goHome")}
           </Link>
