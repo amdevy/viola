@@ -159,7 +159,7 @@ export default async function SuccessPage({
           </p>
         )}
         <p className="text-sm text-muted mb-6">
-          {t("willContact")}
+          {orderState.isPaid ? t("willShip") : t("willContact")}
         </p>
         <p className="text-sm text-muted mb-8">
           {t("reviewPrompt")}{" "}
