@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyCallback, decodeCallback } from "@/lib/liqpay";
-import { settleOrderPayment } from "@/lib/payments";
+import { settleOrderPayment, type SettleResult } from "@/lib/payments";
+import { reportPurchaseFromServer } from "@/lib/ga-server";
 
 type LiqPayCallback = {
   status: string;
@@ -49,8 +50,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ status: "error", reason: "missing order_id" }, { status: 400 });
   }
 
+  let settled: SettleResult;
   try {
-    await settleOrderPayment({
+    settled = await settleOrderPayment({
       orderId: payload.order_id,
       status: payload.status,
       amount: payload.amount,
@@ -64,6 +66,12 @@ export async function POST(req: NextRequest) {
     console.error("liqpay callback: settle failed", payload.order_id, err);
     return NextResponse.json({ status: "error" }, { status: 500 });
   }
+
+  // GA4 purchase for shoppers who never come back from LiqPay. Runs on every
+  // paid callback, not only the one that flipped the order: the report claims
+  // the order itself, so a repeat is a no-op, and it retries one that failed.
+  // It never throws — GA being down must not make LiqPay retry a paid order.
+  if (settled.paid) await reportPurchaseFromServer(payload.order_id);
 
   return NextResponse.json({ status: "ok" });
 }

@@ -6,6 +6,7 @@ import ClearCartOnSuccess from "@/components/checkout/ClearCartOnSuccess";
 
 import { fetchLiqPayStatus, isTerminalFailure } from "@/lib/liqpay";
 import { serviceClient, settleOrderPayment } from "@/lib/payments";
+import { browserShouldReportPurchase } from "@/lib/ga-server";
 import PaymentFailed from "@/components/checkout/PaymentFailed";
 import PaymentProcessing from "@/components/checkout/PaymentProcessing";
 
@@ -138,9 +139,21 @@ export default async function SuccessPage({
 
   const shouldClearCart = orderState.isPaid || orderState.paymentType === "callback";
 
+  // The server reports a paid card order to GA itself (it may already have,
+  // from the LiqPay callback). The browser sends `purchase` only when the
+  // server could not — never both for one order.
+  const reportPurchase =
+    orderId && orderState.isPaid ? await browserShouldReportPurchase(orderId) : true;
+
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-4">
-      {shouldClearCart && <ClearCartOnSuccess orderId={orderId} isPaid={orderState.isPaid} />}
+      {shouldClearCart && (
+        <ClearCartOnSuccess
+          orderId={orderId}
+          isPaid={orderState.isPaid}
+          reportPurchase={reportPurchase}
+        />
+      )}
       <div className="text-center max-w-md">
         <div className="w-16 h-16 bg-[#C6F6D5] dark:bg-success/15 rounded-full flex items-center justify-center mx-auto mb-6">
           <svg className="w-8 h-8 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">

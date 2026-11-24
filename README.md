@@ -30,6 +30,7 @@ npm run build    # продакшн-збірка
 | `RESEND_API_KEY` | Листи-підтвердження клієнтам |
 | `INDEXNOW_KEY` | Подача URL у IndexNow з адмінки |
 | `NEXT_PUBLIC_GA_ID` | Google Analytics 4 |
+| `GA_MEASUREMENT_PROTOCOL_SECRET` | Секрет Measurement Protocol (GA4 → Адміністратор → Потоки даних → потік сайту → Секретні ключі API Measurement Protocol). Без нього оплати карткою потрапляють у GA лише тоді, коли покупець повертається на сайт |
 
 ## Оплата
 

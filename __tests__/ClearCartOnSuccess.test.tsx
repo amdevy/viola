@@ -56,6 +56,12 @@ describe("ClearCartOnSuccess", () => {
     );
   });
 
+  it("сервер уже звітував про оплату — браузер не дублює purchase, кошик чиститься", async () => {
+    render(<ClearCartOnSuccess orderId="order-1" isPaid reportPurchase={false} />);
+    await waitFor(() => expect(useCart.getState().items).toHaveLength(0));
+    expect(sendGAEvent).not.toHaveBeenCalled();
+  });
+
   it("заявка на дзвінок — це лід, а не продаж", async () => {
     render(<ClearCartOnSuccess orderId="order-1" isPaid={false} />);
     await waitFor(() =>
