@@ -109,22 +109,22 @@ export default function ShopContent({
       </Suspense>
 
       {/* Breadcrumb */}
-      <nav className="text-xs text-[#6B6B6B] mb-4 md:mb-6">
-        <Link href="/" className="hover:text-[#C4A882]">{tc("home")}</Link>
+      <nav className="text-xs text-muted mb-4 md:mb-6">
+        <Link href="/" className="hover:text-accent">{tc("home")}</Link>
         <span className="mx-2">/</span>
-        <span className="text-[#1A1A1A]">{t("breadcrumbShop")}</span>
+        <span className="text-foreground">{t("breadcrumbShop")}</span>
       </nav>
 
       {categoryLinks}
 
       {search && (
         <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
-          <p className="text-sm font-medium text-[#1A1A1A]">
+          <p className="text-sm font-medium text-foreground">
             {ts("resultsFor", { query: search })}
           </p>
           <Link
             href="/shop"
-            className="text-sm text-[#C4A882] underline underline-offset-2 hover:text-[#A8875E]"
+            className="text-sm text-accent underline underline-offset-2 hover:text-accent-dark"
           >
             {ts("reset")}
           </Link>
@@ -135,7 +135,7 @@ export default function ShopContent({
           scrolls the list back into view. */}
       <div ref={listTopRef} className="flex items-center justify-between mb-4 md:mb-6 scroll-mt-20">
         <div className="flex items-center gap-3">
-          <span className="text-sm text-[#6B6B6B]">
+          <span className="text-sm text-muted">
             {loading ? "..." : tc("products", { count: products.length })}
           </span>
           <button
@@ -149,8 +149,8 @@ export default function ShopContent({
             aria-controls={filterPanelId}
             // With the panel closed, the count says why the list may be short.
             aria-label={!showFilter && activeFilters > 0 ? tf("filtersActive", { count: activeFilters }) : undefined}
-            className={`md:hidden flex items-center gap-1.5 text-sm border px-3 py-2 rounded hover:border-[#C4A882] transition-colors ${
-              showFilter ? "border-[#C4A882] bg-[#FDF9F5]" : "border-[#E8E4DE]"
+            className={`md:hidden flex items-center gap-1.5 text-sm border px-3 py-2 rounded hover:border-accent transition-colors ${
+              showFilter ? "border-accent bg-cream" : "border-border"
             }`}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -158,7 +158,7 @@ export default function ShopContent({
             </svg>
             {tf("filters")}
             {!showFilter && activeFilters > 0 && (
-              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#C4A882] px-1 text-xs font-semibold text-[#1A1A1A]">
+              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs font-semibold text-[#1A1A1A]">
                 {activeFilters}
               </span>
             )}
@@ -179,7 +179,7 @@ export default function ShopContent({
         {/* Product grid */}
         <div className="flex-1 min-w-0">
           {search && !loading && products.length === 0 ? (
-            <p className="py-12 text-center text-sm text-[#6B6B6B]">{ts("nothingFound")}</p>
+            <p className="py-12 text-center text-sm text-muted">{ts("nothingFound")}</p>
           ) : (
             <ProductGrid
               products={products}
@@ -194,11 +194,11 @@ export default function ShopContent({
       {/* Same place and layer as the product page's MobileStickyBar: just
           above the bottom navigation and under it in stacking order. */}
       {showFilter && (
-        <div className="md:hidden fixed inset-x-0 bottom-[calc(3.5rem+env(safe-area-inset-bottom))] z-30 bg-white border-t border-[#E8E4DE] shadow-[0_-4px_12px_rgba(0,0,0,0.06)] px-4 py-3">
+        <div className="md:hidden fixed inset-x-0 bottom-[calc(3.5rem+env(safe-area-inset-bottom))] z-30 bg-surface border-t border-border shadow-[0_-4px_12px_rgba(0,0,0,0.06)] px-4 py-3">
           <button
             type="button"
             onClick={showResults}
-            className="h-12 w-full rounded bg-[#1A1A1A] text-white text-sm font-semibold"
+            className="h-12 w-full rounded bg-ink text-on-ink text-sm font-semibold"
           >
             {loading ? tf("showProducts") : tf("showResults", { count: products.length })}
           </button>

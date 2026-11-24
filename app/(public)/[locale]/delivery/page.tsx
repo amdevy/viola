@@ -142,13 +142,13 @@ export default async function DeliveryPage({
           },
         ]) }}
       />
-      <nav className="text-xs text-[#6B6B6B] mb-8">
-        <Link href="/" className="hover:text-[#C4A882]">{tc("home")}</Link>
+      <nav className="text-xs text-muted mb-8">
+        <Link href="/" className="hover:text-accent">{tc("home")}</Link>
         <span className="mx-2">/</span>
-        <span className="text-[#1A1A1A]">{t("breadcrumb")}</span>
+        <span className="text-foreground">{t("breadcrumb")}</span>
       </nav>
 
-      <h1 className="font-serif text-4xl font-bold text-[#1A1A1A] mb-12">
+      <h1 className="font-serif text-4xl font-bold text-foreground mb-12">
         {t("title")}
       </h1>
 
@@ -156,64 +156,64 @@ export default async function DeliveryPage({
 
         {/* Payment */}
         <section>
-          <h2 className="font-serif text-2xl font-bold text-[#1A1A1A] mb-5 pb-2 border-b border-[#E8E4DE]">
+          <h2 className="font-serif text-2xl font-bold text-foreground mb-5 pb-2 border-b border-border">
             {t("paymentTitle")}
           </h2>
           <ul className="space-y-3">
             {PAYMENT_POINTS.map((point) => (
-              <li key={point} className="flex gap-3 text-[#6B6B6B]">
-                <span className="text-[#C4A882] flex-shrink-0 mt-0.5">▶</span>
+              <li key={point} className="flex gap-3 text-muted">
+                <span className="text-accent flex-shrink-0 mt-0.5">▶</span>
                 <span>{point}</span>
               </li>
             ))}
           </ul>
           <div
-            className="mt-5 bg-[#F5F2EE] border border-[#E8E4DE] rounded p-4 text-sm text-[#6B6B6B] leading-relaxed"
+            className="mt-5 bg-[#F5F2EE] dark:bg-panel border border-border rounded p-4 text-sm text-muted leading-relaxed"
             dangerouslySetInnerHTML={{ __html: t.raw("paymentNote") }}
           />
         </section>
 
         {/* Delivery */}
         <section>
-          <h2 className="font-serif text-2xl font-bold text-[#1A1A1A] mb-5 pb-2 border-b border-[#E8E4DE]">
+          <h2 className="font-serif text-2xl font-bold text-foreground mb-5 pb-2 border-b border-border">
             {t("deliveryTitle")}
           </h2>
 
           <p
-            className="text-[#6B6B6B] mb-6 leading-relaxed"
+            className="text-muted mb-6 leading-relaxed"
             dangerouslySetInnerHTML={{ __html: t.raw("deliveryIntro") }}
           />
 
-          <p className="font-semibold text-[#1A1A1A] mb-4">{t("scheduleTitle")}</p>
+          <p className="font-semibold text-foreground mb-4">{t("scheduleTitle")}</p>
 
           <ul className="space-y-4 mb-6">
             {SCHEDULE.map((html, i) => (
-              <li key={i} className="flex gap-3 text-[#6B6B6B]">
-                <span className="text-[#C4A882] flex-shrink-0 mt-0.5">▶</span>
+              <li key={i} className="flex gap-3 text-muted">
+                <span className="text-accent flex-shrink-0 mt-0.5">▶</span>
                 <span dangerouslySetInnerHTML={{ __html: html }} />
               </li>
             ))}
           </ul>
 
-          <p className="text-[#6B6B6B] mb-3">
-            ⏳ <strong className="text-[#1A1A1A]">{t("deliveryTime")}</strong>{" "}
+          <p className="text-muted mb-3">
+            ⏳ <strong className="text-foreground">{t("deliveryTime")}</strong>{" "}
             <span dangerouslySetInnerHTML={{ __html: t.raw("deliveryTimeText") }} />
           </p>
 
-          <p className="text-[#6B6B6B]">
+          <p className="text-muted">
             ✨ {t("deliveryCare")}
           </p>
         </section>
 
         {/* Nova Poshta */}
         <section>
-          <h2 className="font-serif text-2xl font-bold text-[#1A1A1A] mb-5 pb-2 border-b border-[#E8E4DE]">
+          <h2 className="font-serif text-2xl font-bold text-foreground mb-5 pb-2 border-b border-border">
             {t("carrierTitle")}
           </h2>
           <div className="flex items-start gap-4">
             {/* self-stretch alone: h-full in an auto-height row collapsed it to 0. */}
-            <div className="w-1 shrink-0 bg-[#C4A882] self-stretch rounded" />
-            <div className="text-[#6B6B6B] leading-relaxed">
+            <div className="w-1 shrink-0 bg-accent self-stretch rounded" />
+            <div className="text-muted leading-relaxed">
               <p
                 className="mb-2"
                 dangerouslySetInnerHTML={{ __html: t.raw("carrierText") }}
@@ -225,10 +225,10 @@ export default async function DeliveryPage({
 
       </div>
 
-      <div className="mt-12 pt-8 border-t border-[#E8E4DE] text-center">
-        <p className="text-[#6B6B6B] text-sm">
+      <div className="mt-12 pt-8 border-t border-border text-center">
+        <p className="text-muted text-sm">
           {t("questionsText")}{" "}
-          <Link href="/contacts" className="text-[#C4A882] hover:underline font-medium">
+          <Link href="/contacts" className="text-accent hover:underline font-medium">
             {t("contactUs")}
           </Link>
         </p>

@@ -134,32 +134,32 @@ export default async function NaGolovyPage({ params }: Props) {
       />
 
       {/* Hero */}
-      <section className="bg-[#E8E4DE] py-20">
+      <section className="bg-border py-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="text-xs text-[#6B6B6B] mb-6 flex items-center gap-2">
-            <Link href="/" className="hover:text-[#C4A882]">{tc("home")}</Link>
+          <nav className="text-xs text-muted mb-6 flex items-center gap-2">
+            <Link href="/" className="hover:text-accent">{tc("home")}</Link>
             <span>/</span>
-            <span className="text-[#1A1A1A]">Na Gólov[y]</span>
+            <span className="text-foreground">Na Gólov[y]</span>
           </nav>
-          <p className="text-[#C4A882] text-xs uppercase tracking-[0.3em] mb-3">
+          <p className="text-accent text-xs uppercase tracking-[0.3em] mb-3">
             {content.eyebrow}
           </p>
-          <h1 className="font-serif text-4xl sm:text-5xl font-bold text-[#1A1A1A] leading-tight mb-6">
+          <h1 className="font-serif text-4xl sm:text-5xl font-bold text-foreground leading-tight mb-6">
             {content.h1}
           </h1>
-          <p className="text-[#1A1A1A]/70 text-lg leading-relaxed mb-8 max-w-3xl">
+          <p className="text-foreground/70 text-lg leading-relaxed mb-8 max-w-3xl">
             {content.intro}
           </p>
           <div className="flex flex-wrap gap-3">
             <Link
               href="/shop"
-              className="inline-flex items-center gap-2 bg-[#1A1A1A] text-white px-8 py-4 text-sm font-medium uppercase tracking-[0.2em] hover:bg-[#C4A882] transition-colors rounded-sm"
+              className="inline-flex items-center gap-2 bg-ink text-on-ink px-8 py-4 text-sm font-medium uppercase tracking-[0.2em] hover:bg-accent transition-colors rounded-sm"
             >
               {content.shopBtn}
             </Link>
             <Link
               href="/contacts"
-              className="inline-flex items-center gap-2 bg-white text-[#1A1A1A] px-8 py-4 text-sm font-medium uppercase tracking-[0.2em] hover:bg-[#C4A882] hover:text-white transition-colors rounded-sm"
+              className="inline-flex items-center gap-2 bg-surface text-foreground px-8 py-4 text-sm font-medium uppercase tracking-[0.2em] hover:bg-accent hover:text-white transition-colors rounded-sm"
             >
               {content.ctaBtn}
             </Link>
@@ -168,18 +168,18 @@ export default async function NaGolovyPage({ params }: Props) {
       </section>
 
       {/* Why */}
-      <section className="py-20 bg-[#FAFAF8]">
+      <section className="py-20 bg-background">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-10">
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-10">
             {content.whyTitle}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {content.why.map((item) => (
               <div key={item.title}>
-                <h3 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-2">
+                <h3 className="font-serif text-xl font-semibold text-foreground mb-2">
                   {item.title}
                 </h3>
-                <p className="text-[#6B6B6B] leading-relaxed">{item.text}</p>
+                <p className="text-muted leading-relaxed">{item.text}</p>
               </div>
             ))}
           </div>
@@ -187,9 +187,9 @@ export default async function NaGolovyPage({ params }: Props) {
       </section>
 
       {/* Lines */}
-      <section className="py-20 bg-[#F0EDE8]">
+      <section className="py-20 bg-panel">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-10">
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-10">
             {content.linesTitle}
           </h2>
           {/* Кожна лінійка — посилання на свою категорію: хаб бренду передає
@@ -199,12 +199,12 @@ export default async function NaGolovyPage({ params }: Props) {
               <Link
                 key={line.name}
                 href={line.href}
-                className="block bg-white rounded p-6 border border-[#E8E4DE] hover:border-[#C4A882] transition-colors"
+                className="block bg-surface rounded p-6 border border-border hover:border-accent transition-colors"
               >
-                <h3 className="font-serif text-lg font-semibold text-[#1A1A1A] mb-2">
+                <h3 className="font-serif text-lg font-semibold text-foreground mb-2">
                   {line.name}
                 </h3>
-                <p className="text-sm text-[#6B6B6B] leading-relaxed">{line.desc}</p>
+                <p className="text-sm text-muted leading-relaxed">{line.desc}</p>
               </Link>
             ))}
           </div>
@@ -213,9 +213,9 @@ export default async function NaGolovyPage({ params }: Props) {
 
       {/* Featured products */}
       {products.length > 0 && (
-        <section className="py-20 bg-[#FAFAF8]">
+        <section className="py-20 bg-background">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-10">
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-10">
               {content.featuredTitle}
             </h2>
             <ProductListGA products={products} listName="na_golovy_featured" />
@@ -227,7 +227,7 @@ export default async function NaGolovyPage({ params }: Props) {
             <div className="mt-10 text-center">
               <Link
                 href="/shop"
-                className="inline-flex items-center gap-2 bg-[#1A1A1A] text-white px-8 py-4 text-sm font-medium uppercase tracking-[0.2em] hover:bg-[#C4A882] transition-colors rounded-sm"
+                className="inline-flex items-center gap-2 bg-ink text-on-ink px-8 py-4 text-sm font-medium uppercase tracking-[0.2em] hover:bg-accent transition-colors rounded-sm"
               >
                 {content.shopBtn}
               </Link>
@@ -237,7 +237,7 @@ export default async function NaGolovyPage({ params }: Props) {
       )}
 
       {/* Founder */}
-      <section className="py-20 bg-[#E8E4DE]">
+      <section className="py-20 bg-border">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="relative aspect-[3/4] w-full max-w-sm mx-auto rounded overflow-hidden">
@@ -254,15 +254,15 @@ export default async function NaGolovyPage({ params }: Props) {
               />
             </div>
             <div>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-4">
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-4">
                 {content.ctaTitle}
               </h2>
-              <p className="text-[#1A1A1A]/70 text-lg leading-relaxed mb-8">
+              <p className="text-foreground/70 text-lg leading-relaxed mb-8">
                 {content.ctaText}
               </p>
               <Link
                 href="/contacts"
-                className="inline-flex items-center gap-2 bg-[#1A1A1A] text-white px-8 py-4 text-sm font-medium uppercase tracking-[0.2em] hover:bg-[#C4A882] transition-colors rounded-sm"
+                className="inline-flex items-center gap-2 bg-ink text-on-ink px-8 py-4 text-sm font-medium uppercase tracking-[0.2em] hover:bg-accent transition-colors rounded-sm"
               >
                 {content.ctaBtn}
               </Link>
@@ -272,22 +272,22 @@ export default async function NaGolovyPage({ params }: Props) {
       </section>
 
       {/* FAQ */}
-      <section className="py-20 bg-[#FAFAF8]">
+      <section className="py-20 bg-background">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-10">
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-10">
             {content.faqTitle}
           </h2>
           <div className="space-y-6">
             {content.faq.map((f) => (
-              <div key={f.q} className="border-b border-[#E8E4DE] pb-6">
-                <h3 className="font-serif text-lg font-semibold text-[#1A1A1A] mb-2">
+              <div key={f.q} className="border-b border-border pb-6">
+                <h3 className="font-serif text-lg font-semibold text-foreground mb-2">
                   {f.q}
                 </h3>
-                <p className="text-[#6B6B6B] leading-relaxed">{f.a}</p>
+                <p className="text-muted leading-relaxed">{f.a}</p>
                 {"link" in f && f.link && (
                   <Link
                     href={f.link.href}
-                    className="inline-block mt-3 text-sm text-[#C4A882] hover:text-[#1A1A1A] transition-colors"
+                    className="inline-block mt-3 text-sm text-accent hover:text-foreground transition-colors"
                   >
                     {f.link.label}
                   </Link>

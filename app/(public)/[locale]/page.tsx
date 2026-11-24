@@ -184,10 +184,10 @@ export default async function HomePage({
           the layout follows the content, since the text's height changes with
           the width: the text container starts with a fixed clear zone for her
           face (pt-60) and carries its own wash — clear at the top, fading in
-          over the last 5rem of that zone, solid #E8E4DE from the first line of
+          over the last 5rem of that zone, solid --border from the first line of
           text down. The hero is anchored to the bottom, so if the min-h floor
           makes it taller than its content the extra room goes to the photo. */}
-      <section className='relative min-h-[70vh] flex items-end lg:items-center overflow-hidden bg-[#E8E4DE]'>
+      <section className='relative min-h-[70vh] flex items-end lg:items-center overflow-hidden bg-border'>
         <div className='absolute inset-0 lg:left-1/2 lg:right-0'>
           <Image
             src='/viola.JPG'
@@ -198,21 +198,21 @@ export default async function HomePage({
             sizes='(max-width: 1024px) 100vw, 50vw'
           />
         </div>
-        <div className='absolute inset-y-0 left-0 w-1/2 bg-[#E8E4DE] hidden lg:block' />
+        <div className='absolute inset-y-0 left-0 w-1/2 bg-border hidden lg:block' />
 
-        <div className='relative z-10 w-full bg-[linear-gradient(to_bottom,rgba(232,228,222,0)_0,rgba(232,228,222,0)_10rem,#E8E4DE_15rem)] lg:bg-none'>
+        <div className='relative z-10 w-full bg-[linear-gradient(to_bottom,transparent_10rem,var(--border)_15rem)] lg:bg-none'>
           <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-60 pb-6 sm:pb-10 lg:py-16'>
             <div className='max-w-xl'>
-              <p className='font-serif text-lg sm:text-xl text-[#1A1A1A]/80 mb-1 sm:mb-2 tracking-wide'>
+              <p className='font-serif text-lg sm:text-xl text-foreground/80 mb-1 sm:mb-2 tracking-wide'>
                 {t("greeting")}
               </p>
-              <h1 className='font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1A1A1A] leading-[1.15] mb-1 sm:mb-2'>
+              <h1 className='font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-[1.15] mb-1 sm:mb-2'>
                 {t("heroName")}
               </h1>
-              <p className='font-serif text-xl sm:text-3xl lg:text-4xl font-semibold text-[#1A1A1A] mb-4 sm:mb-6 tracking-tight'>
+              <p className='font-serif text-xl sm:text-3xl lg:text-4xl font-semibold text-foreground mb-4 sm:mb-6 tracking-tight'>
                 {t("heroRole")}
               </p>
-              <p className='text-[15px] sm:text-lg text-[#1A1A1A]/75 mb-6 sm:mb-10 leading-relaxed max-w-md'>
+              <p className='text-[15px] sm:text-lg text-foreground/75 mb-6 sm:mb-10 leading-relaxed max-w-md'>
                 {t("heroText")}
               </p>
               {/* Phones from 360px: both buttons in one row, sharing it equally,
@@ -220,13 +220,13 @@ export default async function HomePage({
               <div className='grid grid-cols-1 min-[360px]:grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:gap-4'>
                 <Link
                   href='/shop'
-                  className='inline-flex items-center justify-center gap-2 bg-[#1A1A1A] text-white px-3 sm:px-8 py-3.5 sm:py-4 text-[13px] sm:text-sm font-medium uppercase tracking-[0.08em] sm:tracking-[0.2em] whitespace-nowrap hover:bg-[#C4A882] transition-all duration-300 rounded-sm'
+                  className='inline-flex items-center justify-center gap-2 bg-ink text-on-ink px-3 sm:px-8 py-3.5 sm:py-4 text-[13px] sm:text-sm font-medium uppercase tracking-[0.08em] sm:tracking-[0.2em] whitespace-nowrap hover:bg-accent transition-all duration-300 rounded-sm'
                 >
                   {tc("shopNow")}
                 </Link>
                 <Link
                   href='/contacts'
-                  className='inline-flex items-center justify-center gap-2 border-2 border-[#1A1A1A] text-[#1A1A1A] px-3 sm:px-8 py-3.5 sm:py-4 text-[13px] sm:text-sm font-medium uppercase tracking-[0.08em] sm:tracking-[0.2em] whitespace-nowrap hover:bg-[#1A1A1A] hover:text-white transition-all duration-300 rounded-sm'
+                  className='inline-flex items-center justify-center gap-2 border-2 border-foreground text-foreground px-3 sm:px-8 py-3.5 sm:py-4 text-[13px] sm:text-sm font-medium uppercase tracking-[0.08em] sm:tracking-[0.2em] whitespace-nowrap hover:bg-ink hover:text-on-ink transition-all duration-300 rounded-sm'
                 >
                   {tc("consultation")}
                 </Link>
@@ -237,13 +237,13 @@ export default async function HomePage({
       </section>
 
       {/* Category cards */}
-      <section className='py-16 bg-white'>
+      <section className='py-16 bg-surface'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-10'>
-            <h2 className='font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-3'>
+            <h2 className='font-serif text-3xl sm:text-4xl font-bold text-foreground mb-3'>
               {t("categoriesTitle")}
             </h2>
-            <p className='text-[#6B6B6B] max-w-xl mx-auto'>
+            <p className='text-muted max-w-xl mx-auto'>
               {t("categoriesText")}
             </p>
           </div>
@@ -267,7 +267,7 @@ export default async function HomePage({
                 />
                 <div className='absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent' />
                 <div className='relative z-10'>
-                  <p className='text-white font-semibold text-lg group-hover:text-[#C4A882] transition-colors'>
+                  <p className='text-white font-semibold text-lg group-hover:text-accent transition-colors'>
                     {cat.name}
                   </p>
                 </div>
@@ -278,20 +278,20 @@ export default async function HomePage({
       </section>
 
       {/* Bestsellers */}
-      <section className='py-16 bg-[#FAFAF8]'>
+      <section className='py-16 bg-background'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='flex items-center justify-between mb-10'>
             <div>
-              <h2 className='font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-2'>
+              <h2 className='font-serif text-3xl sm:text-4xl font-bold text-foreground mb-2'>
                 {t("bestsellersTitle")}
               </h2>
-              <p className='text-[#6B6B6B]'>
+              <p className='text-muted'>
                 {t("bestsellersText")}
               </p>
             </div>
             <Link
               href='/shop'
-              className='hidden md:flex items-center gap-2 text-sm text-[#1A1A1A] hover:text-[#C4A882] transition-colors font-medium'
+              className='hidden md:flex items-center gap-2 text-sm text-foreground hover:text-accent transition-colors font-medium'
             >
               {tc("allProducts")}
               <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -316,7 +316,7 @@ export default async function HomePage({
           <div className='text-center mt-8 md:hidden'>
             <Link
               href='/shop'
-              className='inline-flex items-center gap-2 text-sm text-[#1A1A1A] hover:text-[#C4A882] transition-colors font-medium border-b border-[#1A1A1A] pb-0.5'
+              className='inline-flex items-center gap-2 text-sm text-foreground hover:text-accent transition-colors font-medium border-b border-foreground pb-0.5'
             >
               {tc("allProducts")}
             </Link>
@@ -325,7 +325,7 @@ export default async function HomePage({
       </section>
 
       {/* About / Brand story */}
-      <section className='py-16 bg-white'>
+      <section className='py-16 bg-surface'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
             <div className='relative aspect-[4/3] rounded overflow-hidden'>
@@ -338,28 +338,28 @@ export default async function HomePage({
               />
             </div>
             <div>
-              <p className='text-[#C4A882] text-xs uppercase tracking-[0.3em] mb-3'>
+              <p className='text-accent text-xs uppercase tracking-[0.3em] mb-3'>
                 {t("storyLabel")}
               </p>
-              <h2 className='font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-6 leading-tight'>
+              <h2 className='font-serif text-3xl sm:text-4xl font-bold text-foreground mb-6 leading-tight'>
                 {t("storyTitle")}
               </h2>
-              <p className='text-[#6B6B6B] mb-4 leading-relaxed'>
+              <p className='text-muted mb-4 leading-relaxed'>
                 {t("storyP1")}
               </p>
-              <p className='text-[#6B6B6B] mb-8 leading-relaxed'>
+              <p className='text-muted mb-8 leading-relaxed'>
                 {t("storyP2")}
               </p>
               <div className='flex flex-wrap gap-6'>
                 <Link
                   href='/about'
-                  className='inline-flex items-center gap-2 text-sm font-medium text-[#1A1A1A] border-b border-[#1A1A1A] pb-0.5 hover:text-[#C4A882] hover:border-[#C4A882] transition-colors'
+                  className='inline-flex items-center gap-2 text-sm font-medium text-foreground border-b border-foreground pb-0.5 hover:text-accent hover:border-accent transition-colors'
                 >
                   {tc("learnMore")}
                 </Link>
                 <Link
                   href='/na-golovy'
-                  className='inline-flex items-center gap-2 text-sm font-medium text-[#1A1A1A] border-b border-[#1A1A1A] pb-0.5 hover:text-[#C4A882] hover:border-[#C4A882] transition-colors'
+                  className='inline-flex items-center gap-2 text-sm font-medium text-foreground border-b border-foreground pb-0.5 hover:text-accent hover:border-accent transition-colors'
                 >
                   {tc("aboutNaGolovy")}
                 </Link>
@@ -370,7 +370,7 @@ export default async function HomePage({
       </section>
 
       {/* Benefits */}
-      <section className='py-16 bg-[#1A1A1A]'>
+      <section className='py-16 bg-band'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8'>
             {BENEFITS.map((b) => (
@@ -388,20 +388,20 @@ export default async function HomePage({
 
       {/* Recent blog posts */}
       {recentPosts.length > 0 && (
-        <section className='py-16 bg-white'>
+        <section className='py-16 bg-surface'>
           <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
             <div className='flex items-end justify-between mb-10'>
               <div>
-                <p className='text-[#C4A882] text-xs uppercase tracking-[0.3em] mb-3'>
+                <p className='text-accent text-xs uppercase tracking-[0.3em] mb-3'>
                   {locale === "en" ? "Blog" : "Блог"}
                 </p>
-                <h2 className='font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A]'>
+                <h2 className='font-serif text-3xl sm:text-4xl font-bold text-foreground'>
                   {locale === "en" ? "Hair care advice" : "Поради по догляду"}
                 </h2>
               </div>
               <Link
                 href='/blog'
-                className='hidden md:flex items-center gap-2 text-sm font-medium text-[#1A1A1A] border-b border-[#1A1A1A] pb-0.5 hover:text-[#C4A882] hover:border-[#C4A882] transition-colors'
+                className='hidden md:flex items-center gap-2 text-sm font-medium text-foreground border-b border-foreground pb-0.5 hover:text-accent hover:border-accent transition-colors'
               >
                 {locale === "en" ? "All posts" : "Всі статті"}
               </Link>
@@ -414,7 +414,7 @@ export default async function HomePage({
                   className='group block'
                 >
                   {post.cover_image && (
-                    <div className='relative aspect-[16/10] rounded overflow-hidden mb-4 bg-[#E8E4DE]'>
+                    <div className='relative aspect-[16/10] rounded overflow-hidden mb-4 bg-border'>
                       <Image
                         src={post.cover_image}
                         alt={post.title}
@@ -424,11 +424,11 @@ export default async function HomePage({
                       />
                     </div>
                   )}
-                  <h3 className='font-serif text-xl font-semibold text-[#1A1A1A] mb-2 group-hover:text-[#C4A882] transition-colors leading-snug'>
+                  <h3 className='font-serif text-xl font-semibold text-foreground mb-2 group-hover:text-accent transition-colors leading-snug'>
                     {post.title}
                   </h3>
                   {post.excerpt && (
-                    <p className='text-sm text-[#6B6B6B] leading-relaxed line-clamp-3'>
+                    <p className='text-sm text-muted leading-relaxed line-clamp-3'>
                       {post.excerpt}
                     </p>
                   )}
@@ -438,7 +438,7 @@ export default async function HomePage({
             <div className='text-center mt-8 md:hidden'>
               <Link
                 href='/blog'
-                className='inline-flex items-center gap-2 text-sm font-medium text-[#1A1A1A] border-b border-[#1A1A1A] pb-0.5 hover:text-[#C4A882] transition-colors'
+                className='inline-flex items-center gap-2 text-sm font-medium text-foreground border-b border-foreground pb-0.5 hover:text-accent transition-colors'
               >
                 {locale === "en" ? "All posts" : "Всі статті"}
               </Link>
@@ -448,22 +448,22 @@ export default async function HomePage({
       )}
 
       {/* FAQ */}
-      <section className='py-16 bg-white'>
+      <section className='py-16 bg-surface'>
         <div className='max-w-3xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-10'>
-            <p className='text-[#C4A882] text-xs uppercase tracking-[0.3em] mb-3'>FAQ</p>
-            <h2 className='font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-3'>
+            <p className='text-accent text-xs uppercase tracking-[0.3em] mb-3'>FAQ</p>
+            <h2 className='font-serif text-3xl sm:text-4xl font-bold text-foreground mb-3'>
               {tf("title")}
             </h2>
-            <p className='text-[#6B6B6B]'>{tf("subtitle")}</p>
+            <p className='text-muted'>{tf("subtitle")}</p>
           </div>
           <div className='space-y-3'>
             {FAQ.map((item, i) => (
               <details
                 key={i}
-                className='group border border-[#E8E4DE] rounded bg-[#FAFAF8] overflow-hidden'
+                className='group border border-border rounded bg-background overflow-hidden'
               >
-                <summary className='flex items-center justify-between cursor-pointer list-none px-5 py-4 font-medium text-[#1A1A1A] hover:text-[#C4A882] transition-colors'>
+                <summary className='flex items-center justify-between cursor-pointer list-none px-5 py-4 font-medium text-foreground hover:text-accent transition-colors'>
                   <span className='pr-4'>{item.q}</span>
                   <svg
                     className='w-4 h-4 flex-shrink-0 transition-transform group-open:rotate-180'
@@ -474,7 +474,7 @@ export default async function HomePage({
                     <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 9l-7 7-7-7' />
                   </svg>
                 </summary>
-                <div className='px-5 pb-5 text-[#6B6B6B] leading-relaxed'>
+                <div className='px-5 pb-5 text-muted leading-relaxed'>
                   {item.a}
                 </div>
               </details>
@@ -484,11 +484,11 @@ export default async function HomePage({
       </section>
 
       {/* Instagram CTA */}
-      <section className='py-16 bg-[#FAFAF8]'>
+      <section className='py-16 bg-background'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
-          <p className='text-[#C4A882] text-xs uppercase tracking-[0.3em] mb-3'>Instagram</p>
-          <h2 className='font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-2'>@viola.mukachevo</h2>
-          <p className='text-[#6B6B6B] mb-8'>{t("instagramCta")}</p>
+          <p className='text-accent text-xs uppercase tracking-[0.3em] mb-3'>Instagram</p>
+          <h2 className='font-serif text-3xl sm:text-4xl font-bold text-foreground mb-2'>@viola.mukachevo</h2>
+          <p className='text-muted mb-8'>{t("instagramCta")}</p>
           <div className='grid grid-cols-3 md:grid-cols-6 gap-2 mb-8'>
             {[
               { src: '/instagram/IMG_3773.jpg', alt: 'Na Golov[y] hair care — Viola Salon' },
@@ -520,7 +520,7 @@ export default async function HomePage({
             href='https://www.instagram.com/viola.mukachevo'
             target='_blank'
             rel='noopener noreferrer'
-            className='inline-flex items-center gap-2 bg-[#1A1A1A] text-white px-6 py-3 text-sm font-medium rounded hover:bg-[#C4A882] transition-colors'
+            className='inline-flex items-center gap-2 bg-ink text-on-ink px-6 py-3 text-sm font-medium rounded hover:bg-accent transition-colors'
           >
             {tc("followInstagram")}
           </a>

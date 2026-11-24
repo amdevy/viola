@@ -83,19 +83,19 @@ export default function CartRecommendations({ variant = "drawer", limit = 4 }: P
 
   const wrapperClass =
     variant === "drawer"
-      ? "border-t border-[#E8E4DE] px-4 py-4 bg-[#FAFAF8]"
-      : "bg-white border border-[#E8E4DE] rounded p-5";
+      ? "border-t border-border px-4 py-4 bg-background"
+      : "bg-surface border border-border rounded p-5";
 
   return (
     <div className={wrapperClass}>
-      <p className="text-[10px] uppercase tracking-widest text-[#6B6B6B] mb-3">
+      <p className="text-[10px] uppercase tracking-widest text-muted mb-3">
         {t("title")}
       </p>
 
       {loading ? (
         <div className="flex flex-col gap-2">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="h-16 bg-[#F0EDE8] rounded animate-pulse" />
+            <div key={i} className="h-16 bg-panel rounded animate-pulse" />
           ))}
         </div>
       ) : (
@@ -106,13 +106,13 @@ export default function CartRecommendations({ variant = "drawer", limit = 4 }: P
             return (
               <li
                 key={p.id}
-                className="flex items-center gap-3 bg-white border border-[#E8E4DE] rounded p-2 hover:border-[#C4A882] transition-colors"
+                className="flex items-center gap-3 bg-surface border border-border rounded p-2 hover:border-accent transition-colors"
               >
                 <Link
                   href={`/shop/${p.slug}`}
                   className="flex items-center gap-3 flex-1 min-w-0 group"
                 >
-                  <div className="relative w-12 h-12 flex-shrink-0 bg-[#F0EDE8] rounded overflow-hidden">
+                  <div className="relative w-12 h-12 flex-shrink-0 bg-panel rounded overflow-hidden">
                     <Image
                       src={image}
                       alt={displayName}
@@ -122,10 +122,10 @@ export default function CartRecommendations({ variant = "drawer", limit = 4 }: P
                     />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[11px] leading-tight text-[#1A1A1A] line-clamp-1 group-hover:text-[#C4A882] transition-colors">
+                    <p className="text-[11px] leading-tight text-foreground line-clamp-1 group-hover:text-accent transition-colors">
                       {displayName}
                     </p>
-                    <p className="text-xs font-semibold text-[#1A1A1A] mt-0.5">
+                    <p className="text-xs font-semibold text-foreground mt-0.5">
                       {formatPrice(Number(p.price), locale)}
                     </p>
                   </div>
@@ -134,7 +134,7 @@ export default function CartRecommendations({ variant = "drawer", limit = 4 }: P
                   type="button"
                   onClick={() => add(p)}
                   aria-label={t("addButton")}
-                  className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center bg-[#1A1A1A] text-white hover:bg-[#C4A882] transition-colors"
+                  className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center bg-ink text-on-ink hover:bg-accent transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />

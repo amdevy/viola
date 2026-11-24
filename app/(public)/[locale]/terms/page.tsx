@@ -24,13 +24,13 @@ export async function generateMetadata({
 export default function TermsPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-16">
-      <h1 className="font-serif text-3xl font-semibold text-[#1A1A1A] mb-8">
+      <h1 className="font-serif text-3xl font-semibold text-foreground mb-8">
         Умови використання
       </h1>
 
-      <div className="prose prose-sm max-w-none text-[#4A4A4A] space-y-6">
+      <div className="prose prose-sm max-w-none text-[#4A4A4A] dark:text-foreground/80 space-y-6">
         <section>
-          <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-3">1. Загальні положення</h2>
+          <h2 className="font-serif text-xl font-semibold text-foreground mb-3">1. Загальні положення</h2>
           <p>
             Ці Умови використання регулюють відносини між ФОП Гегедош Віолета Валеріївна (далі — Продавець)
             та користувачами сайту violamukachevo.com (далі — Сайт).
@@ -41,7 +41,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-3">2. Замовлення та оплата</h2>
+          <h2 className="font-serif text-xl font-semibold text-foreground mb-3">2. Замовлення та оплата</h2>
           <ul className="list-disc list-inside space-y-1 ml-2">
             <li>Оформлення замовлення є офертою на укладення договору купівлі-продажу</li>
             <li>Оплата здійснюється у гривнях (UAH) через платіжну систему LiqPay або за реквізитами</li>
@@ -51,7 +51,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-3">3. Доставка</h2>
+          <h2 className="font-serif text-xl font-semibold text-foreground mb-3">3. Доставка</h2>
           <ul className="list-disc list-inside space-y-1 ml-2">
             <li>Доставка здійснюється Новою Поштою по всій Україні</li>
             <li>Терміни відправлення: 1–3 робочих дні після підтвердження оплати</li>
@@ -60,14 +60,14 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-3">4. Повернення та обмін</h2>
+          <h2 className="font-serif text-xl font-semibold text-foreground mb-3">4. Повернення та обмін</h2>
           <p>
             Згідно з Постановою КМУ №172 від 19.03.1994, косметичні засоби належної якості поверненню та обміну не підлягають.
           </p>
         </section>
 
         <section>
-          <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-3">5. Права інтелектуальної власності</h2>
+          <h2 className="font-serif text-xl font-semibold text-foreground mb-3">5. Права інтелектуальної власності</h2>
           <p>
             Усі матеріали Сайту (тексти, фотографії, логотипи) є власністю Продавця або бренду Na Gólov[y]
             та захищені авторським правом. Копіювання без дозволу заборонено.
@@ -75,7 +75,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-3">6. Обмеження відповідальності</h2>
+          <h2 className="font-serif text-xl font-semibold text-foreground mb-3">6. Обмеження відповідальності</h2>
           <p>
             Продавець не несе відповідальності за збитки, спричинені неправильним використанням товару,
             затримками доставки з вини перевізника або обставинами непереборної сили.
@@ -83,16 +83,16 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-3">7. Контакти</h2>
+          <h2 className="font-serif text-xl font-semibold text-foreground mb-3">7. Контакти</h2>
           <p>
             З питань щодо замовлень та умов звертайтесь:
           </p>
           <ul className="list-none space-y-1 ml-2">
-            <li>📞 <a href="tel:+380500582175" className="text-[#C4A882] hover:underline">+38 050 058 21 75</a></li>
+            <li>📞 <a href="tel:+380500582175" className="text-accent hover:underline">+38 050 058 21 75</a></li>
           </ul>
         </section>
 
-        <p className="text-sm text-[#6B6B6B] pt-4 border-t border-[#E8E4DE]">
+        <p className="text-sm text-muted pt-4 border-t border-border">
           Дата останнього оновлення: березень 2026 р.
         </p>
       </div>

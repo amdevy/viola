@@ -75,7 +75,7 @@ export default function StockNotifyModal({ isOpen, onClose, product }: Props) {
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title={t("title")} size="sm">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <p className="text-sm text-[#6B6B6B]">
+        <p className="text-sm text-muted">
           {t("description", { product: product.name })}
         </p>
         <Input

@@ -140,11 +140,11 @@ export default async function ShopPage({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 md:py-8">
       <div className="mb-4 md:mb-6">
-        <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-3">
+        <h1 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-3">
           {t("title")}
         </h1>
         <CollapsibleIntro moreLabel={tc("readMore")} lessLabel={tc("showLess")} analyticsId="shop">
-          <p className="text-[#6B6B6B] max-w-2xl leading-relaxed">
+          <p className="text-muted max-w-2xl leading-relaxed">
             {t("description")}
           </p>
         </CollapsibleIntro>

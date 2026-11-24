@@ -17,10 +17,10 @@ export default function MasterAdviceNote({
   return (
     <p
       data-testid="master-advice"
-      className={`flex items-start gap-2 text-xs leading-relaxed text-[#6B6B6B] ${className}`}
+      className={`flex items-start gap-2 text-xs leading-relaxed text-muted ${className}`}
     >
       <svg
-        className="mt-px h-4 w-4 shrink-0 text-[#C4A882]"
+        className="mt-px h-4 w-4 shrink-0 text-accent"
         fill="none"
         stroke="currentColor"
         strokeWidth={1.5}

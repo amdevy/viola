@@ -28,7 +28,7 @@ export default async function CheckoutPage({
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="font-serif text-3xl font-bold text-[#1A1A1A] mb-8">
+      <h1 className="font-serif text-3xl font-bold text-foreground mb-8">
         {t("title")}
       </h1>
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">

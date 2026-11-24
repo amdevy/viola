@@ -36,12 +36,12 @@ export function showAddedToCart({
     (t) => (
       <div
         role="status"
-        className={`pointer-events-auto flex w-full max-w-sm items-center gap-3 rounded bg-[#1A1A1A] py-2 pl-4 pr-2 text-sm text-white shadow-lg max-md:py-2.5 max-md:pr-4 transition-opacity duration-200 ${
+        className={`pointer-events-auto flex w-full max-w-sm items-center gap-3 rounded bg-toast py-2 pl-4 pr-2 text-sm text-white shadow-lg max-md:py-2.5 max-md:pr-4 transition-opacity duration-200 ${
           t.visible ? "opacity-100" : "opacity-0"
         }`}
       >
         <svg
-          className="h-5 w-5 flex-shrink-0 text-[#C4A882]"
+          className="h-5 w-5 flex-shrink-0 text-accent"
           fill="none"
           stroke="currentColor"
           strokeWidth={2}
@@ -61,7 +61,7 @@ export function showAddedToCart({
               toast.dismiss(t.id);
               useCart.getState().openCart("toast");
             }}
-            className="flex-shrink-0 rounded bg-white/10 px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#C4A882] transition-colors hover:bg-white/20"
+            className="flex-shrink-0 rounded bg-white/10 px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-accent transition-colors hover:bg-white/20"
           >
             {openLabel}
           </button>

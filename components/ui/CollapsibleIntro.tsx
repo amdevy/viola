@@ -32,7 +32,7 @@ interface Props {
 }
 
 const DEFAULT_COLLAPSED = "max-md:max-h-[3.25rem] max-md:overflow-hidden";
-const DEFAULT_FADE = "right-0 h-[1.625rem] w-1/3 bg-linear-to-r from-[#FAFAF8]/0 to-[#FAFAF8]";
+const DEFAULT_FADE = "right-0 h-[1.625rem] w-1/3 bg-linear-to-r from-background/0 to-background";
 
 /**
  * An intro that takes two lines on phones, so the products start higher, and
@@ -114,7 +114,7 @@ export default function CollapsibleIntro({
             }
             setExpanded(!expanded);
           }}
-          className="md:hidden inline-flex min-h-9 items-center text-sm text-[#7A5C36] underline underline-offset-2"
+          className="md:hidden inline-flex min-h-9 items-center text-sm text-accent-deep underline underline-offset-2"
         >
           {expanded ? lessLabel : moreLabel}
         </button>

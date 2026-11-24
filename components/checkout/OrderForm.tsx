@@ -320,7 +320,7 @@ export default function OrderForm() {
   if (items.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-[#6B6B6B]">{t("cartEmpty")}</p>
+        <p className="text-muted">{t("cartEmpty")}</p>
       </div>
     );
   }
@@ -335,7 +335,7 @@ export default function OrderForm() {
     >
       {/* Contact info */}
       <div>
-        <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-4">{t("contactInfo")}</h2>
+        <h2 className="font-serif text-xl font-semibold text-foreground mb-4">{t("contactInfo")}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
             label={t("firstName")}
@@ -373,7 +373,7 @@ export default function OrderForm() {
 
       {/* Delivery */}
       <div ref={deliverySectionRef}>
-        <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-4">{t("deliverySection")}</h2>
+        <h2 className="font-serif text-xl font-semibold text-foreground mb-4">{t("deliverySection")}</h2>
         <NovaPoshtaSelect
           onCityChange={(c) => {
             setCity(c);
@@ -392,7 +392,7 @@ export default function OrderForm() {
 
       {/* Payment */}
       <div>
-        <h2 className="font-serif text-xl font-semibold text-[#1A1A1A] mb-4">{t("paymentSection")}</h2>
+        <h2 className="font-serif text-xl font-semibold text-foreground mb-4">{t("paymentSection")}</h2>
         <div className={`grid gap-3 ${CARD_PAYMENT_ENABLED ? "grid-cols-2" : "grid-cols-1"}`}>
           {[
             { value: "callback", icon: "📞", label: t("callback"), sub: t("callbackSub") },
@@ -404,14 +404,14 @@ export default function OrderForm() {
               key={opt.value}
               className={`flex flex-col items-center gap-1.5 p-4 border-2 rounded cursor-pointer transition-all ${
                 paymentMethod === opt.value
-                  ? "border-[#C4A882] bg-[#FDF9F5]"
-                  : "border-[#E8E4DE] hover:border-[#C4A882]"
+                  ? "border-accent bg-cream"
+                  : "border-border hover:border-accent"
               }`}
             >
               <input type="radio" value={opt.value} className="sr-only" {...register("paymentMethod")} />
               <span className="text-xl">{opt.icon}</span>
-              <span className="text-xs font-semibold text-[#1A1A1A] text-center">{opt.label}</span>
-              <span className="text-[11px] text-[#6B6B6B] text-center">{opt.sub}</span>
+              <span className="text-xs font-semibold text-foreground text-center">{opt.label}</span>
+              <span className="text-[11px] text-muted text-center">{opt.sub}</span>
             </label>
           ))}
         </div>
@@ -419,13 +419,13 @@ export default function OrderForm() {
 
       {/* Notes */}
       <div>
-        <label className="text-sm font-medium text-[#1A1A1A] block mb-1">
+        <label className="text-sm font-medium text-foreground block mb-1">
           {t("notes")}
         </label>
         <textarea
           rows={2}
           placeholder={t("notesPlaceholder")}
-          className="w-full px-4 py-3 text-sm border border-[#E8E4DE] rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#C4A882] resize-none"
+          className="w-full px-4 py-3 text-sm border border-border rounded bg-surface focus:outline-none focus:ring-2 focus:ring-accent resize-none"
           {...register("notes")}
         />
       </div>
@@ -435,19 +435,19 @@ export default function OrderForm() {
         <label className="flex items-start gap-3 cursor-pointer">
           <input
             type="checkbox"
-            className="mt-0.5 w-4 h-4 shrink-0 accent-[#C4A882]"
+            className="mt-0.5 w-4 h-4 shrink-0 accent-accent"
             {...register("acceptOffer")}
           />
-          <span className="text-xs text-[#6B6B6B] leading-relaxed">
+          <span className="text-xs text-muted leading-relaxed">
             {t.rich("offerAccept", {
               // Localized Link, so an /en shopper is not sent to the Ukrainian page.
               offer: (chunks) => (
-                <Link href="/offer" target="_blank" className="text-[#C4A882] hover:underline">
+                <Link href="/offer" target="_blank" className="text-accent hover:underline">
                   {chunks}
                 </Link>
               ),
               delivery: (chunks) => (
-                <Link href="/delivery" target="_blank" className="text-[#C4A882] hover:underline">
+                <Link href="/delivery" target="_blank" className="text-accent hover:underline">
                   {chunks}
                 </Link>
               ),
@@ -455,14 +455,14 @@ export default function OrderForm() {
           </span>
         </label>
         {errors.acceptOffer && (
-          <p className="text-xs text-[#E53E3E] mt-1.5" role="alert">
+          <p className="text-xs text-error mt-1.5" role="alert">
             {errors.acceptOffer.message}
           </p>
         )}
       </div>
 
       {Object.keys(errors).length > 0 && (
-        <p className="text-sm text-[#E53E3E] text-center" role="alert">
+        <p className="text-sm text-error text-center" role="alert">
           {t("formHasErrors")}
         </p>
       )}
@@ -470,7 +470,7 @@ export default function OrderForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full bg-[#1A1A1A] text-white py-4 text-sm font-medium rounded hover:bg-[#C4A882] transition-colors disabled:opacity-50 uppercase tracking-wider"
+        className="w-full bg-ink text-on-ink py-4 text-sm font-medium rounded hover:bg-accent transition-colors disabled:opacity-50 uppercase tracking-wider"
       >
         {submitting
           ? t("submitting")

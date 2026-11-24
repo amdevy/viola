@@ -77,10 +77,10 @@ export default function BundleQuickView({
       <div
         ref={panelRef}
         tabIndex={-1}
-        className="relative flex max-h-[88dvh] w-full flex-col overflow-hidden rounded-t-xl bg-white shadow-2xl outline-none sm:max-w-md sm:rounded"
+        className="relative flex max-h-[88dvh] w-full flex-col overflow-hidden rounded-t-xl bg-surface shadow-2xl outline-none sm:max-w-md sm:rounded"
       >
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-          <div className="relative aspect-[4/3] w-full bg-[#F0EDE8]">
+          <div className="relative aspect-[4/3] w-full bg-panel">
             <Image
               src={image}
               alt={product.name}
@@ -91,25 +91,25 @@ export default function BundleQuickView({
           </div>
           <div className="p-4">
             {label && (
-              <p className="mb-1 text-[10px] uppercase tracking-widest text-[#C4A882]">{label}</p>
+              <p className="mb-1 text-[10px] uppercase tracking-widest text-accent">{label}</p>
             )}
-            <h3 className="font-serif text-xl font-bold leading-snug text-[#1A1A1A]">
+            <h3 className="font-serif text-xl font-bold leading-snug text-foreground">
               {product.name}
             </h3>
-            <p className="mt-2 text-sm text-[#6B6B6B]">
-              <span className="text-base font-semibold text-[#1A1A1A]">
+            <p className="mt-2 text-sm text-muted">
+              <span className="text-base font-semibold text-foreground">
                 {formatPrice(Number(product.price), locale)}
               </span>
               {product.volume && <> · {formatVolume(product.volume, locale)}</>}
             </p>
             {product.summary && (
-              <p className="mt-3 text-sm leading-relaxed text-[#1A1A1A]">{product.summary}</p>
+              <p className="mt-3 text-sm leading-relaxed text-foreground">{product.summary}</p>
             )}
           </div>
         </div>
 
         {/* Actions stay put at the bottom edge while the text scrolls. */}
-        <div className="space-y-2 border-t border-[#E8E4DE] p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+        <div className="space-y-2 border-t border-border p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
           <button
             type="button"
             onClick={() => {
@@ -118,8 +118,8 @@ export default function BundleQuickView({
             }}
             className={`w-full rounded py-3.5 text-sm font-medium uppercase tracking-wider transition-colors ${
               selected
-                ? "border border-[#1A1A1A] bg-white text-[#1A1A1A] hover:bg-[#FAFAF8]"
-                : "bg-[#1A1A1A] text-white hover:bg-[#C4A882]"
+                ? "border border-foreground bg-surface text-foreground hover:bg-background"
+                : "bg-ink text-on-ink hover:bg-accent"
             }`}
           >
             {selected ? t("removeFromBundle") : t("addToBundle")}
@@ -135,7 +135,7 @@ export default function BundleQuickView({
                     item_id: product.id,
                   })
                 }
-                className="flex-1 rounded border border-[#E8E4DE] py-3 text-center text-sm font-medium text-[#1A1A1A] transition-colors hover:border-[#C4A882]"
+                className="flex-1 rounded border border-border py-3 text-center text-sm font-medium text-foreground transition-colors hover:border-accent"
               >
                 {t("openProduct")}
               </Link>
@@ -143,7 +143,7 @@ export default function BundleQuickView({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 rounded border border-[#E8E4DE] py-3 text-center text-sm font-medium text-[#6B6B6B] transition-colors hover:border-[#C4A882]"
+              className="flex-1 rounded border border-border py-3 text-center text-sm font-medium text-muted transition-colors hover:border-accent"
             >
               {t("close")}
             </button>

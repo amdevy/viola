@@ -19,8 +19,10 @@ export default function AdminRootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // data-theme="light": the admin panel has no dark theme, also on a device
+  // set to dark (see app/globals.css).
   return (
-    <html lang="uk" className={inter.variable}>
+    <html lang="uk" className={inter.variable} data-theme="light">
       <body className="bg-[#F5F3EF] text-[#1A1A1A] antialiased">
         {children}
         <SpeedInsights />

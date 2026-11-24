@@ -34,9 +34,9 @@ export default function PaymentProcessing({ orderId }: { orderId: string }) {
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-4">
       <div className="text-center max-w-md">
-        <div className="w-16 h-16 bg-[#FDF9F5] border border-[#E8E4DE] rounded-full flex items-center justify-center mx-auto mb-6">
+        <div className="w-16 h-16 bg-cream border border-border rounded-full flex items-center justify-center mx-auto mb-6">
           <svg
-            className={`w-8 h-8 text-[#C4A882] ${givenUp ? "" : "animate-spin"}`}
+            className={`w-8 h-8 text-accent ${givenUp ? "" : "animate-spin"}`}
             fill="none"
             viewBox="0 0 24 24"
             aria-hidden="true"
@@ -45,17 +45,17 @@ export default function PaymentProcessing({ orderId }: { orderId: string }) {
             <path className="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8v3a5 5 0 00-5 5H4z" />
           </svg>
         </div>
-        <h1 className="font-serif text-3xl font-bold text-[#1A1A1A] mb-3">
+        <h1 className="font-serif text-3xl font-bold text-foreground mb-3">
           {t("processingTitle")}
         </h1>
-        <p className="text-[#6B6B6B] mb-2">{t("processingMessage")}</p>
-        <p className="text-sm text-[#A0A0A0] mb-6">
+        <p className="text-muted mb-2">{t("processingMessage")}</p>
+        <p className="text-sm text-subtle mb-6">
           {t("orderNumber")}{" "}
-          <span className="font-mono font-medium text-[#1A1A1A]">
+          <span className="font-mono font-medium text-foreground">
             {orderId.slice(0, 8).toUpperCase()}
           </span>
         </p>
-        <p className="text-sm text-[#6B6B6B]">
+        <p className="text-sm text-muted">
           {givenUp
             ? t("processingSlow")
             : elapsed >= 30
@@ -63,7 +63,7 @@ export default function PaymentProcessing({ orderId }: { orderId: string }) {
             : t("processingWait")}
         </p>
         {givenUp && (
-          <p className="text-sm text-[#6B6B6B] mt-4">{t("processingContactUs")}</p>
+          <p className="text-sm text-muted mt-4">{t("processingContactUs")}</p>
         )}
       </div>
     </div>

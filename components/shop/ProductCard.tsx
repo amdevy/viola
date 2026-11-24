@@ -115,7 +115,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       onMouseLeave={() => setHovered(false)}
     >
       {/* Image container */}
-      <div className="relative aspect-[3/4] overflow-hidden rounded bg-[#F0EDE8] mb-3">
+      <div className="relative aspect-[3/4] overflow-hidden rounded bg-panel mb-3">
         <Image
           src={hovered ? secondaryImage : primaryImage}
           alt={
@@ -134,7 +134,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Badges */}
         <div className="absolute top-2 left-2 flex flex-col gap-1">
           {product.is_bestseller && !product.is_coming_soon && (
-            <span className="bg-[#1A1A1A] text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
+            <span className="bg-ink text-on-ink text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
               {tc("bestsellerBadge")}
             </span>
           )}
@@ -149,12 +149,12 @@ export default function ProductCard({ product }: ProductCardProps) {
             </span>
           )}
           {discount && (
-            <span className="bg-[#C4A882] text-white text-[10px] font-bold px-2 py-0.5 rounded">
+            <span className="bg-accent text-white text-[10px] font-bold px-2 py-0.5 rounded">
               -{discount}%
             </span>
           )}
           {!product.in_stock && (
-            <span className="bg-[#1A1A1A] text-white text-[10px] font-bold px-2 py-0.5 rounded">
+            <span className="bg-ink text-on-ink text-[10px] font-bold px-2 py-0.5 rounded">
               {t("outOfStock")}
             </span>
           )}
@@ -196,19 +196,19 @@ export default function ProductCard({ product }: ProductCardProps) {
               // gold tick and the number between them. No min-w-0: in the wide
               // layout it keeps the width its content needs and the gold half
               // gives way, so the buttons never spill over consultation.
-              <div className="flex grow basis-1/2 items-center justify-between bg-[#1A1A1A] text-white">
+              <div className="flex grow basis-1/2 items-center justify-between bg-ink text-on-ink">
                 <button
                   type="button"
                   onClick={(e) => handleStep(e, -1)}
                   aria-label={tcart("decrease")}
-                  className="flex h-full w-12 flex-shrink-0 items-center justify-center transition-colors hover:bg-[#333333] @min-[15rem]:w-10"
+                  className="flex h-full w-12 flex-shrink-0 items-center justify-center transition-colors hover:bg-ink-hover @min-[15rem]:w-10"
                 >
                   <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" d="M5 12h14" />
                   </svg>
                 </button>
                 <span className="flex min-w-0 items-center justify-center gap-1 text-sm font-semibold" aria-live="polite">
-                  <svg className="h-3.5 w-3.5 flex-shrink-0 text-[#C4A882]" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24" aria-hidden="true">
+                  <svg className="h-3.5 w-3.5 flex-shrink-0 text-accent" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
                   <span aria-hidden="true">{quantity}</span>
@@ -218,7 +218,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                   type="button"
                   onClick={(e) => handleStep(e, 1)}
                   aria-label={tcart("increase")}
-                  className="flex h-full w-12 flex-shrink-0 items-center justify-center transition-colors hover:bg-[#333333] @min-[15rem]:w-10"
+                  className="flex h-full w-12 flex-shrink-0 items-center justify-center transition-colors hover:bg-ink-hover @min-[15rem]:w-10"
                 >
                   <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" d="M12 5v14M5 12h14" />
@@ -239,7 +239,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               <button
                 type="button"
                 onClick={handleAddToCart}
-                className="flex grow basis-1/2 @max-[12rem]:basis-[45%] items-center justify-center bg-[#1A1A1A] px-0.5 text-center text-[10px] font-medium uppercase leading-tight tracking-normal text-white transition-colors hover:bg-[#C4A882] @max-[9.5rem]:text-[9px] @max-[9.5rem]:tracking-tight @min-[15rem]:px-1 @min-[15rem]:text-xs @min-[15rem]:tracking-wider"
+                className="flex grow basis-1/2 @max-[12rem]:basis-[45%] items-center justify-center bg-ink px-0.5 text-center text-[10px] font-medium uppercase leading-tight tracking-normal text-on-ink transition-colors hover:bg-accent @max-[9.5rem]:text-[9px] @max-[9.5rem]:tracking-tight @min-[15rem]:px-1 @min-[15rem]:text-xs @min-[15rem]:tracking-wider"
               >
                 {canBuy ? t("addToCart") : tc("notifyMe")}
               </button>
@@ -262,7 +262,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               }}
               className={`${
                 inCart ? "hidden @min-[15rem]:flex" : "flex"
-              } grow basis-1/2 @max-[12rem]:basis-[55%] items-center justify-center bg-[#C4A882] px-0.5 text-center text-[10px] font-medium uppercase leading-tight tracking-normal text-white transition-colors hover:bg-[#b89970] @max-[9.5rem]:text-[9px] @max-[9.5rem]:tracking-tight @min-[15rem]:px-1 @min-[15rem]:text-xs @min-[15rem]:tracking-wider`}
+              } grow basis-1/2 @max-[12rem]:basis-[55%] items-center justify-center bg-accent px-0.5 text-center text-[10px] font-medium uppercase leading-tight tracking-normal text-white transition-colors hover:bg-[#b89970] @max-[9.5rem]:text-[9px] @max-[9.5rem]:tracking-tight @min-[15rem]:px-1 @min-[15rem]:text-xs @min-[15rem]:tracking-wider`}
             >
               {tc("consultation")}
             </a>
@@ -272,24 +272,24 @@ export default function ProductCard({ product }: ProductCardProps) {
 
       {/* Info */}
       <div className="flex flex-col gap-1 flex-1">
-        <h3 className="text-sm font-medium text-[#1A1A1A] line-clamp-2 group-hover:text-[#C4A882] transition-colors">
+        <h3 className="text-sm font-medium text-foreground line-clamp-2 group-hover:text-accent transition-colors">
           <Link
             href={productHref}
             onClick={handleSelect}
-            className="after:absolute after:inset-0 after:rounded after:content-[''] focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-4 focus-visible:after:outline-[#C4A882]"
+            className="after:absolute after:inset-0 after:rounded after:content-[''] focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-4 focus-visible:after:outline-accent"
           >
             {product.name}
           </Link>
         </h3>
         {product.volume && (
-          <p className="text-xs text-[#6B6B6B]">{formatVolume(product.volume, locale)}</p>
+          <p className="text-xs text-muted">{formatVolume(product.volume, locale)}</p>
         )}
         <div className="flex items-center gap-2 mt-auto pt-1">
-          <span className="text-sm font-semibold text-[#1A1A1A]">
+          <span className="text-sm font-semibold text-foreground">
             {formatPrice(product.price, locale)}
           </span>
           {product.compare_price && (
-            <span className="text-xs text-[#A0A0A0] line-through">
+            <span className="text-xs text-subtle line-through">
               {formatPrice(product.compare_price, locale)}
             </span>
           )}

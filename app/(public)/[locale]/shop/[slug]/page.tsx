@@ -382,20 +382,20 @@ export default async function ProductPage({ params }: Props) {
         {/* Breadcrumb: one line. The title takes what is left and ends in an
             ellipsis (the H1 below shows it in full); the category gives way
             only once the title has none left. */}
-        <nav className="text-xs text-[#6B6B6B] mb-8 flex items-center gap-2 whitespace-nowrap">
-          <Link href="/" className="shrink-0 hover:text-[#C4A882]">{tc("home")}</Link>
+        <nav className="text-xs text-muted mb-8 flex items-center gap-2 whitespace-nowrap">
+          <Link href="/" className="shrink-0 hover:text-accent">{tc("home")}</Link>
           <span className="shrink-0">/</span>
-          <Link href="/shop" className="shrink-0 hover:text-[#C4A882]">{ts("breadcrumbShop")}</Link>
+          <Link href="/shop" className="shrink-0 hover:text-accent">{ts("breadcrumbShop")}</Link>
           {product.category && (
             <>
               <span className="shrink-0">/</span>
-              <Link href={`/shop/category/${product.category.slug}`} className="min-w-0 truncate hover:text-[#C4A882]">
+              <Link href={`/shop/category/${product.category.slug}`} className="min-w-0 truncate hover:text-accent">
                 {product.category.name}
               </Link>
             </>
           )}
           <span className="shrink-0">/</span>
-          <span className="min-w-0 flex-1 truncate text-[#1A1A1A]">{product.name}</span>
+          <span className="min-w-0 flex-1 truncate text-foreground">{product.name}</span>
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -410,30 +410,30 @@ export default async function ProductPage({ params }: Props) {
           {/* Details */}
           <div>
             {product.category && (
-              <p className="text-[#C4A882] text-xs uppercase tracking-widest mb-2">
+              <p className="text-accent text-xs uppercase tracking-widest mb-2">
                 {product.category.name}
               </p>
             )}
-            <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-2">
+            <h1 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-2">
               {product.name}
             </h1>
 
             {product.volume && (
-              <p className="text-sm text-[#6B6B6B] mb-4">{formatVolume(product.volume, locale)}</p>
+              <p className="text-sm text-muted mb-4">{formatVolume(product.volume, locale)}</p>
             )}
 
             {/* Price */}
             <div className="flex items-center gap-3 mb-6">
-              <span className="text-2xl font-bold text-[#1A1A1A]">
+              <span className="text-2xl font-bold text-foreground">
                 {formatPrice(product.price, locale)}
               </span>
               {product.compare_price && (
-                <span className="text-base text-[#A0A0A0] line-through">
+                <span className="text-base text-subtle line-through">
                   {formatPrice(product.compare_price, locale)}
                 </span>
               )}
               {discount && (
-                <span className="bg-[#C4A882] text-white text-xs font-bold px-2 py-1 rounded">
+                <span className="bg-accent text-white text-xs font-bold px-2 py-1 rounded">
                   -{discount}%
                 </span>
               )}
@@ -452,14 +452,14 @@ export default async function ProductPage({ params }: Props) {
             {/* Hair types */}
             {hairTypeLabels.length > 0 && (
               <div className="mb-6">
-                <p className="text-xs uppercase tracking-widest text-[#6B6B6B] mb-2">
+                <p className="text-xs uppercase tracking-widest text-muted mb-2">
                   {t("suitableFor")}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {hairTypeLabels.map((label) => (
                     <span
                       key={label}
-                      className="bg-[#F0EDE8] text-[#1A1A1A] text-xs px-3 py-1.5 rounded"
+                      className="bg-panel text-foreground text-xs px-3 py-1.5 rounded"
                     >
                       {label}
                     </span>
@@ -469,8 +469,8 @@ export default async function ProductPage({ params }: Props) {
             )}
 
             {/* Manufacturer */}
-            <p className="text-sm text-[#6B6B6B] mb-6">
-              {t("manufacturer")} <span className="font-semibold text-[#1A1A1A]">Na Gólov[y]</span>
+            <p className="text-sm text-muted mb-6">
+              {t("manufacturer")} <span className="font-semibold text-foreground">Na Gólov[y]</span>
             </p>
 
             {/* Add to cart */}
@@ -510,8 +510,8 @@ export default async function ProductPage({ params }: Props) {
 
         {/* Related */}
         {related.length > 0 && (
-          <section className="mt-16 pt-12 border-t border-[#E8E4DE]">
-            <h2 className="font-serif text-2xl font-bold text-[#1A1A1A] mb-8">
+          <section className="mt-16 pt-12 border-t border-border">
+            <h2 className="font-serif text-2xl font-bold text-foreground mb-8">
               {t("relatedProducts")}
             </h2>
             <ProductListGA products={related} listName="related_products" />
@@ -527,7 +527,7 @@ export default async function ProductPage({ params }: Props) {
           <div className="mt-10">
             <Link
               href={categoryLink.href}
-              className="text-sm text-[#C4A882] hover:text-[#1A1A1A] transition-colors"
+              className="text-sm text-accent hover:text-foreground transition-colors"
             >
               {locale === "en"
                 ? `${categoryLink.label} — the whole category →`
@@ -569,17 +569,17 @@ function ProductTabs({
   if (tabs.length === 0) return null;
 
   return (
-    <div className="border-t border-[#E8E4DE]">
+    <div className="border-t border-border">
       {tabs.map((tab) => (
         <section
           key={tab.id}
           id={`tab-${tab.id}`}
           aria-labelledby={`tab-${tab.id}-title`}
-          className="border-b border-[#E8E4DE] py-8 md:grid md:grid-cols-[180px_minmax(0,1fr)] md:gap-10 lg:grid-cols-[220px_minmax(0,1fr)]"
+          className="border-b border-border py-8 md:grid md:grid-cols-[180px_minmax(0,1fr)] md:gap-10 lg:grid-cols-[220px_minmax(0,1fr)]"
         >
           <h2
             id={`tab-${tab.id}-title`}
-            className="mb-4 font-serif text-xl font-bold text-[#1A1A1A] sm:text-2xl md:mb-0"
+            className="mb-4 font-serif text-xl font-bold text-foreground sm:text-2xl md:mb-0"
           >
             {tab.label}
           </h2>
@@ -593,7 +593,7 @@ function ProductTabs({
               analyticsEvent="product_text_expand"
               analyticsContentType={tab.id}
               collapsedClassName="max-md:max-h-[14rem] max-md:overflow-hidden"
-              fadeClassName="left-0 h-16 w-full bg-linear-to-b from-[#FAFAF8]/0 to-[#FAFAF8]"
+              fadeClassName="left-0 h-16 w-full bg-linear-to-b from-background/0 to-background"
             >
               <ProductText text={tab.content} />
             </CollapsibleIntro>
