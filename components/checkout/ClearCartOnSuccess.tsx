@@ -8,9 +8,15 @@ import { clearCheckoutDraft } from "@/lib/checkout-draft";
 export default function ClearCartOnSuccess({
   orderId,
   isPaid = false,
+  reportPurchase = true,
 }: {
   orderId?: string;
   isPaid?: boolean;
+  /**
+   * False when the server has reported this paid order to GA already (see
+   * lib/ga-server.ts): a second `purchase` would count the sale twice.
+   */
+  reportPurchase?: boolean;
 }) {
   const clearCart = useCart((s) => s.clearCart);
   // The cart is read imperatively rather than subscribed to. Selecting `items`
@@ -41,14 +47,16 @@ export default function ClearCartOnSuccess({
       // the default payment method, so counting those inflates reported revenue
       // permanently — they are leads until the owner confirms and charges them.
       if (isPaid) {
-        sendGAEvent("event", "purchase", {
-          transaction_id: orderId,
-          value,
-          currency: "UAH",
-          shipping: 0,
-          tax: 0,
-          items: gaItems,
-        });
+        if (reportPurchase) {
+          sendGAEvent("event", "purchase", {
+            transaction_id: orderId,
+            value,
+            currency: "UAH",
+            shipping: 0,
+            tax: 0,
+            items: gaItems,
+          });
+        }
       } else {
         sendGAEvent("event", "generate_lead", {
           transaction_id: orderId,
@@ -63,7 +71,7 @@ export default function ClearCartOnSuccess({
     // here — a shopper who went to LiqPay and pressed Back still finds the
     // form filled.
     clearCheckoutDraft();
-  }, [orderId, isPaid, clearCart]);
+  }, [orderId, isPaid, reportPurchase, clearCart]);
 
   return null;
 }

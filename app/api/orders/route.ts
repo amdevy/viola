@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { orderRequestSchema } from "@/lib/validations";
 import { rateLimitRequest } from "@/lib/rate-limit";
+import { readGaIds } from "@/lib/ga-server";
 
 type ProductRow = {
   id: string;
@@ -165,6 +166,22 @@ export async function POST(req: NextRequest) {
   }
 
   await supabase.from("orders").update({ payment_id: order.id }).eq("id", order.id);
+
+  // The LiqPay callback reports a paid card order to GA from the server
+  // (lib/ga-server.ts) and needs the shopper's GA ids to join their session.
+  // gtag's cookies arrive with this same-origin request. Card orders only —
+  // no other order needs them. Best effort: before migration 015 the columns
+  // do not exist, and that must not fail an order that is already saved.
+  if (paymentMethod === "card") {
+    const ga = readGaIds(req.cookies);
+    if (ga.clientId) {
+      const { error: gaError } = await supabase
+        .from("orders")
+        .update({ ga_client_id: ga.clientId, ga_session_id: ga.sessionId })
+        .eq("id", order.id);
+      if (gaError) console.warn("orders: GA ids not stored", order.id, gaError.message);
+    }
+  }
 
   return NextResponse.json({ orderId: order.id, total });
 }
