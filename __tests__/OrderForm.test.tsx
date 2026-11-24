@@ -110,6 +110,8 @@ describe("OrderForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     flags.card = true;
+    // The form keeps a draft for the tab; every test starts without one.
+    sessionStorage.clear();
     installFetchMock();
     useCart.setState({
       items: [{ productId: "p1", name: "Шампунь Harmony", price: 450, image: "/img.jpg", quantity: 1 }],
@@ -372,4 +374,87 @@ describe("OrderForm", () => {
 
     submitSpy.mockRestore();
   }, 15000);
+
+  describe("чернетка форми", () => {
+    const gaEvents = (name: string) =>
+      vi.mocked(sendGAEvent).mock.calls.filter(([, event]) => event === name);
+
+    it("поля, місто й відділення повертаються після виходу з форми; згода з офертою — ні", async () => {
+      const user = userEvent.setup();
+      const first = render(<OrderForm />);
+      await fillValidCheckout(user);
+      await user.type(screen.getByLabelText(uk.checkout.email), "olena@example.com");
+      expect(screen.getByRole("checkbox")).toBeChecked();
+      first.unmount();
+      vi.mocked(sendGAEvent).mockClear();
+
+      // Back on /checkout in the same tab (a recommended product, a language switch, a reload).
+      render(<OrderForm />);
+
+      await waitFor(() => expect(screen.getByLabelText(uk.checkout.firstName)).toHaveValue("Олена"));
+      expect(screen.getByLabelText(uk.checkout.lastName)).toHaveValue("Іваненко");
+      expect(screen.getByLabelText(uk.checkout.phone)).toHaveValue("050 123 45 67");
+      expect(screen.getByLabelText(uk.checkout.email)).toHaveValue("olena@example.com");
+      expect(screen.getByPlaceholderText(uk.checkout.cityPlaceholder)).toHaveValue("Київ");
+      expect(screen.getByDisplayValue(WAREHOUSE.Description)).toBeInTheDocument();
+      expect(screen.getByRole("checkbox")).not.toBeChecked();
+
+      expect(gaEvents("checkout_draft_restore")).toEqual([
+        ["event", "checkout_draft_restore", { field_count: 6 }],
+      ]);
+      // A restored city and branch are not a new shipping choice.
+      await new Promise((r) => setTimeout(r, 50));
+      expect(gaEvents("add_shipping_info")).toHaveLength(0);
+    }, 15000);
+
+    it("свіжий вибір міста й відділення шле add_shipping_info", async () => {
+      const user = userEvent.setup();
+      render(<OrderForm />);
+      await fillValidCheckout(user);
+
+      await waitFor(() => expect(gaEvents("add_shipping_info")).toHaveLength(1));
+    }, 15000);
+
+    it("без чернетки форма порожня й події відновлення немає", async () => {
+      render(<OrderForm />);
+
+      expect(screen.getByLabelText(uk.checkout.firstName)).toHaveValue("");
+      expect(screen.getByPlaceholderText(uk.checkout.cityPlaceholder)).toHaveValue("");
+      await new Promise((r) => setTimeout(r, 50));
+      expect(gaEvents("checkout_draft_restore")).toHaveLength(0);
+    });
+
+    it("зіпсована чернетка ігнорується", async () => {
+      sessionStorage.setItem("viola:checkout-draft", "{not json");
+      render(<OrderForm />);
+
+      expect(screen.getByLabelText(uk.checkout.firstName)).toHaveValue("");
+      await new Promise((r) => setTimeout(r, 50));
+      expect(gaEvents("checkout_draft_restore")).toHaveLength(0);
+    });
+
+    it("збережена картка стає зворотним зв'язком, коли оплату карткою вимкнено", async () => {
+      sessionStorage.setItem(
+        "viola:checkout-draft",
+        JSON.stringify({
+          firstName: "Олена",
+          lastName: "",
+          phone: "",
+          email: "",
+          notes: "",
+          paymentMethod: "card",
+          city: "",
+          cityRef: "",
+          novaPoshtaRef: "",
+          novaPoshtaAddress: "",
+        }),
+      );
+      flags.card = false;
+      render(<OrderForm />);
+
+      await waitFor(() => expect(screen.getByLabelText(uk.checkout.firstName)).toHaveValue("Олена"));
+      expect(document.querySelector<HTMLInputElement>('input[value="callback"]')?.checked).toBe(true);
+      expect(screen.getByRole("button", { name: uk.checkout.submit })).toBeInTheDocument();
+    });
+  });
 });

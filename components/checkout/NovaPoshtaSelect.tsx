@@ -9,6 +9,14 @@ interface NovaPoshtaSelectProps {
   onWarehouseChange: (warehouse: NovaPoshtaWarehouse | null) => void;
   cityError?: string;
   warehouseError?: string;
+  /**
+   * A city and branch to start from (the checkout draft restored after the
+   * shopper came back to the form). Read once, on mount: the parent remounts
+   * this component (key) to apply a different start. The parent's form already
+   * holds the same values, so nothing is reported back through the callbacks.
+   */
+  initialCity?: { Ref: string; Description: string } | null;
+  initialWarehouse?: { Ref: string; Description: string } | null;
 }
 
 export default function NovaPoshtaSelect({
@@ -16,14 +24,30 @@ export default function NovaPoshtaSelect({
   onWarehouseChange,
   cityError,
   warehouseError,
+  initialCity = null,
+  initialWarehouse = null,
 }: NovaPoshtaSelectProps) {
   const t = useTranslations("checkout");
-  const [cityQuery, setCityQuery] = useState("");
+  const [cityQuery, setCityQuery] = useState(initialCity?.Description ?? "");
   const [cities, setCities] = useState<NovaPoshtaCity[]>([]);
-  const [selectedCity, setSelectedCity] = useState<NovaPoshtaCity | null>(null);
+  const [selectedCity, setSelectedCity] = useState<NovaPoshtaCity | null>(() =>
+    initialCity
+      ? { Ref: initialCity.Ref, Description: initialCity.Description, DescriptionRu: "", AreaDescription: "" }
+      : null,
+  );
   const [warehouses, setWarehouses] = useState<NovaPoshtaWarehouse[]>([]);
   const [warehouseQuery, setWarehouseQuery] = useState("");
-  const [selectedWarehouse, setSelectedWarehouse] = useState<NovaPoshtaWarehouse | null>(null);
+  const [selectedWarehouse, setSelectedWarehouse] = useState<NovaPoshtaWarehouse | null>(() =>
+    initialCity && initialWarehouse
+      ? {
+          Ref: initialWarehouse.Ref,
+          Description: initialWarehouse.Description,
+          Number: "",
+          CityRef: initialCity.Ref,
+          CityDescription: initialCity.Description,
+        }
+      : null,
+  );
   const [cityLoading, setCityLoading] = useState(false);
   const [warehouseLoading, setWarehouseLoading] = useState(false);
   const [showCityDropdown, setShowCityDropdown] = useState(false);
@@ -40,6 +64,11 @@ export default function NovaPoshtaSelect({
       setCities([]);
       return;
     }
+    // The field shows a chosen city (picked from the list, or restored from
+    // the draft): nothing to search, and the list must not pop open again
+    // 400 ms later. Typing changes the text and clears the choice, so a real
+    // edit still searches.
+    if (selectedCity && cityQuery === selectedCity.Description) return;
     const timer = setTimeout(async () => {
       setCityLoading(true);
       const res = await fetch(`/api/nova-poshta?type=cities&query=${encodeURIComponent(cityQuery)}`);
@@ -49,7 +78,7 @@ export default function NovaPoshtaSelect({
       setCityLoading(false);
     }, 400);
     return () => clearTimeout(timer);
-  }, [cityQuery]);
+  }, [cityQuery, selectedCity]);
 
   // Load warehouses when city selected
   useEffect(() => {

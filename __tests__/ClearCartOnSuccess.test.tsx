@@ -83,4 +83,15 @@ describe("ClearCartOnSuccess", () => {
     // is exactly what fed the loop.
     expect(useCart.getState().items).toBe(before);
   });
+
+  it("разом із кошиком прибирає чернетку форми замовлення", async () => {
+    sessionStorage.setItem(
+      "viola:checkout-draft",
+      JSON.stringify({ firstName: "Олена", paymentMethod: "card" }),
+    );
+    render(<ClearCartOnSuccess orderId="order-1" isPaid />);
+
+    await waitFor(() => expect(useCart.getState().items).toHaveLength(0));
+    expect(sessionStorage.getItem("viola:checkout-draft")).toBeNull();
+  });
 });

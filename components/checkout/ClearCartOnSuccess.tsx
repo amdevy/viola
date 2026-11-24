@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { sendGAEvent } from "@/lib/analytics";
 import { useCart } from "@/hooks/useCart";
+import { clearCheckoutDraft } from "@/lib/checkout-draft";
 
 export default function ClearCartOnSuccess({
   orderId,
@@ -58,6 +59,10 @@ export default function ClearCartOnSuccess({
       }
     }
     clearCart();
+    // The order is placed: the next checkout in this tab starts empty. Only
+    // here — a shopper who went to LiqPay and pressed Back still finds the
+    // form filled.
+    clearCheckoutDraft();
   }, [orderId, isPaid, clearCart]);
 
   return null;
