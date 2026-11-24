@@ -100,4 +100,46 @@ describe("NovaPoshtaSelect", () => {
     await user.click(whOption);
     expect(onWarehouseChange).toHaveBeenCalledWith(WAREHOUSE);
   });
+
+  it("відновлене місто й відділення видно одразу, список відділень вантажиться, а список міст не відкривається сам", async () => {
+    const fetchMock = mockNovaPoshtaFetch([KYIV, KYPTI]);
+    vi.stubGlobal("fetch", fetchMock);
+    render(
+      <NovaPoshtaSelect
+        onCityChange={onCityChange}
+        onWarehouseChange={onWarehouseChange}
+        initialCity={{ Ref: KYIV.Ref, Description: KYIV.Description }}
+        initialWarehouse={{ Ref: WAREHOUSE.Ref, Description: WAREHOUSE.Description }}
+      />,
+    );
+
+    expect(screen.getByPlaceholderText(uk.checkout.cityPlaceholder)).toHaveValue("Київ");
+    expect(screen.getByDisplayValue(WAREHOUSE.Description)).toBeEnabled();
+    // The branch list for the city still loads, so the shopper can change it.
+    await waitFor(() =>
+      expect(fetchMock.mock.calls.some(([u]) => String(u).includes("type=warehouses&cityRef=kyiv-ref"))).toBe(true),
+    );
+
+    // Past the 400 ms search debounce: no city search, no open list.
+    await new Promise((r) => setTimeout(r, 600));
+    expect(fetchMock.mock.calls.some(([u]) => String(u).includes("type=cities"))).toBe(false);
+    expect(screen.queryByRole("button", { name: /Київська/ })).toBeNull();
+    // A restore is not a choice: nothing is reported back.
+    expect(onCityChange).not.toHaveBeenCalled();
+    expect(onWarehouseChange).not.toHaveBeenCalled();
+    expect(document.body).toHaveFocus();
+  });
+
+  it("після вибору міста список міст не відкривається знову", async () => {
+    vi.stubGlobal("fetch", mockNovaPoshtaFetch([KYIV, KYPTI]));
+    const user = userEvent.setup();
+    render(<NovaPoshtaSelect onCityChange={onCityChange} onWarehouseChange={onWarehouseChange} />);
+
+    await user.type(screen.getByPlaceholderText(uk.checkout.cityPlaceholder), "Киї");
+    await user.click(await screen.findByRole("button", { name: /Київська/ }, { timeout: 3000 }));
+    expect(onCityChange).toHaveBeenCalledWith(KYIV);
+
+    await new Promise((r) => setTimeout(r, 600));
+    expect(screen.queryByRole("button", { name: /Київська/ })).toBeNull();
+  });
 });

@@ -8,12 +8,37 @@ import Input from "@/components/ui/Input";
 import NovaPoshtaSelect from "./NovaPoshtaSelect";
 import { useCart } from "@/hooks/useCart";
 import toast from "react-hot-toast";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter, Link } from "@/i18n/routing";
 import { useLocale } from "next-intl";
 import { sendGAEvent } from "@/lib/analytics";
 import { CARD_PAYMENT_ENABLED } from "@/lib/payment-flags";
 import type { NovaPoshtaCity, NovaPoshtaWarehouse } from "@/types";
+import {
+  filledFieldCount,
+  readCheckoutDraft,
+  writeCheckoutDraft,
+  type CheckoutDraft,
+} from "@/lib/checkout-draft";
+
+// The draft lives in sessionStorage, which the server cannot see. Read through
+// useSyncExternalStore: hydration uses the server snapshot (no draft), so the
+// HTML matches, and React re-renders with the draft right after.
+const subscribeNever = () => () => {};
+const noDraft = () => null;
+
+const toDraft = (values: Partial<CheckoutFormData>): CheckoutDraft => ({
+  firstName: values.firstName ?? "",
+  lastName: values.lastName ?? "",
+  phone: values.phone ?? "",
+  email: values.email ?? "",
+  notes: values.notes ?? "",
+  paymentMethod: values.paymentMethod === "card" ? "card" : "callback",
+  city: values.city ?? "",
+  cityRef: values.cityRef ?? "",
+  novaPoshtaRef: values.novaPoshtaRef ?? "",
+  novaPoshtaAddress: values.novaPoshtaAddress ?? "",
+});
 
 export default function OrderForm() {
   const t = useTranslations("checkout");
@@ -24,6 +49,24 @@ export default function OrderForm() {
   const [submitting, setSubmitting] = useState(false);
   const [, setCity] = useState<NovaPoshtaCity | null>(null);
   const [, setWarehouse] = useState<NovaPoshtaWarehouse | null>(null);
+
+  // What the shopper typed before leaving the form (a recommended product, a
+  // language switch, a reload), read once per mount. A stored card choice
+  // falls back to callback when card payment is off — its tile is not
+  // rendered, and an invisible choice must not stay selected.
+  const draftRead = useRef<CheckoutDraft | null | undefined>(undefined);
+  const readDraftOnce = useCallback(() => {
+    if (draftRead.current === undefined) draftRead.current = readCheckoutDraft();
+    return draftRead.current;
+  }, []);
+  const storedDraft = useSyncExternalStore(subscribeNever, readDraftOnce, noDraft);
+  const draft = useMemo(
+    () =>
+      storedDraft && storedDraft.paymentMethod === "card" && !CARD_PAYMENT_ENABLED
+        ? { ...storedDraft, paymentMethod: "callback" as const }
+        : storedDraft,
+    [storedDraft],
+  );
 
   const schema = useMemo(
     () =>
@@ -45,6 +88,7 @@ export default function OrderForm() {
     setValue,
     setFocus,
     watch,
+    reset,
     formState: { errors },
   } = useForm<CheckoutFormData>({
     resolver: zodResolver(schema),
@@ -70,8 +114,33 @@ export default function OrderForm() {
 
   const paymentMethod = watch("paymentMethod");
   const watchedCity = watch("city");
+  const watchedCityRef = watch("cityRef");
   const watchedWarehouse = watch("novaPoshtaRef");
   const shippingTrackedRef = useRef(false);
+
+  // Apply the draft once per mount (refs survive StrictMode's second effect
+  // run). acceptOffer is not part of the draft and stays unticked: the offer
+  // is a consent the shopper gives anew each time.
+  const draftApplied = useRef(false);
+  useEffect(() => {
+    if (!draft || draftApplied.current) return;
+    draftApplied.current = true;
+    reset({ ...draft, acceptOffer: false as unknown as true });
+    sendGAEvent("event", "checkout_draft_restore", { field_count: filledFieldCount(draft) });
+  }, [draft, reset]);
+
+  // Keep the draft as the shopper types. A subscription fires on changes only,
+  // never on mount, so an empty form cannot overwrite a stored draft before it
+  // has been applied.
+  useEffect(() => {
+    const subscription = watch((values) => writeCheckoutDraft(toDraft(values)));
+    return () => subscription.unsubscribe();
+  }, [watch]);
+
+  // City and branch that came back with the draft: not a new choice, so they
+  // do not count as add_shipping_info. Changing either one still does.
+  const restoredShipping =
+    draft && draft.cityRef && draft.novaPoshtaRef ? `${draft.cityRef}|${draft.novaPoshtaRef}` : null;
 
   // Capture an in-progress checkout once the phone is valid, so we can measure
   // how many shoppers start the form but never submit. Debounced; keeps the
@@ -129,6 +198,7 @@ export default function OrderForm() {
   useEffect(() => {
     if (!watchedCity || !watchedWarehouse || shippingTrackedRef.current) return;
     if (items.length === 0) return;
+    if (restoredShipping === `${watchedCityRef}|${watchedWarehouse}`) return;
     shippingTrackedRef.current = true;
     sendGAEvent("event", "add_shipping_info", {
       currency: "UAH",
@@ -141,7 +211,7 @@ export default function OrderForm() {
         quantity: i.quantity,
       })),
     });
-  }, [watchedCity, watchedWarehouse, items, cartTotal]);
+  }, [watchedCity, watchedCityRef, watchedWarehouse, restoredShipping, items, cartTotal]);
 
   const deliverySectionRef = useRef<HTMLDivElement>(null);
 
@@ -375,6 +445,15 @@ export default function OrderForm() {
       <div ref={deliverySectionRef}>
         <h2 className="font-serif text-xl font-semibold text-foreground mb-4">{t("deliverySection")}</h2>
         <NovaPoshtaSelect
+          // Remounted when the draft arrives, so it starts from the restored
+          // city and branch (it keeps its own state from mount on).
+          key={draft ? "draft" : "fresh"}
+          initialCity={draft?.city && draft.cityRef ? { Ref: draft.cityRef, Description: draft.city } : null}
+          initialWarehouse={
+            draft?.novaPoshtaRef
+              ? { Ref: draft.novaPoshtaRef, Description: draft.novaPoshtaAddress }
+              : null
+          }
           onCityChange={(c) => {
             setCity(c);
             setValue("city", c?.Description ?? "");
