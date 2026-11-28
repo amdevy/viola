@@ -490,7 +490,7 @@ describe("SearchOverlay — аналітика", () => {
     telegram.addEventListener("click", (e) => e.preventDefault());
     fireEvent.click(telegram);
     expect(events("telegram_consultation")).toEqual([
-      { source: "search_no_results", search_term: "парфуми" },
+      { method: "search_no_results", search_term: "парфуми" },
     ]);
 
     const all = screen.getByRole("link", { name: uk.search.allProducts });

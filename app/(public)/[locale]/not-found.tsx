@@ -54,7 +54,7 @@ export default async function NotFound() {
           target="_blank"
           rel="noopener noreferrer"
           eventName="telegram_consultation"
-          eventParams={{ source: "not_found" }}
+          eventParams={{ method: "not_found" }}
           className="inline-flex items-center gap-2 border border-foreground text-foreground px-8 py-4 text-sm font-medium uppercase tracking-[0.2em] hover:bg-ink hover:text-on-ink transition-colors rounded-sm"
         >
           {t("askTechnologist")}

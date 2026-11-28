@@ -406,7 +406,7 @@ export default function SearchOverlay({ onClose, categories, inputRef, restored 
             rel="noopener noreferrer"
             onClick={() =>
               sendGAEvent("event", "telegram_consultation", {
-                source: "search_no_results",
+                method: "search_no_results",
                 search_term: searchTerm,
               })
             }

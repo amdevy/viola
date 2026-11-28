@@ -32,7 +32,7 @@ export default function ProductLikeButton({
     if (!wasLiked) {
       sendGAEvent("event", "product_like", {
         product_id: productId,
-        source: variant,
+        method: variant,
       });
     }
   };

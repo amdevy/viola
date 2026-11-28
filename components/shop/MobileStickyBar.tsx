@@ -64,7 +64,7 @@ export default function MobileStickyBar({ product }: { product: Product }) {
     sendGAEvent("event", "add_to_cart", {
       currency: "UAH",
       value: product.price,
-      source: "mobile_sticky_bar",
+      method: "mobile_sticky_bar",
       items: [{
         item_id: product.id,
         item_name: product.name,
