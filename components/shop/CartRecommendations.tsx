@@ -71,7 +71,7 @@ export default function CartRecommendations({ variant = "drawer", limit = 4 }: P
     });
     sendGAEvent("event", "cart_recommendation_add", {
       product_id: p.id,
-      source: variant,
+      method: variant,
     });
     // Optimistically remove from the local list; the auto-refetch
     // triggered by the cart change will bring in fresh candidates.

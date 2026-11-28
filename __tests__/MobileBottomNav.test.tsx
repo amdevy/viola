@@ -101,7 +101,7 @@ describe("MobileBottomNav — нижня панель на телефоні", ()
     // jsdom cannot open a new tab; only the analytics event is checked here.
     ask.addEventListener("click", (e) => e.preventDefault());
     fireEvent.click(ask);
-    expect(sendGAEvent).toHaveBeenCalledWith("event", "telegram_consultation", { source: "bottom_nav" });
+    expect(sendGAEvent).toHaveBeenCalledWith("event", "telegram_consultation", { method: "bottom_nav" });
   });
 
   it("позначає каталог активним на сторінках магазину", () => {
@@ -159,7 +159,7 @@ describe("MobileBottomNav — аналітика", () => {
       })),
     );
     // «Запитати» still counts as a consultation, and the cart knows where it was opened from.
-    expect(sendGAEvent).toHaveBeenCalledWith("event", "telegram_consultation", { source: "bottom_nav" });
+    expect(sendGAEvent).toHaveBeenCalledWith("event", "telegram_consultation", { method: "bottom_nav" });
     expect(useCart.getState().openMethod).toBe("bottom_nav");
   });
 });

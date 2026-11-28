@@ -144,7 +144,7 @@ describe("ProductCard — посилання на товар у розмітці
     document.removeEventListener("click", bubbled);
 
     expect(sendGAEvent).toHaveBeenCalledWith("event", "telegram_consultation", {
-      source: "product_card",
+      method: "product_card",
       product_id: "p1",
       product_name: product.name,
     });

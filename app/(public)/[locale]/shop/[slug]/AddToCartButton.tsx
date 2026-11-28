@@ -104,7 +104,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
           rel="noopener noreferrer"
           onClick={() => {
             sendGAEvent("event", "telegram_consultation", {
-              source: "product_page",
+              method: "product_page",
               product_id: product.id,
               product_name: product.name,
             });

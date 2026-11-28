@@ -67,7 +67,7 @@ export default function MobileBottomNav({ onSearch, onMenu }: Props) {
             aria-label={t("askAria")}
             onClick={() => {
               track("ask");
-              sendGAEvent("event", "telegram_consultation", { source: "bottom_nav" });
+              sendGAEvent("event", "telegram_consultation", { method: "bottom_nav" });
             }}
             className={`${ITEM} text-foreground`}
           >

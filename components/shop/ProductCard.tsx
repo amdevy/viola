@@ -255,7 +255,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               onClick={(e) => {
                 e.stopPropagation();
                 sendGAEvent("event", "telegram_consultation", {
-                  source: "product_card",
+                  method: "product_card",
                   product_id: product.id,
                   product_name: product.name,
                 });
